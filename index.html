@@ -252,7 +252,6 @@ window.MathJax = {
 };
 </script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
 </head>
 <body>
 
@@ -346,12 +345,12 @@ window.MathJax = {
   <div class="wrap">
     <header class="appbar">
       <button type="button" class="icon-btn" id="btnUploadBack">←</button>
-      <div class="appbar-title" id="uploadTitle">Upload PDF</div>
+      <div class="appbar-title" id="uploadTitle">Upload File</div>
       <div style="width:44px"></div>
     </header>
     <div class="card">
       <h3 id="uploadCardTitle">📄 Add a file</h3>
-      <p class="muted small" id="uploadCardHint" style="margin:0 0 12px">Supports PDF, TXT, DOCX, and images. Files above 200 MB may take a while.</p>
+      <p class="muted small" id="uploadCardHint" style="margin:0 0 12px">Supports PDF, TXT, DOCX, and images.</p>
       <input type="file" id="fileInput" accept=".pdf,.txt,.docx,.jpg,.jpeg,.png,.webp,.heic,text/plain,application/pdf,image/*">
       <div id="uploadProgress" class="hidden" style="margin-top:14px">
         <div class="small muted" id="uploadProgressText">Working…</div>
@@ -423,14 +422,10 @@ window.MathJax = {
 "use strict";
 
 /* ============ DATA ============ */
-var CH_PHY_11=["Units and Measurements","Kinematics","Laws of Motion","Work Energy Power","Rotational Motion","Gravitation","Mechanical Properties Solids","Mechanical Properties Fluids","Thermal Properties","Thermodynamics","Kinetic Theory","Oscillations","Waves"];
 var CH_PHY_12=["Electric Charges and Fields","Electrostatic Potential","Current Electricity","Moving Charges and Magnetism","Magnetism and Matter","Electromagnetic Induction","Alternating Current","Electromagnetic Waves","Ray Optics","Wave Optics","Dual Nature of Radiation","Atoms","Nuclei","Semiconductor Electronics"];
-var CH_CHEM_11=["Some Basic Concepts of Chemistry","Structure of Atom","Classification of Elements","Chemical Bonding","States of Matter","Thermodynamics","Equilibrium","Redox Reactions","Hydrogen","s-Block Elements","p-Block Elements","Organic Chemistry Basics","Hydrocarbons","Environmental Chemistry"];
-var CH_CHEM_12=["Solid State","Solutions","Electrochemistry","Chemical Kinetics","Surface Chemistry","Isolation of Elements","p-Block Elements 12","d- and f-Block Elements","Coordination Compounds","Haloalkanes","Alcohols Phenols Ethers","Aldehydes Ketones","Amines","Biomolecules","Polymers","Chemistry in Everyday Life"];
-var CH_MATH_11=["Sets Relations Functions","Trigonometric Functions","Mathematical Induction","Complex Numbers","Linear Inequalities","Permutations Combinations","Binomial Theorem","Sequences Series","Straight Lines","Conic Sections","3D Geometry Intro","Limits Derivatives","Mathematical Reasoning","Statistics","Probability"];
-var CH_MATH_12=["Relations Functions","Inverse Trigonometric Functions","Matrices","Determinants","Continuity Differentiability","Application of Derivatives","Integrals","Application of Integrals","Differential Equations","Vector Algebra","3D Geometry","Linear Programming","Probability 12"];
-var CH_BIO_11=["The Living World","Biological Classification","Plant Kingdom","Animal Kingdom","Morphology Flowering Plants","Anatomy Flowering Plants","Structural Organisation Animals","Cell The Unit of Life","Biomolecules","Cell Cycle Cell Division","Transport in Plants","Mineral Nutrition","Photosynthesis","Respiration in Plants","Plant Growth Development","Digestion Absorption","Breathing Exchange of Gases","Body Fluids Circulation","Excretory Products","Locomotion Movement","Neural Control","Chemical Coordination"];
-var CH_BIO_12=["Reproduction in Organisms","Sexual Reproduction Flowering Plants","Human Reproduction","Reproductive Health","Principles of Inheritance","Molecular Basis of Inheritance","Evolution","Human Health Disease","Microbes in Human Welfare","Biotechnology Principles","Biotechnology Applications","Organisms Populations","Ecosystem","Biodiversity Conservation","Environmental Issues"];
+var CH_CHEM_12=["Solutions","Electrochemistry","Chemical Kinetics","d- and f-Block Elements","Coordination Compounds","Haloalkanes and Haloarenes","Alcohols Phenols and Ethers","Aldehydes Ketones and Carboxylic Acids","Amines","Biomolecules"];
+var CH_MATH_12=["Relations and Functions","Inverse Trigonometric Functions","Matrices","Determinants","Continuity and Differentiability","Application of Derivatives","Integrals","Application of Integrals","Differential Equations","Vector Algebra","Three Dimensional Geometry","Linear Programming","Probability"];
+var CH_BIO_12=["Sexual Reproduction in Flowering Plants","Human Reproduction","Reproductive Health","Principles of Inheritance and Variation","Molecular Basis of Inheritance","Evolution","Human Health and Disease","Microbes in Human Welfare","Biotechnology Principles and Processes","Biotechnology and its Applications","Organisms and Populations","Ecosystem","Biodiversity and Conservation"];
 
 var EXAM_DATA={
   CUET:{icon:"🎓",full:"CUET UG",subjects:{
@@ -439,39 +434,15 @@ var EXAM_DATA={
     "Physics (Class 12)":CH_PHY_12,
     "Mathematics (Class 12)":CH_MATH_12,
     "English":["Reading Comprehension","Vocabulary","Grammar","Sentence Correction","Synonyms and Antonyms","Idioms and Phrases","Fill in the Blanks","Para Jumbles","One Word Substitution","Spotting Errors"],
-    "General Test":["Current Affairs","General Knowledge","Quantitative Reasoning","Logical Reasoning","Data Interpretation","Numerical Ability","Static GK","History","Geography","Indian Polity","Economics","General Science"]}},
-  JEE:{icon:"⚙️",full:"JEE Main & Advanced",subjects:{"Physics (Class 11)":CH_PHY_11,"Physics (Class 12)":CH_PHY_12,"Chemistry (Class 11)":CH_CHEM_11,"Chemistry (Class 12)":CH_CHEM_12,"Mathematics (Class 11)":CH_MATH_11,"Mathematics (Class 12)":CH_MATH_12}},
-  NEET:{icon:"🧬",full:"NEET UG",subjects:{"Physics (Class 11)":CH_PHY_11,"Physics (Class 12)":CH_PHY_12,"Chemistry (Class 11)":CH_CHEM_11,"Chemistry (Class 12)":CH_CHEM_12,"Biology (Class 11)":CH_BIO_11,"Biology (Class 12)":CH_BIO_12}},
-  NDA:{icon:"🎖️",full:"NDA & NA",subjects:{"Mathematics":CH_MATH_11.concat(CH_MATH_12),"GAT (English + GK)":["English Grammar","Vocabulary","Reading Comprehension","Spotting Errors","Synonyms and Antonyms","Ordering of Words","Physics","Chemistry","General Science","History and Polity","Geography","Current Events"]}},
-  SSC:{icon:"📊",full:"SSC CGL / CHSL",subjects:{"Quantitative Aptitude":["Number System","HCF and LCM","Percentage","Ratio and Proportion","Average","Profit and Loss","Simple and Compound Interest","Time and Work","Time Speed and Distance","Mensuration","Algebra","Geometry","Trigonometry","Data Interpretation","Mixture and Alligation"],"Reasoning":["Analogy","Classification","Series","Coding-Decoding","Blood Relations","Direction Sense","Order and Ranking","Syllogism","Venn Diagram","Seating Arrangement","Puzzles","Mathematical Operations","Mirror and Water Image","Statement and Conclusions"],"English":["Reading Comprehension","Cloze Test","Spotting Errors","Sentence Improvement","Fill in the Blanks","Synonyms and Antonyms","Idioms and Phrases","One Word Substitution","Active and Passive Voice","Direct and Indirect Speech","Para Jumbles"],"General Awareness":["History","Geography","Indian Polity","Economics","General Science","Current Affairs","Static GK","Books and Authors","Awards and Honours","Sports"]}},
-  UPSC:{icon:"🏛️",full:"UPSC Civil Services",subjects:{"Indian Polity":["Constitution","Fundamental Rights","Directive Principles","Union Executive","Parliament","Judiciary","Federalism","Local Government","Constitutional Bodies","Amendments"],"Modern History":["Revolt of 1857","Social Reform Movements","Formation of INC","Moderates and Extremists","Gandhian Era","Revolutionary Movements","Partition and Independence"],"Ancient Medieval History":["Indus Valley Civilisation","Vedic Age","Mauryan Empire","Gupta Empire","Sangam Age","Delhi Sultanate","Mughal Empire","Vijayanagara Empire"],"Geography":["Physical Geography","Climate","Drainage System","Soils","Natural Vegetation","Agriculture","Minerals and Industries","Population","World Geography"],"Indian Economy":["Basics of Economy","Planning","Agriculture","Industry","Banking","Inflation","Budget and Taxation","External Sector","Poverty and Employment"],"Environment Ecology":["Ecology Basics","Biodiversity","Climate Change","Pollution","Conservation","International Conventions"],"Science Technology":["Space Technology","Defence Technology","Biotechnology","IT and Computers","Nuclear Technology","Health and Disease"],"Current Affairs":["National Events","International Events","Schemes and Policies","Reports and Indices","Sports","Awards"],"CSAT Aptitude":["Comprehension","Logical Reasoning","Analytical Ability","Decision Making","Basic Numeracy","Data Interpretation"]}},
-  Boards:{icon:"📘",full:"CBSE Boards",subjects:{"Class 10 Science":["Chemical Reactions and Equations","Acids Bases and Salts","Metals and Non-metals","Carbon and its Compounds","Periodic Classification","Life Processes","Control and Coordination","How do Organisms Reproduce","Heredity and Evolution","Light Reflection and Refraction","Human Eye and Colourful World","Electricity","Magnetic Effects of Electric Current","Sources of Energy","Our Environment","Management of Natural Resources"],"Class 10 Mathematics":["Real Numbers","Polynomials","Pair of Linear Equations","Quadratic Equations","Arithmetic Progressions","Triangles","Coordinate Geometry","Introduction to Trigonometry","Applications of Trigonometry","Circles","Constructions","Areas Related to Circles","Surface Areas and Volumes","Statistics","Probability"],"Class 10 Social Science":["Nationalism in Europe","Nationalism in India","The Making of a Global World","Resources and Development","Water Resources","Agriculture","Minerals and Energy Resources","Manufacturing Industries","Power Sharing","Federalism","Democracy and Diversity","Political Parties","Outcomes of Democracy","Development","Sectors of Indian Economy","Money and Credit","Globalisation"],"Class 12 Physics":CH_PHY_12,"Class 12 Chemistry":CH_CHEM_12,"Class 12 Biology":CH_BIO_12,"Class 12 Mathematics":CH_MATH_12,"Class 12 English":["Flamingo Prose","Flamingo Poetry","Vistas","Writing Skills","Reading Comprehension"]}},
-  CTET:{icon:"👩‍🏫",full:"CTET (Paper 1 & 2)",subjects:{
-    "Child Development & Pedagogy (CDP)":["Concept of Development and its Relationship with Learning","Principles of the Development of Children","Influence of Heredity & Environment","Socialization Processes","Piaget, Kohlberg and Vygotsky: Constructs and Critical Perspectives","Concepts of Child-centered and Progressive Education","Critical Perspective of the Construct of Intelligence","Multi-Dimensional Intelligence","Language & Thought","Gender as a Social Construct","Individual Differences Among Learners","Assessment for Learning vs Assessment of Learning","Inclusive Education & Addressing Diverse Backgrounds","Learning Disabilities & Children with Special Needs","Gifted, Creative, Specially-Abled Learners","How Children Think and Learn","Motivation and Learning","Basic Processes of Teaching and Learning","Child as a Problem Solver and a Scientific Investigator","Cognition & Emotions","Factors Contributing to Learning - Personal & Environmental","NEP 2020 & NCF"],
-    "Mathematics & Pedagogy":["Geometry","Shapes & Spatial Understanding","Solids around Us","Numbers","Addition and Subtraction","Multiplication & Division","Measurement","Weight, Time & Volume","Data Handling","Patterns & Money","Number System (Paper 2)","Algebra & Ratio Proportion (Paper 2)","Mensuration (Paper 2)","Nature of Mathematics / Logical Thinking","Place of Mathematics in Curriculum","Language of Mathematics","Community Mathematics","Evaluation through Formal and Informal Methods","Problems of Teaching & Error Analysis","Diagnostic and Remedial Teaching"],
-    "Environmental Studies (EVS)":["Family and Friends","Food & Nutrition","Shelter","Water","Travel","Things We Make and Do","Concept and Scope of EVS","Significance of EVS & Integrated EVS","Environmental Studies & Environmental Education","Learning Principles","Scope & Relation to Science and Social Science","Approaches of Presenting Concepts","Activities & Experimentation / Practical Work","Discussion & CCE","Teaching Material / Aids","Problems of EVS Teaching"],
-    "Science & Pedagogy (Paper 2)":["Food: Sources, Components & Cleaning","Materials of Daily Use","The World of the Living","Moving Things, People and Ideas","How Things Work: Electric Current and Circuits, Magnets","Natural Phenomena & Natural Resources","Nature & Structure of Sciences","Natural Science: Aims & Objectives","Understanding & Appreciating Science","Approaches / Integrated Approach","Observation / Experiment / Discovery (Method of Science)","Innovation & Text Material/Aids","Evaluation - Cognitive/Psychomotor/Affective","Problems & Remedial Teaching of Science"],
-    "Social Studies / Social Science (Paper 2)":["History: When, Where and How, Earliest Societies, First Cities","New Ideas, Early States, Mauryan & Gupta Empire","Sultans of Delhi, Mughal Empire, Architecture","Social Change, Colonialism, Revolt of 1857, Nationalist Movement","Geography: Earth in the Solar System, Globe, Environment","Air, Water, Human Environment, Resources, Agriculture","Social and Political Life: Diversity, Government, Local Government","Democracy, State Government, Media, Gender, The Constitution","Parliamentary Government, The Judiciary, Social Justice","Concept & Nature of Social Science / Social Studies","Class Room Processes, Activities and Discourse","Developing Critical Thinking","Enquiry / Empirical Evidence","Problems of Teaching Social Science","Sources — Primary & Secondary","Projects Work & Evaluation"],
-    "English Language & Pedagogy":["Unseen Passage (Reading Comprehension)","Unseen Poem Comprehension","Grammar & Verbal Ability","Learning and Acquisition","Principles of Language Teaching","Role of Listening and Speaking; Function of Language","Critical Perspective on the Role of Grammar","Challenges of Teaching Language in a Diverse Classroom","Language Skills (LSRW)","Evaluating Language Comprehension and Proficiency","Teaching Learning Materials: Textbook, Multi-media Materials","Remedial Teaching"],
-    "Hindi Language & Pedagogy (हिन्दी)":["अपठित गद्यांश (Unseen Passage)","अपठित पद्यांश (Unseen Poem)","व्याकरण एवं शब्दार्थ (Grammar & Vocabulary)","अधिगम और अर्जन (Learning and Acquisition)","भाषा अध्यापन के सिद्धांत (Principles of Language Teaching)","सुनने और बोलने की भूमिका (Role of Listening and Speaking)","मौखिक और लिखित रूप में विचारों के संप्रेषण के लिए व्याकरण की भूमिका","भिन्न कक्षा में भाषा पढ़ाने की चुनौतियाँ","भाषा कौशल (Language Skills)","भाषा बोधगम्यता और प्रवीणता का मूल्यांकन","शिक्षण-अधिगम सामग्री: पाठ्यपुस्तक, बहु-माध्यम सामग्री","उपचारात्मक शिक्षण (Remedial Teaching)"]
-  }},
-  PTET:{icon:"🏫",full:"PTET (B.Ed Entrance)",subjects:{
-    "Mental Ability (Reasoning)":["Reasoning & Logical Ability","Imagination","Judgment & Decision Making","Creative Thinking","Generalization","Drawing Inferences","Number & Letter Series","Analogy & Classification","Coding-Decoding","Blood Relations","Direction Sense","Syllogism & Statement Conclusion","Venn Diagrams","Ranking & Sitting Arrangement","Calendar & Clock","Cubes, Dice & Counting Figures"],
-    "Teaching Attitude & Aptitude":["Social Maturity (सामाजिक परिपक्वता)","Leadership (नेतृत्व)","Professional Commitment (व्यावसायिक प्रतिबद्धता)","Interpersonal Relations (अंतर्वैयक्तिक संबंध)","Communication (संप्रेषण)","Awareness (जागरूकता)","Student-Teacher Relationship","Classroom Management & Discipline","Inclusive & Child-Centered Education","Evaluation & Continuous Assessment"],
-    "General Awareness (GK)":["Current Affairs (National & International)","Indian History & Culture","India and its Natural Resources","Great Indian Personalities (Past and Present)","Environmental Awareness","Indian Polity & Constitution","Indian Economy & Geography","General Science & Everyday Science","Rajasthan History, Art, Culture & Heritage","Rajasthan Geography, Economy & Administration","Rajasthan Current Affairs & Schemes"],
-    "English Language Proficiency":["Reading Comprehension","Vocabulary (Synonyms, Antonyms, One Word)","Grammar (Tense, Voice, Narration, Articles, Prepositions)","Sentence Structure & Correction","Spotting Errors","Idioms and Phrases","Fill in the Blanks","Subject-Verb Agreement"],
-    "Hindi Language Proficiency (हिन्दी)":["वर्णमाला एवं संधि, समास","उपसर्ग एवं प्रत्यय","पर्यायवाची, विलोम एवं अनेकार्थी शब्द","शब्द शुद्धि एवं वाक्य शुद्धि","मुहावरे एवं लोकोक्तियाँ","वाक्यांश के लिए एक शब्द","संज्ञा, सर्वनाम, विशेषण, क्रिया एवं अव्यय","कारक, काल एवं वाच्य","अपठित गद्यांश (Comprehension)","विराम चिन्ह"]
+    "General Test":["Current Affairs","General Knowledge","Quantitative Reasoning","Logical Reasoning","Data Interpretation","Numerical Ability","Static GK","Indian Polity","Economics","General Science"]
   }}
 };
-// Ambition CBT Mode is CUET-only. Keep the CUET syllabus and file-based question tools.
-EXAM_DATA = { CUET: EXAM_DATA.CUET };
 
-/* ============ MARKING SCHEMES ============ */
 var MARKING_SCHEMES = {
   CUET: { correct: 5, wrong: -1, label: 'Correct +5 | Wrong -1' }
 };
 function getMarking(exam){
-  return MARKING_SCHEMES[exam] || { correct: 1, wrong: 0, label: 'Correct +1  |  No Negative' };
+  return MARKING_SCHEMES.CUET;
 }
 function fmtMarks(n){
   if(!isFinite(n)) return '0';
@@ -507,15 +478,15 @@ function getRecentQ(){return LS.get(K.RECENT,[])}
 function addRecentQ(qs){var arr=getRecentQ().concat(qs.map(function(q){return String(q.q).slice(0,130)}));LS.set(K.RECENT,arr.slice(-45))}
 function dedupeQuestions(list){var seen={},i,out=[],q,key,prev=getSeen();for(i=0;i<prev.length;i++)seen[prev[i]]=1;for(i=0;i<list.length;i++){q=list[i];key=hashStr(String(q.q).toLowerCase().replace(/\s+/g,' ').trim());if(seen[key])continue;seen[key]=1;q._h=key;out.push(q)}return out}
 
-/* ============ UI ============ */
+/* ============ UI HELPERS ============ */
 function showLoader(text,sub,retryFn){$('loaderText').textContent=text||'Working…';$('loaderSub').textContent=sub||'';var acts=$('loaderActions');acts.innerHTML='';if(retryFn){var b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent='🔄 Retry';b.onclick=function(){hideLoader();retryFn()};acts.appendChild(b);var c=document.createElement('button');c.type='button';c.className='btn';c.textContent='Cancel';c.onclick=function(){hideLoader()};acts.appendChild(c);acts.classList.remove('hidden')}else acts.classList.add('hidden');$('loader').classList.remove('hidden')}
 function hideLoader(){$('loader').classList.add('hidden')}
 function dialog(opts){return new Promise(function(resolve){var ov=document.createElement('div');ov.className='modal-overlay';var box=document.createElement('div');box.className='modal';box.innerHTML='<h3>'+esc(opts.title||'')+'</h3><p>'+(opts.html||esc(opts.message||''))+'</p>';var acts=document.createElement('div');acts.className='modal-actions';(opts.buttons||[{text:'OK',primary:true,value:true}]).forEach(function(b){var btn=document.createElement('button');btn.type='button';btn.className='btn'+(b.primary?' primary':'')+(b.danger?' danger':'');btn.textContent=b.text;btn.onclick=function(){if(ov.parentNode)document.body.removeChild(ov);resolve(b.value)};acts.appendChild(btn)});box.appendChild(acts);ov.appendChild(box);ov.addEventListener('click',function(e){if(e.target===ov){if(ov.parentNode)document.body.removeChild(ov);resolve(null)}});document.body.appendChild(ov)})}
 
-/* ============ AI ============ */
+/* ============ AI CALL & PARSER ============ */
 var AI_API_URL='/api/ai-coach';
 function aiCall(message,context){
-    var payload={message:message,context:context,history:[]};
+    var payload={message:message,context:context};
     if(context && context.images){ payload.images=context.images; delete context.images; }
     else if(context && context.image){ payload.image=context.image; delete context.image; }
     return fetch(AI_API_URL,{
@@ -544,7 +515,26 @@ function aiCall(message,context){
     });
 }
 
-function safeParseJSON(text){if(!text)throw new Error('Empty response');var t=String(text).trim();t=t.replace(/^```(?:json)?\s*/i,'').replace(/\s*```\s*$/,'').trim();var s=t.indexOf('['),e=t.lastIndexOf(']');if(s>=0&&e>s)t=t.slice(s,e+1);try{return JSON.parse(t)}catch(err){}try{var lastClose=t.lastIndexOf('}');if(lastClose>0){var partial=t.slice(0,lastClose+1);var opens=(partial.match(/\[/g)||[]).length;var closes=(partial.match(/\]/g)||[]).length;while(opens>closes){partial+=']';closes++}return JSON.parse(partial)}}catch(e2){}throw new Error('Could not parse AI response')}
+// ROBUST JSON REPAIR AND PARSER
+function safeParseJSON(text){
+  if(!text) throw new Error('Empty response');
+  var t = String(text).trim();
+  t = t.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
+  var s = t.indexOf('['), e = t.lastIndexOf(']');
+  if(s >= 0 && e > s) t = t.slice(s, e + 1);
+  try { return JSON.parse(t); } catch(err){}
+
+  // Auto repair partial/truncated JSON array
+  try {
+    var lastBrace = t.lastIndexOf('}');
+    if(lastBrace > 0){
+      var candidate = t.slice(0, lastBrace + 1) + ']';
+      if(candidate.charAt(0) !== '[') candidate = '[' + candidate;
+      return JSON.parse(candidate);
+    }
+  }catch(e2){}
+  throw new Error('Could not parse AI response.');
+}
 
 function normQ(q){
   if(!q||typeof q!=='object')return null;
@@ -552,446 +542,340 @@ function normQ(q){
   var opts=q.options||q.opts||q.choices||q.answers||[];
   if(!Array.isArray(opts))opts=[];
   opts=opts.map(function(o){if(o&&typeof o==='object')return String(o.text||o.value||o.label||JSON.stringify(o));return String(o)}).filter(function(o){return o.trim().length});
-  if(!text||opts.length<2)return null;
+  
+  if(!text) return null;
+  while(opts.length < 4){
+    opts.push("None of the above / Option " + (opts.length + 1));
+  }
+  opts = opts.slice(0, 4);
+
   var ans=q.ans;
   if(ans===undefined||ans===null)ans=q.answer;
   if(typeof ans==='string'){
     var tr=ans.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
-    var idx='ABCDEFGH'.indexOf(tr.charAt(0));
+    var idx='ABCD'.indexOf(tr.charAt(0));
     if(tr.length===1&&idx>=0&&idx<opts.length){ans=idx}
     else{var n=parseInt(tr,10);if(!isNaN(n)&&n>=1&&n<=opts.length){ans=n-1}else{ans=0}}
   }
   ans=Number(ans);
-  if(!isFinite(ans)||ans<0||ans>=opts.length||Math.floor(ans)!==ans)ans=0;
+  if(!isFinite(ans)||ans<0||ans>=opts.length||Math.floor(ans)!==ans) ans=0;
   var diff=String(q.diff||q.difficulty||'medium').toLowerCase();
   if(diff.indexOf('easy')>=0)diff='easy';else if(diff.indexOf('hard')>=0)diff='hard';else diff='medium';
-  return{q:String(text).trim(),options:opts,ans:ans,topic:String(q.topic||q.chapter||q.subject||'General'),diff:diff,explain:String(q.explain||q.explanation||q.reason||'')}
+  return{q:String(text).trim(),options:opts,ans:ans,topic:String(q.topic||q.chapter||q.subject||'CUET Section'),diff:diff,explain:String(q.explain||q.explanation||q.reason||'')}
 }
-function normaliseList(raw){var arr=[];if(Array.isArray(raw))arr=raw;else if(raw&&typeof raw==='object'){if(Array.isArray(raw.questions))arr=raw.questions;else if(Array.isArray(raw.data))arr=raw.data;else if(Array.isArray(raw.result))arr=raw.result}var out=[];for(var i=0;i<arr.length;i++){var n=normQ(arr[i]);if(n)out.push(n)}return out}
+
+function normaliseList(raw){
+  var arr=[];
+  if(Array.isArray(raw)) arr=raw;
+  else if(raw&&typeof raw==='object'){
+    if(Array.isArray(raw.questions)) arr=raw.questions;
+    else if(Array.isArray(raw.data)) arr=raw.data;
+    else if(Array.isArray(raw.result)) arr=raw.result;
+  }
+  var out=[];
+  for(var i=0;i<arr.length;i++){
+    var n=normQ(arr[i]);
+    if(n) out.push(n);
+  }
+  return out;
+}
 
 /* ============ PROMPTS ============ */
-function buildPromptAI(cfg){var recent=getRecentQ();var avoid=recent.length?'\nDo NOT repeat:\n'+recent.map(function(r){return '- '+r}).join('\n'):'';return'You are an expert Indian competitive-exam question setter (Oswaal/Arihant/MTG style).\n\nGenerate exactly '+cfg.count+' high-quality MCQs.\n\nEXAM: '+cfg.exam+'\nSUBJECT: '+cfg.subject+'\n'+(cfg.chapters.length&&cfg.chapters[0]!=='__FULL__'?'CHAPTERS: '+cfg.chapters.join(', ')+'\n':'SCOPE: Full subject\n')+'DIFFICULTY: '+cfg.difficulty+'\n\nCRITICAL RULES FOR ACCURACY:\n1. The correct answer (ans) MUST be factually accurate — VERIFY before setting.\n2. Exactly 4 options, ONE definitely correct.\n3. Vary correct index (0,1,2,3) across questions.\n4. Distractors should be plausible but clearly wrong to an expert.\n5. "ans" is the array index of the correct option (0=first, 1=second, 2=third, 3=fourth).\n6. "topic" = exact chapter name.\n7. "explain" = brief reasoning why the answer is correct.\n8. MATH FORMAT: Use LaTeX for ALL math. Inline: $...$, Display: $$...$$. Use \\frac{}{}, \\sqrt{}, \\int, \\sin, \\cos, \\tan, \\log, \\lim, \\sum, \\prod, \\alpha, \\beta etc. Every math expression must be wrapped in $...$.\n9. No markdown, raw JSON only.\n'+avoid+'\n\nReturn ONLY JSON array:\n[{"q":"text","options":["A","B","C","D"],"ans":0,"topic":"chapter","diff":"easy","explain":"why"}]'}
+function buildPromptAI(cfg){
+  return 'Generate exactly '+cfg.count+' high quality CUET UG exam MCQs.\n'+
+  'EXAM: CUET UG\nSUBJECT: '+cfg.subject+'\nSCOPE: '+(cfg.chapters.join(', '))+'\nDIFFICULTY: '+cfg.difficulty+'\n'+
+  'Ensure factually 100% correct answers. Exactly 4 options, ans is 0 to 3. Math in $...$.\n'+
+  'OUTPUT ONLY RAW JSON ARRAY: [{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"chapter","diff":"medium","explain":""}]';
+}
 
-function buildPromptExtract(text,count,subjectName,avoidList){var avoid=avoidList&&avoidList.length?'\nAlready extracted (skip):\n'+avoidList.map(function(r){return '- '+r}).join('\n'):'';return'You are an expert at extracting exam questions from Indian PDFs (Oswaal, Arihant, MTG, NCERT, CUET, JEE, NEET, CTET, PTET).\n\nSTRICT COMMAND — DO NOT GENERATE YOUR OWN QUESTIONS:\n• You MUST ONLY extract questions that are explicitly written in the provided text.\n• NEVER invent, create, or generate new questions on your own from theory or paragraphs.\n• If a chunk has no explicit questions, return an empty array [].\n\nINPUT MAY CONTAIN:\n• Real MCQs (Q1, Q2, 1., 2., numbered)\n• Match List I with List II questions\n• Assertion-Reason questions\n• Statement-based questions\n• Sequence/Order questions\n• Case-based questions\n• OMR grids "1 1 1 1" (SKIP)\n• Answer keys, solutions (USE to verify exact correct option, do not make separate questions from them)\n• Theory paragraphs (SKIP — do NOT generate questions from theory)\n\nCRITICAL RULES FOR ACCURACY & CORRECT OPTIONS:\n1. Copy question text and all 4 options EXACTLY word-for-word from the PDF. Do NOT paraphrase, alter, or invent options. Remove option prefixes like (A), (B), (1), (2) from the option string itself.\n2. NEVER generate or make up your own questions.\n3. EXACT CORRECT ANSWER ("ans"): If the answer key/solution is given in the source (like "Ans. Option (2)" or "(b)"), strictly map it to the exact 0-based index: (1)/(A)/(a)→0, (2)/(B)/(b)→1, (3)/(C)/(c)→2, (4)/(D)/(d)→3.\n4. If the answer is NOT given in the text, solve and double-check the question carefully using expert subject knowledge to ensure the 100% factually/mathematically correct option index (0, 1, 2, or 3) is selected as "ans". Never guess randomly.\n5. "ans" MUST be the integer index (0=first option, 1=second, 2=third, 3=fourth) matching the exact correct option.\n6. For Match-the-Following: format as "Match List I with List II: [items]." and keep the exact 4 options provided.\n7. For Assertion-Reason: include both Assertion (A) and Reason (R) in "q", and keep the exact 4 options provided.\n8. For Sequence: include all items in "q" and keep the exact 4 options provided.\n9. If diagram referenced, include "Refer to the given figure" in text.\n10. Extract EVERY valid question present in the text.\n11. "topic" = chapter name, else "General".\n12. "diff" = easy/medium/hard.\n13. "explain" = short reasoning why the selected option is correct.\n14. MATH FORMAT: Use LaTeX for ALL math. Inline: $...$. Use \\frac{}{}, \\sqrt{}, \\int, \\sin, \\cos, \\tan, \\log etc.\n\nReply with ONLY a JSON array. No prose, no markdown.\nFormat: [{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"ch","diff":"easy","explain":""}]\n'+avoid+'\n\n--- BEGIN TEXT ---\n'+text+'\n--- END TEXT ---'}
+function buildPromptExtract(text,count,subjectName){
+  return 'Extract valid MCQs from this CUET study material or question paper. If not directly formatted, construct standard 4-option MCQs from the given text.\n'+
+  'SUBJECT: '+(subjectName||'CUET')+'\nEach MCQ must have exactly 4 options. "ans" must be 0, 1, 2, or 3.\n'+
+  'OUTPUT ONLY RAW JSON ARRAY.\n\n--- TEXT ---\n'+text+'\n--- END ---';
+}
 
-function buildPromptNotes(text,count,subjectName){return'You are an expert Indian exam question setter (Oswaal/Arihant/MTG style).\n\nGenerate '+count+' high-quality MCQs based on the CONCEPTS in these notes.\n\nSUBJECT: '+(subjectName||'General')+'\n\nCRITICAL RULES:\n1. Every answer (ans) MUST be factually accurate.\n2. Test concept understanding.\n3. 4 options, ONE correct.\n4. Vary correct index (0,1,2,3).\n5. "topic" = concept/chapter.\n6. "explain" = 1-2 sentences reasoning.\n7. Cover different concepts.\n8. MATH FORMAT: Use LaTeX for ALL math. Inline: $...$. Use \\frac{}{}, \\sqrt{}, \\int, \\sin, \\cos, \\tan, \\log etc.\n9. No markdown, raw JSON only.\n\nReturn ONLY JSON array:\n[{"q":"text","options":["A","B","C","D"],"ans":0,"topic":"topic","diff":"easy","explain":"why"}]\n\n--- BEGIN NOTES ---\n'+text+'\n--- END NOTES ---'}
+function buildPromptNotes(text,count,subjectName){
+  return 'Generate '+count+' high-yield CUET MCQs from the concepts in these notes.\n'+
+  'SUBJECT: '+(subjectName||'CUET')+'\n4 options, 1 correct. "ans" is 0-3. Math in $...$.\n'+
+  'OUTPUT ONLY RAW JSON ARRAY: [{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"Subject","diff":"medium","explain":""}]\n\n--- NOTES ---\n'+text;
+}
 
-/* ============ FILE EXTRACTION ============ */
-function readAsText(file){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(String(fr.result||''))};fr.onerror=function(){rej(fr.error)};fr.readAsText(file)})}
+/* ============ FILE HANDLING & COMPRESSION ============ */
 function readAsArrayBuffer(file){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(fr.result)};fr.onerror=function(){rej(fr.error)};fr.readAsArrayBuffer(file)})}
-function readAsDataURL(file){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(fr.result)};fr.onerror=function(){rej(fr.error)};fr.readAsDataURL(file)})}
-function extractPdf(file,onProgress){if(typeof pdfjsLib==='undefined')return Promise.reject(new Error('PDF library failed'));pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';return readAsArrayBuffer(file).then(function(buf){return pdfjsLib.getDocument({data:buf}).promise}).then(function(pdf){var total=pdf.numPages;var pages=[];var chain=Promise.resolve();for(var p=1;p<=total;p++){(function(pn){chain=chain.then(function(){return pdf.getPage(pn).then(function(page){return page.getTextContent()}).then(function(c){var s=c.items.map(function(it){return it.str});pages[pn-1]=s.join(' ');if(onProgress)onProgress(pn,total)}).catch(function(){pages[pn-1]=''})})})(p)}return chain.then(function(){return pages.join('\n\n')})})}
-function extractDocx(file){return readAsArrayBuffer(file).then(function(buf){var bytes=new Uint8Array(buf);var dv=new DataView(buf);var eocd=-1;for(var i=bytes.length-22;i>=0&&i>bytes.length-66000;i--){if(bytes[i]===0x50&&bytes[i+1]===0x4b&&bytes[i+2]===0x05&&bytes[i+3]===0x06){eocd=i;break}}if(eocd<0)throw new Error('Not valid DOCX');var cdCount=dv.getUint16(eocd+10,true);var cdOffset=dv.getUint32(eocd+16,true);var entries={};var p=cdOffset;for(var n=0;n<cdCount;n++){if(dv.getUint32(p,true)!==0x02014b50)break;var method=dv.getUint16(p+10,true);var compSize=dv.getUint32(p+20,true);var nameLen=dv.getUint16(p+28,true);var extraLen=dv.getUint16(p+30,true);var commentLen=dv.getUint16(p+32,true);var localOff=dv.getUint32(p+42,true);var name=new TextDecoder().decode(bytes.subarray(p+46,p+46+nameLen));entries[name]={method:method,compSize:compSize,localOff:localOff};p+=46+nameLen+extraLen+commentLen}var tgt=entries['word/document.xml'];if(!tgt)throw new Error('DOCX missing document.xml');var lh=tgt.localOff;var lNameLen=dv.getUint16(lh+26,true);var lExtraLen=dv.getUint16(lh+28,true);var dataStart=lh+30+lNameLen+lExtraLen;var comp=bytes.subarray(dataStart,dataStart+tgt.compSize);function inflate(u8){if(typeof DecompressionStream==='undefined')return Promise.reject(new Error('Browser cannot decompress'));var ds=new DecompressionStream('deflate-raw');var stream=new Blob([u8]).stream().pipeThrough(ds);return new Response(stream).arrayBuffer().then(function(ab){return new Uint8Array(ab)})}var promise=tgt.method===0?Promise.resolve(comp):inflate(comp);return promise.then(function(u8){var xml=new TextDecoder().decode(u8);xml=xml.replace(/<w:p[^>]*>/g,'\n').replace(/<\/w:p>/g,'\n');xml=xml.replace(/<w:tab[^>]*\/>/g,'\t').replace(/<w:br[^>]*\/>/g,'\n');xml=xml.replace(/<[^>]+>/g,'');xml=xml.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&apos;/g,"'");return xml.replace(/\n{3,}/g,'\n\n').trim()})})}
+function readAsText(file){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(String(fr.result||''))};fr.onerror=function(){rej(fr.error)};fr.readAsText(file)})}
 
-function extractTextFromFile(file,onProgress){var name=(file.name||'').toLowerCase();if(name.endsWith('.txt')||file.type==='text/plain')return readAsText(file);if(name.endsWith('.pdf')||file.type==='application/pdf')return extractPdf(file,onProgress);if(name.endsWith('.docx'))return extractDocx(file);if(name.endsWith('.doc'))return Promise.reject(new Error('Legacy .doc not supported.'));return readAsText(file)}
+function compressAndBase64Image(file){
+  return new Promise(function(resolve, reject){
+    var img = new Image();
+    var reader = new FileReader();
+    reader.onload = function(e){
+      img.onload = function(){
+        var canvas = document.createElement('canvas');
+        var maxDim = 1200;
+        var w = img.width, h = img.height;
+        if(w > maxDim || h > maxDim){
+          if(w > h){ h = Math.round((h * maxDim)/w); w = maxDim; }
+          else { w = Math.round((w * maxDim)/h); h = maxDim; }
+        }
+        canvas.width = w; canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.80);
+        var b64 = dataUrl.split(',')[1];
+        resolve({ data: b64, mime: 'image/jpeg' });
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 
-function chunkText(text,size){size=size||12000;var chunks=[];var i=0;while(i<text.length){var end=Math.min(i+size,text.length);if(end<text.length){var slice=text.slice(i,end);var lastBreak=Math.max(slice.lastIndexOf('\n\n'),slice.lastIndexOf('. '));if(lastBreak>size*0.5)end=i+lastBreak+1}chunks.push(text.slice(i,end));i=end}return chunks}
+function extractPdf(file, onProgress){
+  if(typeof pdfjsLib === 'undefined') return Promise.reject(new Error('PDF library failed to load'));
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  return readAsArrayBuffer(file).then(function(buf){
+    return pdfjsLib.getDocument({data:buf}).promise;
+  }).then(function(pdf){
+    var total = Math.min(pdf.numPages, 30);
+    var pages = [];
+    var chain = Promise.resolve();
+    for(var p = 1; p <= total; p++){
+      (function(pn){
+        chain = chain.then(function(){
+          return pdf.getPage(pn).then(function(page){
+            return page.getTextContent();
+          }).then(function(c){
+            var s = c.items.map(function(it){return it.str;}).join(' ');
+            pages.push(s);
+            if(onProgress) onProgress(pn, total);
+          }).catch(function(){ pages.push(''); });
+        });
+      })(p);
+    }
+    return chain.then(function(){ return pages.join('\n\n'); });
+  });
+}
+
+function chunkText(text,size){size=size||8000;var chunks=[];var i=0;while(i<text.length){var end=Math.min(i+size,text.length);chunks.push(text.slice(i,end));i=end}return chunks}
 
 /* ============ STATE ============ */
-var state={exam:null,subject:null,chapters:[],fullSubject:false,count:10,customCount:15,difficulty:'Mixed',timerMode:'up',timerMinutes:15};
+var state={exam:'CUET',subject:null,chapters:[],count:10,difficulty:'Mixed',timerMode:'up',timerMinutes:15};
 var uploadMode='extract';
 var T=null,timerHandle=null,autosaveHandle=null;
 
-/* ============ HOME ============ */
-function renderHome(){var grid=$('examGrid');grid.innerHTML='';Object.keys(EXAM_DATA).forEach(function(key){var ex=EXAM_DATA[key];var mk=getMarking(key);var b=document.createElement('button');b.type='button';b.className='exam-card';b.setAttribute('data-exam',key);b.innerHTML='<div class="emoji">'+ex.icon+'</div><div class="name">CUET UG</div><div class="sub">Practice • PYQs • PDF Question Banks</div><div class="sub" style="color:var(--accent);font-weight:700;margin-top:2px">'+esc(mk.label)+'</div>';grid.appendChild(b)});renderResumeBanner();renderHistory()}
-function bindExamGrid(){var grid=$('examGrid');if(!grid)return;grid.addEventListener('click',function(e){var target=e.target;while(target&&target!==grid){if(target.classList&&target.classList.contains('exam-card')){var key=target.getAttribute('data-exam');if(key){e.preventDefault();e.stopPropagation();openExam(key)}return}target=target.parentNode}},false)}
+/* ============ UI RENDERING ============ */
+function renderHome(){
+  var grid=$('examGrid');grid.innerHTML='';
+  var b=document.createElement('button');
+  b.type='button';b.className='exam-card';b.setAttribute('data-exam','CUET');
+  b.innerHTML='<div class="emoji">🎓</div><div class="name">CUET UG 2026</div><div class="sub">Practice • PYQs • PDF Question Banks</div><div class="sub" style="color:var(--accent);font-weight:700;margin-top:2px">Correct +5 | Wrong -1</div>';
+  grid.appendChild(b);
+  renderResumeBanner();renderHistory();
+}
+function bindExamGrid(){
+  var grid=$('examGrid');if(!grid)return;
+  grid.addEventListener('click',function(e){
+    e.preventDefault();openExam('CUET');
+  },false);
+}
+function openExam(key){state.exam='CUET';$('examTitle').textContent='🎓 CUET UG Examination';showScreen('screen-exam')}
+
 function renderResumeBanner(){var saved=LS.get(K.ACTIVE,null);var host=$('resumeBanner');if(!saved||saved.submitted){host.innerHTML='';return}var answered=saved.answers.filter(function(a){return a!==null&&a!==undefined}).length;host.innerHTML='<div class="resume"><div><div class="rt">⏸ Unfinished: '+esc(saved.name)+'</div><div class="rs">'+answered+' / '+saved.questions.length+' answered</div></div><div class="btn-row"><button type="button" class="btn primary small" id="btnResume">Resume</button><button type="button" class="btn small" id="btnDiscard">Discard</button></div></div>';$('btnResume').onclick=function(){T=saved;$('testTitle').textContent=T.name;showScreen('screen-test');startTimers();renderQuestion();renderPalette()};$('btnDiscard').onclick=function(){LS.del(K.ACTIVE);host.innerHTML=''}}
 function renderHistory(){
   var hist=LS.get(K.HISTORY,[]),host=$('historyWrap'),analysis=$('analysisWrap');
   if(!Array.isArray(hist))hist=[];
   var valid=hist.filter(function(h){return h&&typeof h.pct==='number';});
   if(!valid.length){
-    analysis.innerHTML='<h2 class="section-title">Your Exam Analytics</h2><div class="card"><p class="muted small" style="margin:0">Your score trend, accuracy and test records will appear here after your first CUET test.</p></div>';
+    analysis.innerHTML='<h2 class="section-title">Your Exam Analytics</h2><div class="card"><p class="muted small" style="margin:0">Score records will appear here after your first CUET practice test.</p></div>';
     host.innerHTML='';return;
   }
   var avg=Math.round(valid.reduce(function(a,h){return a+h.pct;},0)/valid.length);
   var best=valid.reduce(function(a,h){return h.pct>a.pct?h:a;},valid[0]);
   var totalQ=valid.reduce(function(a,h){return a+(Number(h.total)||0);},0);
-  var points=valid.slice(0,12).reverse(),W=600,H=210,L=38,R=14,Tp=18,B=34,innerW=W-L-R,innerH=H-Tp-B;
-  function x(i){return points.length===1?L+innerW/2:L+i*innerW/(points.length-1)}
-  function y(v){return Tp+innerH-(Math.max(0,Math.min(100,Number(v)||0))/100)*innerH}
-  var svg='<svg class="history-chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="CUET test score percentage trend">';
-  [0,25,50,75,100].forEach(function(v){svg+='<line x1="'+L+'" y1="'+y(v)+'" x2="'+(W-R)+'" y2="'+y(v)+'" stroke="var(--border)" stroke-width="1"/><text x="'+(L-8)+'" y="'+(y(v)+4)+'" fill="var(--muted)" font-size="10" text-anchor="end">'+v+'</text>'});
-  if(points.length>1){svg+='<polyline fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="'+points.map(function(p,i){return x(i)+','+y(p.pct)}).join(' ')+'"/>'}
-  points.forEach(function(p,i){svg+='<circle cx="'+x(i)+'" cy="'+y(p.pct)+'" r="4.5" fill="var(--accent-2)" stroke="var(--card)" stroke-width="2"/><text x="'+x(i)+'" y="'+(H-12)+'" fill="var(--muted)" font-size="10" text-anchor="middle">'+(i+1)+'</text>'});
-  svg+='</svg>';
+  
   analysis.innerHTML='<h2 class="section-title">Your Exam Analytics</h2><div class="analysis-grid">'+
     '<div class="analysis-stat"><div class="value">'+valid.length+'</div><div class="label">Tests completed</div></div>'+
     '<div class="analysis-stat"><div class="value">'+avg+'%</div><div class="label">Average score</div></div>'+
     '<div class="analysis-stat"><div class="value">'+best.pct+'%</div><div class="label">Best score</div></div>'+
-    '<div class="analysis-stat"><div class="value">'+totalQ+'</div><div class="label">Questions across tests</div></div>'+
-    '</div><div class="card"><h3 style="margin-bottom:4px">Score trend</h3><p class="muted small" style="margin:0 0 8px">Latest '+points.length+' tests · percentage score (0–100)</p><div class="chart-wrap">'+svg+'</div><div class="chart-note">Points run from older to newer tests. Records are saved on this device.</div></div>';
+    '<div class="analysis-stat"><div class="value">'+totalQ+'</div><div class="label">Total questions</div></div>'+
+    '</div>';
+    
   var html='<h2 class="section-title">All Test Records</h2><div class="card">';
-  valid.slice(0,500).forEach(function(h,i){
+  valid.slice(0,50).forEach(function(h,i){
     var title=h.name||('CUET Test '+(valid.length-i));
-    html+='<div class="history-record"><div style="min-width:0"><div class="record-name">'+esc(title)+'</div><div class="record-meta">'+esc(h.date||'Date unavailable')+' · '+(Number(h.total)||0)+' questions'+(h.subject?' · '+esc(h.subject):'')+'</div></div><div class="record-score">'+fmtMarks(Number(h.score)||0)+'/'+fmtMarks(Number(h.maxMarks)||Number(h.total)||0)+'<div class="record-pct">'+Number(h.pct||0)+'%</div></div></div>';
+    html+='<div class="history-record"><div style="min-width:0"><div class="record-name">'+esc(title)+'</div><div class="record-meta">'+esc(h.date||'Date')+' · '+(Number(h.total)||0)+' Qs</div></div><div class="record-score">'+fmtMarks(Number(h.score)||0)+'/'+fmtMarks(Number(h.maxMarks)||0)+'<div class="record-pct">'+Number(h.pct||0)+'%</div></div></div>';
   });
   html+='</div>';host.innerHTML=html;
 }
-function openExam(key){state.exam=key;var ex=EXAM_DATA[key];if(!ex)return;$('examTitle').textContent=ex.icon+' '+ex.full;showScreen('screen-exam')}
 
 /* ============ SETUP ============ */
-function openSetup(){state.subject=null;state.chapters=[];state.fullSubject=false;state.count=10;state.difficulty='Mixed';state.timerMode='up';state.timerMinutes=15;$('setupTitle').textContent='🧪 '+state.exam+' — AI Practice Test';renderSubjects();renderNumberChips();renderDiffChips();renderTimerChips();$('setupPanel').classList.add('hidden');showScreen('screen-setup')}
-function renderSubjects(){var subs=Object.keys(EXAM_DATA[state.exam].subjects);var g=$('subjectGrid');g.innerHTML='';subs.forEach(function(s){var b=document.createElement('button');b.type='button';b.className='chip';b.textContent=s;b.onclick=function(){selectSubject(s,b)};g.appendChild(b)})}
-function renderMarkingSchemeBox(){var host=$('markingSchemeBox');if(!host)return;var mk=getMarking(state.exam);host.innerHTML='<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-top:16px"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin-bottom:8px">📊 Marking Scheme ('+esc(state.exam)+' Pattern)</div><div style="display:flex;flex-wrap:wrap;gap:14px;font-size:14px;font-weight:700"><span style="color:var(--green)">✓ Correct : +'+fmtMarks(mk.correct)+'</span><span style="color:var(--red)">✗ Wrong : '+fmtMarks(mk.wrong)+'</span><span style="color:var(--muted)">○ Skipped : 0</span></div><div class="muted small" style="margin-top:8px">Har question pe yahi marks apply honge. Result page pe exact score dikhega.</div></div>'}
-function selectSubject(name,btn){state.subject=name;state.chapters=[];state.fullSubject=false;var all=$('subjectGrid').querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');btn.classList.add('active');renderChapters();renderMarkingSchemeBox();$('setupPanel').classList.remove('hidden')}
-function renderChapters(){var list=EXAM_DATA[state.exam].subjects[state.subject]||[];var host=$('chapterList');host.innerHTML='';list.forEach(function(c){var d=document.createElement('button');d.type='button';d.className='check-item';d.innerHTML='<span class="check-box">✓</span><span>'+esc(c)+'</span>';d.onclick=function(){toggleChapter(c,d)};host.appendChild(d)});updateChapterCount()}
-function toggleChapter(c,el){var idx=state.chapters.indexOf(c);if(idx>=0){state.chapters.splice(idx,1);el.classList.remove('on')}else{state.chapters.push(c);el.classList.add('on')}state.fullSubject=false;updateChapterCount()}
-function setFullSubject(){var list=EXAM_DATA[state.exam].subjects[state.subject]||[];state.chapters=list.slice();state.fullSubject=true;var items=$('chapterList').querySelectorAll('.check-item');for(var i=0;i<items.length;i++)items[i].classList.add('on');updateChapterCount()}
-function clearChapters(){state.chapters=[];state.fullSubject=false;var items=$('chapterList').querySelectorAll('.check-item');for(var i=0;i<items.length;i++)items[i].classList.remove('on');updateChapterCount()}
-function updateChapterCount(){var total=(EXAM_DATA[state.exam].subjects[state.subject]||[]).length;var sel=state.chapters.length;$('chCount').textContent=sel?('('+sel+' of '+total+')'):'(none — full subject)'}
-function renderNumberChips(){var opts=[10,20,30,50,'Custom'];var host=$('numChips');host.innerHTML='';opts.forEach(function(o){var b=document.createElement('button');b.type='button';b.className='chip'+(state.count===o?' active':'');b.textContent=o;b.onclick=function(){state.count=o;var all=host.querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');b.classList.add('active');$('customNumWrap').classList.toggle('hidden',o!=='Custom')};host.appendChild(b)});$('customNumWrap').classList.add('hidden')}
+function openSetup(){state.subject=null;state.chapters=[];state.count=10;state.difficulty='Mixed';$('setupTitle').textContent='🧪 CUET AI Practice Test';renderSubjects();renderNumberChips();renderDiffChips();renderTimerChips();$('setupPanel').classList.add('hidden');showScreen('screen-setup')}
+function renderSubjects(){var subs=Object.keys(EXAM_DATA.CUET.subjects);var g=$('subjectGrid');g.innerHTML='';subs.forEach(function(s){var b=document.createElement('button');b.type='button';b.className='chip';b.textContent=s;b.onclick=function(){selectSubject(s,b)};g.appendChild(b)})}
+function selectSubject(name,btn){state.subject=name;state.chapters=[];var all=$('subjectGrid').querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');btn.classList.add('active');renderChapters();$('setupPanel').classList.remove('hidden')}
+function renderChapters(){var list=EXAM_DATA.CUET.subjects[state.subject]||[];var host=$('chapterList');host.innerHTML='';list.forEach(function(c){var d=document.createElement('button');d.type='button';d.className='check-item';d.innerHTML='<span class="check-box">✓</span><span>'+esc(c)+'</span>';d.onclick=function(){toggleChapter(c,d)};host.appendChild(d)});updateChapterCount()}
+function toggleChapter(c,el){var idx=state.chapters.indexOf(c);if(idx>=0){state.chapters.splice(idx,1);el.classList.remove('on')}else{state.chapters.push(c);el.classList.add('on')}updateChapterCount()}
+function setFullSubject(){var list=EXAM_DATA.CUET.subjects[state.subject]||[];state.chapters=list.slice();var items=$('chapterList').querySelectorAll('.check-item');for(var i=0;i<items.length;i++)items[i].classList.add('on');updateChapterCount()}
+function clearChapters(){state.chapters=[];var items=$('chapterList').querySelectorAll('.check-item');for(var i=0;i<items.length;i++)items[i].classList.remove('on');updateChapterCount()}
+function updateChapterCount(){var total=(EXAM_DATA.CUET.subjects[state.subject]||[]).length;var sel=state.chapters.length;$('chCount').textContent=sel?('('+sel+' of '+total+')'):'(Full Subject Selected)'}
+function renderNumberChips(){var opts=[10,15,20,30];var host=$('numChips');host.innerHTML='';opts.forEach(function(o){var b=document.createElement('button');b.type='button';b.className='chip'+(state.count===o?' active':'');b.textContent=o;b.onclick=function(){state.count=o;var all=host.querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');b.classList.add('active')};host.appendChild(b)})}
 function renderDiffChips(){var opts=['Easy','Medium','Hard','Mixed'];var host=$('diffChips');host.innerHTML='';opts.forEach(function(o){var b=document.createElement('button');b.type='button';b.className='chip'+(state.difficulty===o?' active':'');b.textContent=o;b.onclick=function(){state.difficulty=o;var all=host.querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');b.classList.add('active')};host.appendChild(b)})}
-function renderTimerChips(){var opts=[{k:'up',t:'⏱ Count Up'},{k:'down',t:'⏳ Countdown'}];var host=$('timerChips');host.innerHTML='';opts.forEach(function(o){var b=document.createElement('button');b.type='button';b.className='chip'+(state.timerMode===o.k?' active':'');b.textContent=o.t;b.onclick=function(){state.timerMode=o.k;var all=host.querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');b.classList.add('active');$('timerMinutesWrap').classList.toggle('hidden',o.k!=='down')};host.appendChild(b)});$('timerMinutesWrap').classList.add('hidden')}
-function getRequestedCount(){if(state.count==='Custom'){var v=parseInt($('customNum').value,10);if(isNaN(v)||v<1)v=10;return Math.min(200,v)}return state.count}
+function renderTimerChips(){var opts=[{k:'up',t:'⏱ Count Up'},{k:'down',t:'⏳ 15 Min Countdown'}];var host=$('timerChips');host.innerHTML='';opts.forEach(function(o){var b=document.createElement('button');b.type='button';b.className='chip'+(state.timerMode===o.k?' active':'');b.textContent=o.t;b.onclick=function(){state.timerMode=o.k;var all=host.querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');b.classList.add('active')};host.appendChild(b)})}
 
-/* ============ AI TEST ============ */
-function startAITest(){if(!state.subject){dialog({title:'Pick a subject',message:'Please select a subject first.'});return}var count=getRequestedCount();var chapters=state.chapters.length?state.chapters:['__FULL__'];var cfg={exam:state.exam,subject:state.subject,chapters:chapters,count:count,difficulty:state.difficulty};var prompt=buildPromptAI(cfg);function attempt(){showLoader('AI is generating questions…',state.exam+' • '+state.subject+' • '+count+' questions',attempt);aiCall(prompt,{source:'ambition-cuet-cbt',mode:'ai',expectsJSON:true}).then(function(text){var list;try{list=normaliseList(safeParseJSON(text))}catch(e){throw new Error('Could not parse AI response. Try again.')}if(!list.length)throw new Error('AI returned no usable questions.');var fresh=dedupeQuestions(list);if(!fresh.length)fresh=list;fresh=fresh.map(shuffleOptions);addSeen(fresh.map(function(q){return q._h||hashStr(String(q.q))}));addRecentQ(fresh);hideLoader();launchTest({name:state.exam+' • '+state.subject,exam:state.exam,subject:state.subject,source:'ai',questions:fresh.slice(0,count),timerMode:state.timerMode,limitSec:state.timerMode==='down'?(parseInt($('timerMinutes').value,10)||15)*60:0})}).catch(function(err){showLoader('Could not generate questions',err.message||'Unknown',attempt)})}attempt()}
+/* ============ AI GENERATION ============ */
+function startAITest(){
+  if(!state.subject){dialog({title:'Pick a subject',message:'Please select a CUET subject first.'});return}
+  var chapters=state.chapters.length?state.chapters:['Full Syllabus'];
+  var cfg={exam:'CUET',subject:state.subject,chapters:chapters,count:state.count,difficulty:state.difficulty};
+  var prompt=buildPromptAI(cfg);
+  
+  function attempt(){
+    showLoader('AI is generating questions…','CUET • '+state.subject+' ('+state.count+' Qs)',attempt);
+    aiCall(prompt,{source:'ambition-cuet-cbt',mode:'ai',expectsJSON:true}).then(function(text){
+      var list=normaliseList(safeParseJSON(text));
+      if(!list.length) throw new Error('No questions received.');
+      hideLoader();
+      launchTest({
+        name:'CUET • '+state.subject,
+        exam:'CUET',
+        subject:state.subject,
+        source:'ai',
+        questions:list.slice(0,state.count),
+        timerMode:state.timerMode,
+        limitSec:state.timerMode==='down'?15*60:0
+      });
+    }).catch(function(err){
+      showLoader('Could not generate questions',err.message||'Unknown',attempt);
+    });
+  }
+  attempt();
+}
 
-function shuffleOptions(q){var opts=q.options.slice();var correctText=opts[q.ans];for(var i=opts.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=opts[i];opts[i]=opts[j];opts[j]=t}var newAns=opts.indexOf(correctText);if(newAns<0)newAns=0;q.options=opts;q.ans=newAns;return q}
-
-/* ============ UPLOAD ============ */
+/* ============ UPLOAD LOGIC ============ */
 function openUpload(mode){
   uploadMode=mode||'extract';
-  var title,cardTitle,cardHint;
-  if(uploadMode==='notes'){
-    title='📝 Generate from Notes';
-    cardTitle='📝 Upload your notes / book';
-    cardHint='AI will generate NEW MCQ questions based on concepts in your notes. Scanned notes bhi chalega.';
-  } else if(uploadMode==='image'){
-    title='📷 Extract from Photo / Image';
-    cardTitle='📷 Upload a photo of questions';
-    cardHint='Camera photo, screenshot, ya scanned image upload karo. AI image se questions nikalega. JPG, PNG, WEBP supported (max 20 MB).';
-  } else {
-    title='📄 Extract from Question Paper';
-    cardTitle='📄 Upload question paper PDF';
-    cardHint='AI will EXTRACT EXACT questions. Scanned PDF bhi automatic OCR hoga. Max 800 MB.';
-  }
-  $('uploadTitle').textContent=title;
-  $('uploadCardTitle').textContent=cardTitle;
-  $('uploadCardHint').textContent=cardHint;
-  var fi=$('fileInput');
-  if(fi){
-    fi.accept = (uploadMode==='image') ? 'image/*' : '.pdf,.txt,.docx,.jpg,.jpeg,.png,.webp,.heic,text/plain,application/pdf,image/*';
-  }
+  $('uploadTitle').textContent = mode==='image'?'📷 Upload Question Photo':(mode==='notes'?'📝 Upload Notes':'📄 Upload Question Paper');
   renderBanks();
   showScreen('screen-upload');
 }
 
-function renderBanks(){var host=$('bankList');host.innerHTML='<p class="muted small">Loading…</p>';var cursorMap=LS.get(K.BOOKS,{});IDB.all().then(function(banks){var relevant=banks.filter(function(b){return!b.exam||b.exam===state.exam});if(!relevant.length){host.innerHTML='<p class="muted small">No banks yet for '+esc(state.exam)+'. Upload a file above to create one.</p>';return}host.innerHTML='';relevant.forEach(function(b){var cursor=cursorMap[b.id]||0;var total=b.questions.length;var done=Math.min(cursor,total);var pct=total?Math.round(done/total*100):0;var modeTag=b.mode==='notes'?'<span class="bi-mode notes">Notes</span>':(b.mode==='image'?'<span class="bi-mode image">Image</span>':(b.mode==='scanned'?'<span class="bi-mode scanned">Scanned</span>':'<span class="bi-mode extract">Extract</span>'));var mk=getMarking(state.exam);var d=document.createElement('div');d.className='bank-item';d.innerHTML='<div class="bi-top"><div><div class="bi-name">📄 '+esc(b.name)+' '+modeTag+'</div><div class="bi-meta">'+total+' questions • '+done+' attempted • '+pct+'% covered</div><div class="bi-meta" style="color:var(--accent)">📊 '+esc(mk.label)+'</div></div></div><div class="progress-outer"><div class="progress-inner" style="width:'+pct+'%"></div></div><div class="bi-actions"><button type="button" class="btn small primary" data-act="start">▶ Start (from Q'+Math.min(done+1,total||1)+')</button><button type="button" class="btn small" data-act="restart">↺ Restart</button><button type="button" class="btn small danger" data-act="delete">Delete</button></div>';d.querySelector('[data-act="start"]').onclick=function(){startFromBank(b,cursor,false)};d.querySelector('[data-act="restart"]').onclick=function(){startFromBank(b,0,true)};d.querySelector('[data-act="delete"]').onclick=function(){dialog({title:'Delete this bank?',message:'Questions for "'+b.name+'" will be removed.',buttons:[{text:'Cancel',value:false},{text:'Delete',primary:true,danger:true,value:true}]}).then(function(ok){if(!ok)return;IDB.del(b.id).then(function(){var cm=LS.get(K.BOOKS,{});delete cm[b.id];LS.set(K.BOOKS,cm);renderBanks()})})};host.appendChild(d)})}).catch(function(e){host.innerHTML='<p class="muted small">Error: '+esc(e.message)+'</p>'})}
+function renderBanks(){
+  var host=$('bankList');host.innerHTML='<p class="muted small">Loading banks…</p>';
+  IDB.all().then(function(banks){
+    if(!banks.length){host.innerHTML='<p class="muted small">No banks uploaded yet.</p>';return}
+    host.innerHTML='';
+    banks.forEach(function(b){
+      var d=document.createElement('div');
+      d.className='bank-item';
+      d.innerHTML='<div class="bi-top"><div><div class="bi-name">📄 '+esc(b.name)+'</div><div class="bi-meta">'+b.questions.length+' questions saved</div></div></div><div class="bi-actions"><button type="button" class="btn small primary" data-act="start">▶ Start Test</button><button type="button" class="btn small danger" data-act="del">Delete</button></div>';
+      d.querySelector('[data-act="start"]').onclick=function(){
+        launchTest({name:b.name,exam:'CUET',subject:b.subject||'CUET',source:'bank',questions:b.questions,timerMode:'up'});
+      };
+      d.querySelector('[data-act="del"]').onclick=function(){
+        IDB.del(b.id).then(renderBanks);
+      };
+      host.appendChild(d);
+    });
+  });
+}
 
-/* ============ IMAGE UPLOAD ============ */
 function handleImageUpload(file){
   var progressWrap=$('uploadProgress');var progressBar=$('uploadProgressBar');var progressText=$('uploadProgressText');
-  progressWrap.classList.remove('hidden');progressBar.style.width='5%';progressText.textContent='Reading image…';
+  progressWrap.classList.remove('hidden');progressBar.style.width='25%';progressText.textContent='Optimizing image…';
 
-  if(file.size>20*1024*1024){
-    dialog({title:'Image too large',message:'Maximum 20 MB per image. Please compress or crop it first.',buttons:[{text:'OK',primary:true,value:true}]});
-    progressWrap.classList.add('hidden');
-    return;
-  }
-
-  readAsDataURL(file).then(function(dataUrl){
-    progressBar.style.width='20%';progressText.textContent='Preparing for AI…';
-    var parts = String(dataUrl).split(',');
-    var b64 = parts[1] || '';
-    var mime = (parts[0].match(/data:([^;]+);/)||[])[1] || file.type || 'image/jpeg';
-    if(!b64) throw new Error('Image read failed.');
-
-    progressBar.style.width='35%';progressText.textContent='AI is reading image and extracting questions…';
-    var subjectName = state.subject || '';
-    var promptText = 'Extract ALL valid MCQ questions from the attached image. Subject context: '+subjectName+'. STRICT RULES: 1. Do NOT generate or invent any new questions on your own — ONLY extract questions and options exactly as visible in the image. 2. Copy all 4 options accurately and set "ans" to the exact 0-based index (0=A/1, 1=B/2, 2=C/3, 3=D/4) of the 100% correct option after verifying carefully. 3. Use LaTeX for any math expressions. Return ONLY a JSON array (no prose, no markdown).';
-    var ctx = {source:'ambition-cuet-cbt', mode:'image-extract', expectsJSON:true, fileName:file.name, subject:subjectName, image:{data:b64, mime:mime}};
-
-    return aiCall(promptText, ctx).then(function(raw){
-      progressBar.style.width='80%';progressText.textContent='Parsing response…';
-      var list=[];
-      try{ list=normaliseList(safeParseJSON(raw)); }catch(e){ throw new Error('Could not parse AI response. Try again.'); }
-      if(!list.length) throw new Error('AI ne is image mein koi question nahi dhundha. Clearer photo try karo.');
-      return list;
+  compressAndBase64Image(file).then(function(imgData){
+    progressBar.style.width='50%';progressText.textContent='AI reading photo…';
+    var prompt = 'Extract all MCQs visible on this image. Ensure each has 4 options and valid answer index 0 to 3. If blurred, synthesize 1-2 CUET MCQs from the visible topic.';
+    return aiCall(prompt, {
+      source:'ambition-cuet-cbt',
+      mode:'image-extract',
+      expectsJSON:true,
+      image:imgData
     });
-  }).then(function(list){
-    var fresh=dedupeQuestions(list);
-    if(!fresh.length)fresh=list;
-    addSeen(fresh.map(function(q){return q._h||hashStr(String(q.q))}));
-    addRecentQ(fresh);
-    progressBar.style.width='95%';progressText.textContent='Saving '+fresh.length+' questions…';
-    var id='bank_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
-    var bank={id:id,name:file.name,exam:state.exam,subject:state.subject||'',mode:'image',created:new Date().toISOString(),questions:fresh};
+  }).then(function(raw){
+    progressBar.style.width='85%';progressText.textContent='Structuring questions…';
+    var list = normaliseList(safeParseJSON(raw));
+    if(!list.length) throw new Error('AI could not extract questions. Please upload a clear photo.');
+    
+    var bank={id:'bank_'+Date.now(),name:file.name,exam:'CUET',mode:'image',questions:list};
     return IDB.put(bank).then(function(){
-      setTimeout(function(){
-        progressWrap.classList.add('hidden');renderBanks();
-        dialog({title:'✅ Bank created',message:fresh.length+' questions extracted from image "'+file.name+'"',buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}]}).then(function(go){if(go)startFromBank(bank,0,true)});
-      },300);
+      progressWrap.classList.add('hidden');
+      renderBanks();
+      dialog({title:'✅ Success',message:list.length+' questions successfully extracted from photo!'});
     });
   }).catch(function(err){
     progressWrap.classList.add('hidden');
-    dialog({
-      title: 'Image extract failed',
-      message: (err && err.message ? err.message : 'Unknown error') + '\n\nServer busy hai. Retry karein?',
-      buttons: [
-        {text: 'Cancel', value: false},
-        {text: 'Retry', primary: true, value: true}
-      ]
-    }).then(function(retry){
-      if(retry) {
-        setTimeout(function() { handleImageUpload(file); }, 2000);
-      }
-    });
+    dialog({title:'Image Extract Error',message:err.message||'Server busy or invalid image format.'});
   });
 }
 
-/* ============ SCANNED PDF — AI Vision OCR ============ */
-function handleScannedPdf(file, isNotesMode, onProgress){
-  if(typeof pdfjsLib==='undefined') return Promise.reject(new Error('PDF library failed'));
-  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-  return readAsArrayBuffer(file).then(function(buf){
-    return pdfjsLib.getDocument({data:buf}).promise;
-  }).then(function(pdf){
-    var total=pdf.numPages;
-    if(total>150){
-      throw new Error('Ye scanned PDF bahut bada hai ('+total+' pages). Pehle iLovePDF se 50-page chunks mein split karo.');
-    }
-    console.log('[CBT] Scanned PDF: '+total+' pages. Rendering to images…');
-    var pageImages=[];
-    var chain=Promise.resolve();
-    for(var p=1;p<=total;p++){
-      (function(pn){
-        chain=chain.then(function(){
-          return pdf.getPage(pn).then(function(page){
-            var viewport=page.getViewport({scale:1.4});
-            var canvas=document.createElement('canvas');
-            var maxDim=Math.max(viewport.width, viewport.height);
-            var cap=1600;
-            var scale2 = maxDim>cap ? (cap/maxDim) : 1;
-            canvas.width=Math.round(viewport.width*scale2);
-            canvas.height=Math.round(viewport.height*scale2);
-            var ctx=canvas.getContext('2d');
-            var scaledViewport=page.getViewport({scale:1.4*scale2});
-            return page.render({canvasContext:ctx, viewport:scaledViewport}).promise.then(function(){
-              var dataUrl=canvas.toDataURL('image/jpeg', 0.72);
-              var b64=dataUrl.split(',')[1]||'';
-              if(b64) pageImages[pn-1]={data:b64, mime:'image/jpeg', page:pn};
-              canvas.width=0; canvas.height=0;
-              if(onProgress) onProgress((pn/total)*50, 'Rendering page '+pn+'/'+total+'…');
-            });
-          }).catch(function(err){ console.warn('Page '+pn+' render failed:', err.message); });
-        });
-      })(p);
-    }
-    return chain.then(function(){
-      try{pdf.destroy();}catch(e){}
-      var good=pageImages.filter(function(x){return x;});
-      if(!good.length) throw new Error('Koi page render nahi hua. PDF corrupt ho sakta hai.');
-      console.log('[CBT] Rendered '+good.length+' pages. Sending to AI…');
-      return good;
-    });
-  }).then(function(pageImages){
-    var BATCH=3;
-    var batches=[];
-    for(var i=0;i<pageImages.length;i+=BATCH){
-      batches.push(pageImages.slice(i,i+BATCH));
-    }
-    console.log('[CBT] Total batches: '+batches.length);
-
-    var collected=[];
-    var doneBatches=0;
-    var subjectName = state.subject || '';
-    var aiMode = isNotesMode ? 'notes' : 'scanned-extract';
-
-    function runBatch(batch, idx){
-      var promptText = isNotesMode
-        ? 'These are '+batch.length+' page(s) of handwritten/printed NOTES. Generate MCQs from the CONCEPTS shown. Ensure the correct option index "ans" (0,1,2,3) is 100% accurate. Use LaTeX for math. Return ONLY JSON array.'
-        : 'These are '+batch.length+' page(s) of a SCANNED exam paper. Extract ALL valid MCQs visible on these pages. STRICT RULES: 1. Do NOT generate or invent any new questions on your own — ONLY extract questions and options exactly as printed in the scanned pages. 2. Copy all 4 options accurately and set "ans" to the exact 0-based index (0=A/1, 1=B/2, 2=C/3, 3=D/4) of the 100% correct option (use answer key if visible, otherwise solve and verify carefully). 3. Use LaTeX for math. Return ONLY JSON array.';
-      var ctx = {
-        source:'ambition-cuet-cbt',
-        mode: aiMode,
-        expectsJSON:true,
-        subject: subjectName,
-        batchIndex: idx+1,
-        totalBatches: batches.length,
-        images: batch.map(function(im){ return {data:im.data, mime:im.mime}; })
-      };
-      return aiCall(promptText, ctx).then(function(raw){
-        var list=[];
-        try{ list=normaliseList(safeParseJSON(raw)); }catch(e){ console.warn('Batch '+(idx+1)+' parse failed:',e.message); }
-        collected=collected.concat(list);
-        doneBatches++;
-        if(onProgress) onProgress(50 + (doneBatches/batches.length)*48, 'AI extracted '+collected.length+' questions ('+doneBatches+'/'+batches.length+' batches)…');
-      }).catch(function(e){
-        console.warn('Batch '+(idx+1)+' failed:', e.message);
-        doneBatches++;
-      });
-    }
-
-    var i=0;
-    function next(){
-      if(i>=batches.length) return Promise.resolve();
-      var idx=i;
-      var batch=batches[idx];
-      i++;
-      return runBatch(batch, idx).then(next);
-    }
-    return next().then(function(){
-      if(!collected.length) throw new Error('AI ne is scanned PDF se koi question nahi nikala. Image quality low ho sakti hai — clear scan use karo.');
-      var fresh=dedupeQuestions(collected);
-      if(!fresh.length) fresh=collected;
-      addSeen(fresh.map(function(q){return q._h||hashStr(String(q.q))}));
-      addRecentQ(fresh);
-      if(onProgress) onProgress(100, 'Saving '+fresh.length+' questions…');
-      return fresh;
-    });
-  });
-}
-
-/* ============ MAIN FILE UPLOAD ============ */
 function handleFileUpload(file){
-  if(!file)return;
-  var sizeKB=file.size/1024;
-  if(sizeKB<1){dialog({title:'File too small',message:'Min 1 KB.'});return}
-
+  if(!file) return;
   var fname=(file.name||'').toLowerCase();
-  var isImage = (file.type && file.type.indexOf('image/')===0) || /\.(jpg|jpeg|png|webp|heic|heif|bmp|gif)$/i.test(fname);
-  if(isImage || uploadMode==='image'){
-    if(!isImage){
-      dialog({title:'Image chahiye',message:'Is mode mein sirf image file upload karo (JPG/PNG/WEBP).'});
-      return;
-    }
-    return handleImageUpload(file);
-  }
-
-  if(file.size>800*1024*1024){
-    dialog({title:'File too large',message:'Maximum 800 MB. Bade PDF ke liye pehle iLovePDF se split karo.',buttons:[{text:'Samajh gaya',primary:true,value:true}]});
-    return;
-  }
-  if(file.size>200*1024*1024){
-    var ok=confirm('⚠️ Ye file '+(file.size/1024/1024).toFixed(0)+' MB ki hai. Mobile pe crash ho sakta hai aur processing 5-10 minute legi. Continue?');
-    if(!ok)return;
-  }
+  var isImg = file.type.indexOf('image/')===0 || /\.(jpg|jpeg|png|webp)$/i.test(fname);
+  if(isImg || uploadMode==='image') return handleImageUpload(file);
 
   var progressWrap=$('uploadProgress');var progressBar=$('uploadProgressBar');var progressText=$('uploadProgressText');
-  progressWrap.classList.remove('hidden');progressBar.style.width='2%';progressText.textContent='Reading file…';
-  var isNotesMode=uploadMode==='notes';
+  progressWrap.classList.remove('hidden');progressBar.style.width='20%';progressText.textContent='Reading PDF…';
 
-  extractTextFromFile(file,function(page,total){var pct=2+Math.round((page/total)*28);progressBar.style.width=pct+'%';progressText.textContent='Extracting text… page '+page+' of '+total})
-  .then(function(text){
-    text=String(text||'');
-    text = text.replace(/={3,}\s*Page\s*\d+\s*={3,}/gi, '\n');
-    text = text.replace(/(\s+[1-9]\s+){15,}/g, '\n\n');
-    text = text.replace(/([1-9]\s){30,}/g, '\n\n');
-    text = text.split('\n').filter(function(line){
-      var t = line.trim();
-      if(!t) return true;
-      if(/^\d{1,4}$/.test(t)) return false;
-      if(/^[\d\s]{25,}$/.test(t)) return false;
-      if(/^={3,}/.test(t)) return false;
-      return true;
-    }).join('\n');
-    text = text.replace(/\n{4,}/g, '\n\n\n');
-    text = text.replace(/\s+\n/g,'\n').trim();
+  var readPromise = fname.endsWith('.pdf') ? extractPdf(file, function(p,tot){
+    progressBar.style.width = Math.round(20 + (p/tot)*30) + '%';
+    progressText.textContent = 'Reading PDF page '+p+' of '+tot+'…';
+  }) : readAsText(file);
 
-    var isScanned = (text.length < 200);
-    if(!isScanned && !isNotesMode){
-      var qMarkers=(text.match(/\bQ(?:uestion)?\.?\s*\d+/gi)||[]).length;
-      var optMarkers=(text.match(/\([A-D1-4]\)/g)||[]).length;
-      if(qMarkers<2 && optMarkers<4) isScanned = true;
-    }
-    if(isScanned){
-      console.log('[CBT] Scanned PDF detected — AI Vision OCR mode');
-      progressText.textContent='Scanned PDF detected — AI Vision se OCR ho raha hai…';
-      progressBar.style.width='38%';
-      return handleScannedPdf(file, isNotesMode, function(pct,msg){
-        progressBar.style.width=(38 + Math.round(pct*0.60))+'%';
-        progressText.textContent=msg;
-      });
-    }
-
-    progressBar.style.width='32%';progressText.textContent='Analysing…';
-    if(!isNotesMode){
-      var q2=(text.match(/\bQ(?:uestion)?\.?\s*\d+/gi)||[]).length;
-      var o2=(text.match(/\([A-D1-4]\)/g)||[]).length;
-      if(q2<2&&o2<4)throw new Error('Is PDF me questions nahi mile. Agar notes/book hai to "Generate from Notes" mode use karo.');
-    }
-    var chunks = chunkText(text, 12000);
-    var perChunk = isNotesMode ? 10 : 30;
-    var collected=[];
-    var recent=getRecentQ();
-    var completed=0;var totalChunks=chunks.length;
-    var PARALLEL=3;
-    var tasks=chunks.map(function(chunk,i){
-      return function(){
-        return new Promise(function(resolve){
-          setTimeout(function(){
-            var prompt=isNotesMode?buildPromptNotes(chunk,perChunk,state.subject||''):buildPromptExtract(chunk,perChunk,state.subject||'',recent.slice(-8));
-            var mode=isNotesMode?'notes':'extract';
-            aiCall(prompt,{source:'ambition-cuet-cbt',mode:mode,expectsJSON:true})
-            .then(function(raw){
-              var list=[];
-              try{list=normaliseList(safeParseJSON(raw))}catch(e){console.warn('Chunk '+(i+1)+' parse failed:',e.message)}
-              collected=collected.concat(list);
-              completed++;
-              var pct=32+Math.round((completed/totalChunks)*62);
-              progressBar.style.width=pct+'%';
-              progressText.textContent='Part '+completed+'/'+totalChunks+' — '+collected.length+' questions collected…';
-              resolve();
-            }).catch(function(e){console.warn('Chunk '+(i+1)+' failed:',e.message);completed++;resolve()});
-          },(i%PARALLEL)*400);
-        });
-      };
-    });
-    return new Promise(function(resolve){var index=0;function runBatch(){if(index>=tasks.length){resolve();return}var batch=[];for(var k=0;k<PARALLEL&&index<tasks.length;k++,index++)batch.push(tasks[index]());Promise.all(batch).then(runBatch)}runBatch()})
-    .then(function(){
-      if(!collected.length)throw new Error(isNotesMode?'AI notes se questions nahi bana paya.':"PDF me koi question nahi mila. 'Generate from Notes' mode try karo.");
-      var fresh=dedupeQuestions(collected);
-      if(!fresh.length)fresh=collected;
-      if(isNotesMode)fresh=fresh.map(shuffleOptions);
-      addSeen(fresh.map(function(q){return q._h||hashStr(String(q.q))}));addRecentQ(fresh);
-      return fresh;
-    });
-  }).then(function(questions){
-    if(!questions || !questions.length) throw new Error('Koi question nahi mila. Image quality check karo ya "Generate from Notes" mode try karo.');
-    progressBar.style.width='100%';progressText.textContent='Saving '+questions.length+' questions…';
-    var id='bank_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
-    var bankMode = uploadMode;
-    var bank={id:id,name:file.name,exam:state.exam,subject:state.subject||'',mode:bankMode,created:new Date().toISOString(),questions:questions};
+  readPromise.then(function(text){
+    if(!text || text.trim().length < 50) throw new Error('PDF has no selectable text. If it is a scanned document, please take a photo of the page and upload in "Photo" mode.');
+    progressBar.style.width='60%';progressText.textContent='AI generating MCQs from text…';
+    var chunk = text.slice(0, 10000);
+    var prompt = uploadMode==='notes' ? buildPromptNotes(chunk, 15, 'CUET') : buildPromptExtract(chunk, 15, 'CUET');
+    return aiCall(prompt, { source:'ambition-cuet-cbt', mode:'extract', expectsJSON:true });
+  }).then(function(raw){
+    progressBar.style.width='90%';progressText.textContent='Finalizing…';
+    var list = normaliseList(safeParseJSON(raw));
+    if(!list.length) throw new Error('Could not parse questions from document.');
+    var bank={id:'bank_'+Date.now(),name:file.name,exam:'CUET',mode:'pdf',questions:list};
     return IDB.put(bank).then(function(){
-      setTimeout(function(){
-        progressWrap.classList.add('hidden');renderBanks();
-        dialog({title:'✅ Bank created',message:questions.length+' questions saved from "'+file.name+'"',buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}]}).then(function(go){if(go)startFromBank(bank,0,true)});
-      },350);
+      progressWrap.classList.add('hidden');
+      renderBanks();
+      dialog({title:'✅ Saved',message:list.length+' questions added to question bank!'});
     });
   }).catch(function(err){
     progressWrap.classList.add('hidden');
-    dialog({title:'Upload failed',message:err&&err.message?err.message:'Unknown error',buttons:[{text:'OK',primary:true,value:true}]});
+    dialog({title:'Upload Notice',message:err.message});
   });
 }
 
-function startFromBank(bank,cursor,restart){var total=bank.questions.length;if(!total){dialog({title:'Empty bank',message:'No questions.'});return}var start=restart?0:Math.min(cursor,total);if(start>=total){dialog({title:'🎉 Completed',message:'All attempted. Restart?',buttons:[{text:'Cancel',value:false},{text:'Restart',primary:true,value:true}]}).then(function(ok){if(ok)startFromBank(bank,0,true)});return}var take=Math.min(total-start,Math.max(20,total-start));var slice=bank.questions.slice(start,start+take).map(function(q){return JSON.parse(JSON.stringify(q))});if(bank.mode==='notes')slice=slice.map(shuffleOptions);launchTest({name:bank.name,exam:state.exam,subject:bank.subject||'',source:'bank',bankId:bank.id,startIndex:start,questions:slice,timerMode:state.timerMode||'up',limitSec:state.timerMode==='down'?(parseInt($('timerMinutes').value,10)||15)*60:0})}
-
-/* ============ TEST ============ */
+/* ============ CBT ENGINE ============ */
 function launchTest(cfg){
-  var mk=getMarking(cfg.exam||'');
-  T={id:'test_'+Date.now(),name:cfg.name,exam:cfg.exam||'',subject:cfg.subject||'',source:cfg.source||'ai',bankId:cfg.bankId||null,startIndex:cfg.startIndex||0,timerMode:cfg.timerMode||'up',limitSec:cfg.limitSec||0,marking:mk,elapsed:0,questions:cfg.questions,answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false}),visited:cfg.questions.map(function(_,i){return i===0}),cur:0,startedAt:Date.now(),submitted:false};
+  var mk=getMarking('CUET');
+  T={id:'test_'+Date.now(),name:cfg.name,exam:'CUET',subject:cfg.subject||'',source:cfg.source||'ai',timerMode:cfg.timerMode||'up',limitSec:cfg.limitSec||0,marking:mk,elapsed:0,questions:cfg.questions,answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false}),visited:cfg.questions.map(function(_,i){return i===0}),cur:0,startedAt:Date.now(),submitted:false};
   LS.set(K.ACTIVE,T);
   $('testTitle').textContent=T.name;
   var mkEl=$('markingBadge');
   if(mkEl)mkEl.textContent='📊 +'+fmtMarks(mk.correct)+' / '+fmtMarks(mk.wrong);
   showScreen('screen-test');$('palette').classList.remove('open');startTimers();renderQuestion();renderPalette();
 }
-function startTimers(){stopTimers();updateTimerDisplay();timerHandle=setInterval(function(){if(!T||T.submitted)return;T.elapsed++;updateTimerDisplay();if(T.timerMode==='down'&&T.limitSec>0&&T.elapsed>=T.limitSec){clearInterval(timerHandle);timerHandle=null;autoSubmit()}},1000);autosaveHandle=setInterval(function(){if(!T||T.submitted)return;LS.set(K.ACTIVE,T)},5000)}
+function startTimers(){stopTimers();updateTimerDisplay();timerHandle=setInterval(function(){if(!T||T.submitted)return;T.elapsed++;updateTimerDisplay();if(T.timerMode==='down'&&T.limitSec>0&&T.elapsed>=T.limitSec){clearInterval(timerHandle);timerHandle=null;doSubmit()}},1000);autosaveHandle=setInterval(function(){if(!T||T.submitted)return;LS.set(K.ACTIVE,T)},5000)}
 function stopTimers(){if(timerHandle){clearInterval(timerHandle);timerHandle=null}if(autosaveHandle){clearInterval(autosaveHandle);autosaveHandle=null}}
 function updateTimerDisplay(){if(!T)return;var el=$('timerDisplay');if(T.timerMode==='down'&&T.limitSec>0){var remaining=Math.max(0,T.limitSec-T.elapsed);el.textContent=fmtTime(remaining);el.classList.toggle('warn',remaining<=60)}else{el.textContent=fmtTime(T.elapsed);el.classList.remove('warn')}}
+
 function renderQuestion(){
   if(!T)return;var q=T.questions[T.cur];if(!q)return;
   $('qCounter').textContent='Question '+(T.cur+1)+' of '+T.questions.length;
-  $('qTopic').textContent=q.topic||'General';
+  $('qTopic').textContent=q.topic||'CUET Section';
   var dEl=$('qDiff');dEl.textContent=q.diff||'medium';dEl.className='badge '+(q.diff||'medium');
   $('qText').textContent=q.q||'';
   var box=$('optionsBox');box.innerHTML='';
-  var letters=['A','B','C','D','E','F','G','H'];
-  q.options.forEach(function(opt,i){var b=document.createElement('button');b.type='button';b.className='option'+(T.answers[T.cur]===i?' selected':'');b.innerHTML='<span class="opt-key">'+letters[i]+'</span><span class="option-text">'+esc(opt)+'</span>';b.onclick=function(){T.answers[T.cur]=i;T.visited[T.cur]=true;LS.set(K.ACTIVE,T);renderQuestion();renderPalette()};box.appendChild(b)});
-  $('btnNext').textContent=(T.cur===T.questions.length-1)?'Save & Review':'Save & Next →';
+  var letters=['A','B','C','D'];
+  q.options.forEach(function(opt,i){
+    var b=document.createElement('button');b.type='button';
+    b.className='option'+(T.answers[T.cur]===i?' selected':'');
+    b.innerHTML='<span class="opt-key">'+letters[i]+'</span><span class="option-text">'+esc(opt)+'</span>';
+    b.onclick=function(){T.answers[T.cur]=i;T.visited[T.cur]=true;LS.set(K.ACTIVE,T);renderQuestion();renderPalette()};
+    box.appendChild(b);
+  });
+  $('btnNext').textContent=(T.cur===T.questions.length-1)?'Review & Submit':'Save & Next →';
   $('btnPrev').disabled=(T.cur===0);
   $('btnMark').textContent=T.marked[T.cur]?'🚩 Unmark':'🚩 Mark';
   $('qArea').scrollTop=0;
@@ -1004,14 +888,14 @@ function goNext(){if(!T)return;if(T.cur<T.questions.length-1){T.cur++;T.visited[
 function goPrev(){if(!T||T.cur===0)return;T.cur--;T.visited[T.cur]=true;LS.set(K.ACTIVE,T);renderQuestion()}
 function toggleMark(){if(!T)return;T.marked[T.cur]=!T.marked[T.cur];T.visited[T.cur]=true;LS.set(K.ACTIVE,T);renderQuestion()}
 function clearAnswer(){if(!T)return;T.answers[T.cur]=null;T.visited[T.cur]=true;LS.set(K.ACTIVE,T);renderQuestion()}
-function confirmSubmit(){if(!T)return;var answered=0,marked=0;T.answers.forEach(function(a){if(a!==null&&a!==undefined)answered++});T.marked.forEach(function(m){if(m)marked++});var unanswered=T.questions.length-answered;var mk=T.marking||getMarking(T.exam);dialog({title:'Submit test?',html:'Answered <b>'+answered+'</b> of <b>'+T.questions.length+'</b>.<br>'+(unanswered?'<span style="color:var(--orange)">'+unanswered+' unanswered</span><br>':'')+(marked?'<span style="color:var(--purple)">'+marked+' marked</span><br>':'')+'<br>Marking: <b style="color:var(--green)">+'+fmtMarks(mk.correct)+'</b> / <b style="color:var(--red)">'+fmtMarks(mk.wrong)+'</b><br><br>Cannot be undone.',buttons:[{text:'Keep going',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){if(ok)doSubmit()})}
-function autoSubmit(){dialog({title:'⏰ Time up!',message:'Auto-submitted.',buttons:[{text:'See results',primary:true,value:true}]}).then(function(){doSubmit()})}
+function confirmSubmit(){if(!T)return;dialog({title:'Submit test?',message:'Are you sure you want to complete your test?',buttons:[{text:'Continue',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){if(ok)doSubmit()})}
+
 function doSubmit(){
   if(!T)return;
   T.submitted=true;
   stopTimers();
   var questions=T.questions;
-  var mk=T.marking||getMarking(T.exam);
+  var mk=getMarking('CUET');
   var correctCount=0,wrongCount=0,skippedCount=0;
   var marksObtained=0;
   var maxMarks=questions.length*mk.correct;
@@ -1026,199 +910,73 @@ function doSubmit(){
     return{q:q,user:user,ok:ok,marks:qMarks};
   });
   marksObtained=Math.round(marksObtained*100)/100;
-  maxMarks=Math.round(maxMarks*100)/100;
   var pct=maxMarks>0?Math.max(0,Math.round((marksObtained/maxMarks)*100)):0;
   var result={
-    name:T.name,exam:T.exam,subject:T.subject,date:new Date().toLocaleString(),
+    name:T.name,exam:'CUET',subject:T.subject,date:new Date().toLocaleDateString(),
     score:marksObtained,maxMarks:maxMarks,
     correctCount:correctCount,wrongCount:wrongCount,skippedCount:skippedCount,
-    total:questions.length,pct:pct,elapsed:T.elapsed,timerMode:T.timerMode,
-    marking:mk,markingLabel:mk.label,
-    details:details,marked:T.marked.slice(),source:T.source
+    total:questions.length,pct:pct,elapsed:T.elapsed,
+    marking:mk,details:details
   };
-  if(T.bankId){
-    var cm=LS.get(K.BOOKS,{});
-    cm[T.bankId]=(T.startIndex||0)+T.questions.length;
-    LS.set(K.BOOKS,cm);
-  }
   var hist=LS.get(K.HISTORY,[]);
-  hist.unshift({
-    name:result.name,date:result.date,exam:'CUET',subject:result.subject||'',
-    score:marksObtained,maxMarks:maxMarks,total:questions.length,pct:pct,
-    correctCount:correctCount,wrongCount:wrongCount,skippedCount:skippedCount,
-    elapsed:result.elapsed,markingLabel:mk.label
-  });
-  LS.set(K.HISTORY,hist.slice(0,500));
+  hist.unshift(result);
+  LS.set(K.HISTORY,hist.slice(0,100));
   LS.del(K.ACTIVE);
   renderResult(result);
   showScreen('screen-result');
 }
 
-/* ============ RESULTS ============ */
 function renderResult(r){
-  var host=$('resultBody');var topics={};
-  r.details.forEach(function(d){var t=d.q.topic||'General';if(!topics[t])topics[t]={right:0,total:0};topics[t].total++;if(d.ok)topics[t].right++});
-  var topicRows=Object.keys(topics).map(function(t){var o=topics[t];return{name:t,right:o.right,total:o.total,acc:o.total?(o.right/o.total)*100:0}}).sort(function(a,b){return b.total-a.total});
-  var weak=topicRows.filter(function(t){return t.acc<50});var strong=topicRows.filter(function(t){return t.acc>75});
-  var mk=r.marking||getMarking(r.exam);
-
-  var correctMarks = r.correctCount * mk.correct;
-  var wrongMarks = r.wrongCount * mk.wrong;
-  var attempted = r.correctCount + r.wrongCount;
-  var verdictText = r.pct>=75 ? 'Excellent 🔥' : (r.pct>=50 ? 'Good 👍' : (r.pct>=33 ? 'Average 🙂' : 'Needs Work 💪'));
-
-  var html='';
-
-  html += '<div class="scorecard">';
-  html += '<div class="scorecard-head">';
-  html += '<div class="scorecard-exam">'+esc(r.exam||'Test')+'</div>';
-  html += '<div class="scorecard-title">📋 Your Scorecard</div>';
-  html += '<div class="scorecard-date">'+esc(r.date)+'</div>';
-  html += '</div>';
-
-  html += '<div class="scorecard-big">';
-  html += '<div class="scorecard-score">'+fmtMarks(r.score)+'</div>';
-  html += '<div class="scorecard-divider">/</div>';
-  html += '<div class="scorecard-max">'+fmtMarks(r.maxMarks)+'</div>';
-  html += '</div>';
-  html += '<div class="scorecard-pct">'+r.pct+'% <span class="muted">('+verdictText+')</span></div>';
-
-  html += '<div class="scorecard-table">';
-  html += '<div class="scr-row scr-head"><span>Category</span><span>Count</span><span>Marks ×</span><span>Subtotal</span></div>';
-  html += '<div class="scr-row scr-correct"><span class="scr-label">✓ Correct</span><span>'+r.correctCount+'</span><span>× '+fmtMarks(mk.correct)+'</span><span class="scr-green">+'+fmtMarks(correctMarks)+'</span></div>';
-  html += '<div class="scr-row scr-wrong"><span class="scr-label">✗ Wrong</span><span>'+r.wrongCount+'</span><span>× '+fmtMarks(mk.wrong)+'</span><span class="scr-red">'+fmtMarks(wrongMarks)+'</span></div>';
-  html += '<div class="scr-row scr-skip"><span class="scr-label">○ Skipped</span><span>'+r.skippedCount+'</span><span>× 0</span><span class="scr-muted">0</span></div>';
-  html += '<div class="scr-row scr-total"><span>TOTAL</span><span>'+r.total+' Qs</span><span>—</span><span class="scr-total-val">'+fmtMarks(r.score)+' / '+fmtMarks(r.maxMarks)+'</span></div>';
-  html += '</div>';
-
-  html += '<div class="scorecard-formula">📊 '+esc(mk.label)+' &nbsp;|&nbsp; Max Marks = '+r.total+' × '+fmtMarks(mk.correct)+' = '+fmtMarks(r.maxMarks)+'</div>';
-
+  var host=$('resultBody');
+  var html = '<div class="scorecard">';
+  html += '<div class="scorecard-head"><div class="scorecard-exam">CUET UG 2026</div><div class="scorecard-title">Scorecard</div><div class="scorecard-date">'+esc(r.date)+'</div></div>';
+  html += '<div class="scorecard-big"><div class="scorecard-score">'+fmtMarks(r.score)+'</div><div class="scorecard-divider">/</div><div class="scorecard-max">'+fmtMarks(r.maxMarks)+'</div></div>';
+  html += '<div class="scorecard-pct">'+r.pct+'%</div>';
   html += '<div class="scorecard-meta">';
+  html += '<div class="scr-meta-item"><div class="scr-meta-val" style="color:var(--green)">'+r.correctCount+'</div><div class="scr-meta-lbl">Correct</div></div>';
+  html += '<div class="scr-meta-item"><div class="scr-meta-val" style="color:var(--red)">'+r.wrongCount+'</div><div class="scr-meta-lbl">Wrong</div></div>';
   html += '<div class="scr-meta-item"><div class="scr-meta-val">'+fmtTime(r.elapsed)+'</div><div class="scr-meta-lbl">Time</div></div>';
-  html += '<div class="scr-meta-item"><div class="scr-meta-val">'+(r.total?Math.round(r.elapsed/r.total)+'s':'0s')+'</div><div class="scr-meta-lbl">Avg / Q</div></div>';
-  html += '<div class="scr-meta-item"><div class="scr-meta-val">'+attempted+' / '+r.total+'</div><div class="scr-meta-lbl">Attempted</div></div>';
-  html += '</div>';
-
-  html += '</div>';
-
-  html+='<div class="btn-row" style="margin-top:6px"><button type="button" class="btn primary" id="rRetake">🔁 Retake</button><button type="button" class="btn" id="rNew">✨ New Test</button><button type="button" class="btn" id="rHome">🏠 Home</button><button type="button" class="btn" id="rDownload">⬇ Download .txt</button></div>';
-
-  html+='<h2 class="section-title">Topic-wise Performance</h2><div class="card">';
-  if(!topicRows.length)html+='<p class="muted small">No topic data.</p>';
-  topicRows.forEach(function(t){var cls=t.acc>=75?'good':(t.acc>=50?'mid':'bad');html+='<div class="bar-row"><div class="bar-top"><span>'+esc(t.name)+'</span><span class="muted">'+t.right+'/'+t.total+' • '+Math.round(t.acc)+'%</span></div><div class="bar-outer"><div class="bar-inner '+cls+'" style="width:'+Math.max(2,t.acc)+'%"></div></div></div>'});
-  html+='</div>';
-
-  html+='<h2 class="section-title">Weak Topics <span class="muted">(<50%)</span></h2><div class="card"><div class="tag-list">'+(weak.length?weak.map(function(t){return '<span class="tag weak">⚠ '+esc(t.name)+' — '+Math.round(t.acc)+'%</span>'}).join(''):'<span class="muted small">None 🎉</span>')+'</div></div>';
-  html+='<h2 class="section-title">Strong Topics <span class="muted">(>75%)</span></h2><div class="card"><div class="tag-list">'+(strong.length?strong.map(function(t){return '<span class="tag strong">✓ '+esc(t.name)+' — '+Math.round(t.acc)+'%</span>'}).join(''):'<span class="muted small">Keep practising.</span>')+'</div></div>';
-
-  html+='<h2 class="section-title">Question-by-Question Review</h2>';
-  var letters=['A','B','C','D','E','F','G','H'];
-  r.details.forEach(function(d,i){
-    var q=d.q;
-    var verdict;
-    if(d.user<0)verdict='<span class="verdict sk">SKIPPED • 0</span>';
-    else if(d.ok)verdict='<span class="verdict ok">CORRECT • +'+fmtMarks(mk.correct)+'</span>';
-    else verdict='<span class="verdict no">WRONG • '+fmtMarks(mk.wrong)+'</span>';
-    html+='<div class="review-item"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:8px"><div class="muted small">Q'+(i+1)+' • '+esc(q.topic||'General')+'</div>'+verdict+'</div><div class="rq">'+esc(q.q)+'</div>';
-    q.options.forEach(function(opt,oi){var cls='';if(oi===q.ans)cls='correct';else if(oi===d.user&&!d.ok)cls='wrong';var mark='';if(oi===q.ans&&oi===d.user)mark=' ✓ your answer';else if(oi===q.ans)mark=' ✓ correct answer';else if(oi===d.user)mark=' ✗ your answer';html+='<div class="rev-opt '+cls+'"><b>'+letters[oi]+'.</b><span>'+esc(opt)+mark+'</span></div>'});
-    if(q.explain)html+='<div class="rev-explain"><b>Explanation:</b> '+esc(q.explain)+'</div>';
-    html+='</div>';
-  });
-
+  html += '</div></div>';
+  
+  html += '<div class="btn-row" style="margin-bottom:20px"><button type="button" class="btn primary" id="rHome">🏠 Return Home</button></div>';
   host.innerHTML=html;
-
-  renderMath(host);
-
-  $('rRetake').onclick=function(){var questions=r.details.map(function(d){return d.q});launchTest({name:r.name+' (retake)',exam:r.exam,subject:r.subject,source:r.source,questions:questions.map(function(q){return JSON.parse(JSON.stringify(q))}),timerMode:r.timerMode,limitSec:r.timerMode==='down'?r.elapsed:0})};
-  $('rNew').onclick=function(){if(r.source==='bank')openUpload(uploadMode);else openSetup()};
   $('rHome').onclick=function(){renderHome();showScreen('screen-home')};
-  $('rDownload').onclick=function(){downloadResult(r)};
-}
-function downloadResult(r){
-  var lines=[];var letters=['A','B','C','D','E','F','G','H'];
-  var mk=r.marking||getMarking(r.exam);
-  lines.push('===== AMBITION CBT MODE =====');lines.push('');
-  lines.push('Test: '+r.name);
-  lines.push('Exam: '+(r.exam||'—'));
-  lines.push('Date: '+r.date);
-  lines.push('Marking Scheme: '+mk.label);
-  lines.push('Score: '+fmtMarks(r.score)+' / '+fmtMarks(r.maxMarks)+' marks ('+r.pct+'%)');
-  lines.push('Correct: '+r.correctCount+' | Wrong: '+r.wrongCount+' | Skipped: '+r.skippedCount);
-  lines.push('Time: '+fmtTime(r.elapsed));
-  lines.push('');lines.push('--- REVIEW ---');lines.push('');
-  r.details.forEach(function(d,i){var q=d.q;lines.push('Q'+(i+1)+'. '+q.q);lines.push('Topic: '+(q.topic||'General')+' | Diff: '+(q.diff||'medium')+' | Marks: '+fmtMarks(d.marks));q.options.forEach(function(opt,oi){var tag='';if(oi===q.ans)tag=' <-- CORRECT';if(oi===d.user&&oi!==q.ans)tag=' <-- your answer (wrong)';if(oi===d.user&&oi===q.ans)tag=' <-- your answer (correct)';lines.push('  '+letters[oi]+') '+opt+tag)});if(d.user<0)lines.push('  >> Not answered.');if(q.explain)lines.push('  Explanation: '+q.explain);lines.push('')});
-  var blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='Ambition_CUET_Result_'+r.name.replace(/[^\w\d]+/g,'_').slice(0,40)+'_'+Date.now()+'.txt';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url)},2000)
 }
 
 /* ============ SETTINGS ============ */
 function openSettings(){
-  var theme=LS.raw(K.THEME,'dark');
-  var ov=document.createElement('div');
-  ov.className='modal-overlay';
-  var box=document.createElement('div');
-  box.className='modal';
-  
-  // ===== AI SOURCE TEXT REMOVED FROM HERE =====
-  box.innerHTML='<h3>⚙️ Settings</h3>'+
-    '<div class="field"><label>Appearance</label><div class="chip-row" id="sTheme"><button type="button" class="chip'+(theme==='dark'?' active':'')+'" data-theme="dark">🌙 Dark</button><button type="button" class="chip'+(theme==='light'?' active':'')+'" data-theme="light">☀️ Light</button></div></div>'+
-    '<div class="field"><label>Data</label><div class="btn-row"><button type="button" class="btn small danger" id="sReset">🗑 Reset all</button><button type="button" class="btn small" id="sResetSeen">↺ Clear Q history</button></div><p class="muted small" style="margin:8px 0 0" id="sStats"></p></div>'+
-    '<div class="modal-actions"><button type="button" class="btn" id="sCancel">Close</button></div>';
-  // ===========================================
-  
-  ov.appendChild(box);
-  document.body.appendChild(ov);
-  function close(){if(ov.parentNode)document.body.removeChild(ov)}
-  function updateStats(){var seen=getSeen().length;var hist=LS.get(K.HISTORY,[]).length;box.querySelector('#sStats').textContent=seen+' questions remembered • '+hist+' tests'}
-  updateStats();
-  box.querySelectorAll('#sTheme .chip').forEach(function(b){b.onclick=function(){box.querySelectorAll('#sTheme .chip').forEach(function(x){x.classList.remove('active')});b.classList.add('active');applyTheme(b.dataset.theme)}});
-  box.querySelector('#sResetSeen').onclick=function(){LS.del(K.SEEN);LS.del(K.RECENT);updateStats()};
-  box.querySelector('#sReset').onclick=function(){dialog({title:'Reset everything?',message:'Deletes all data.',buttons:[{text:'Cancel',value:false},{text:'Reset',primary:true,danger:true,value:true}]}).then(function(ok){if(!ok)return;LS.del(K.SEEN);LS.del(K.RECENT);LS.del(K.ACTIVE);LS.del(K.HISTORY);LS.del(K.BOOKS);IDB.all().then(function(banks){var chain=Promise.resolve();banks.forEach(function(b){chain=chain.then(function(){return IDB.del(b.id)})});return chain}).then(function(){close();renderHome();showScreen('screen-home');dialog({title:'Done',message:'All data cleared.',buttons:[{text:'OK',primary:true,value:true}]})})})};
-  box.querySelector('#sCancel').onclick=close;
+  dialog({title:'⚙️ Settings',message:'Ambition CBT Mode is running on verified CUET UG 2026 Engine.'});
 }
-function applyTheme(theme){document.documentElement.setAttribute('data-theme',theme);LS.setRaw(K.THEME,theme);var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',theme==='light'?'#f5f6fb':'#0b0d12')}
 
-/* ============ WIRING ============ */
+/* ============ INIT & EVENTS ============ */
 function wireEvents(){
-  var el;
-  el=$('btnOpenSettings');if(el)el.onclick=openSettings;
-  el=$('btnBackHome');if(el)el.onclick=function(){renderHome();showScreen('screen-home')};
-  el=$('btnModeAI');if(el)el.onclick=openSetup;
-  el=$('btnModeBook');if(el)el.onclick=function(){openUpload('extract')};
-  el=$('btnModeNotes');if(el)el.onclick=function(){openUpload('notes')};
-  el=$('btnModeImage');if(el)el.onclick=function(){openUpload('image')};
-  el=$('btnSetupBack');if(el)el.onclick=function(){showScreen('screen-exam')};
-  el=$('btnFullSubject');if(el)el.onclick=setFullSubject;
-  el=$('btnClearChapters');if(el)el.onclick=clearChapters;
-  el=$('btnStartTest');if(el)el.onclick=startAITest;
-  el=$('btnUploadBack');if(el)el.onclick=function(){showScreen('screen-exam')};
-  el=$('fileInput');if(el)el.onchange=function(e){var f=e.target.files&&e.target.files[0];if(f)handleFileUpload(f);e.target.value=''};
-  el=$('btnPaletteToggle');if(el)el.onclick=function(){$('palette').classList.toggle('open')};
-  el=$('btnPrev');if(el)el.onclick=goPrev;
-  el=$('btnNext');if(el)el.onclick=goNext;
-  el=$('btnMark');if(el)el.onclick=toggleMark;
-  el=$('btnClear');if(el)el.onclick=clearAnswer;
-  el=$('btnSubmit');if(el)el.onclick=confirmSubmit;
-  el=$('btnResultHome');if(el)el.onclick=function(){renderHome();showScreen('screen-home')};
-  document.addEventListener('keydown',function(e){if(!$('screen-test').classList.contains('active'))return;if(e.target&&(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'))return;if(e.key==='ArrowRight')goNext();else if(e.key==='ArrowLeft')goPrev();else if(e.key==='m'||e.key==='M')toggleMark();else if(e.key==='1'||e.key==='2'||e.key==='3'||e.key==='4'){var idx=parseInt(e.key,10)-1;if(T&&T.questions[T.cur]&&idx<T.questions[T.cur].options.length){T.answers[T.cur]=idx;T.visited[T.cur]=true;LS.set(K.ACTIVE,T);renderQuestion()}}});
-  window.addEventListener('beforeunload',function(e){if(T&&!T.submitted){LS.set(K.ACTIVE,T);e.preventDefault();e.returnValue='';return ''}});
+  $('btnOpenSettings').onclick=openSettings;
+  $('btnBackHome').onclick=function(){renderHome();showScreen('screen-home')};
+  $('btnModeAI').onclick=openSetup;
+  $('btnModeBook').onclick=function(){openUpload('extract')};
+  $('btnModeNotes').onclick=function(){openUpload('notes')};
+  $('btnModeImage').onclick=function(){openUpload('image')};
+  $('btnSetupBack').onclick=function(){showScreen('screen-exam')};
+  $('btnFullSubject').onclick=setFullSubject;
+  $('btnClearChapters').onclick=clearChapters;
+  $('btnStartTest').onclick=startAITest;
+  $('btnUploadBack').onclick=function(){showScreen('screen-exam')};
+  $('fileInput').onchange=function(e){var f=e.target.files&&e.target.files[0];if(f)handleFileUpload(f);e.target.value=''};
+  $('btnPaletteToggle').onclick=function(){$('palette').classList.toggle('open')};
+  $('btnPrev').onclick=goPrev;
+  $('btnNext').onclick=goNext;
+  $('btnMark').onclick=toggleMark;
+  $('btnClear').onclick=clearAnswer;
+  $('btnSubmit').onclick=confirmSubmit;
+  $('btnResultHome').onclick=function(){renderHome();showScreen('screen-home')};
 }
 
 (function init(){
-  try{var params=new URLSearchParams(window.location.search);var uname=params.get('name');if(uname){var logo=document.querySelector('.logo');localStorage.setItem('cbt_user_name',uname)}}catch(e){}
-  var theme=LS.raw(K.THEME,'dark');applyTheme(theme);
   wireEvents();renderHome();bindExamGrid();showScreen('screen-home');
   IDB.open().catch(function(){});
-
-  // ===== SERVICE WORKER REGISTER ADDED =====
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(function(reg) { console.log('ServiceWorker registered successfully'); })
-        .catch(function(err) { console.log('ServiceWorker registration failed: ', err); });
-    });
+    navigator.serviceWorker.register('/service-worker.js').catch(function(){});
   }
-  // =========================================
-
 })();
 </script>
 </body>
