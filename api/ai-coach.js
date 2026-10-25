@@ -1,16 +1,8 @@
 // Ambition CBT Mode — Production AI Backend
-// Secure, fast & optimized for Vercel Serverless limits
+// Updated with verified active Google Gemini models
 
 module.exports = async (req, res) => {
-  const allowedOrigin = 'https://ambition-cbt-mode.vercel.app';
-  const origin = req.headers.origin;
-
-  if (origin === allowedOrigin || process.env.NODE_ENV === 'development') {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  } else {
-    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
-  }
-
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -24,7 +16,7 @@ module.exports = async (req, res) => {
 
   const key = (process.env.GEMINI_API_KEY || '').trim();
   if (!key) {
-    return res.status(500).json({ error: 'NO_KEY', message: 'GEMINI_API_KEY missing.' });
+    return res.status(500).json({ error: 'NO_KEY', message: 'GEMINI_API_KEY missing in Vercel settings.' });
   }
 
   const isCBT = context && (context.source === 'ambition-cuet-cbt' || context.source === 'cbt-test-studio');
@@ -52,20 +44,25 @@ module.exports = async (req, res) => {
     systemPrompt = 'You are Ambition AI Coach for CUET aspirants. Supportive, motivating, concise. Output plain text.';
   }
 
-  let contents = [{ role: 'user', parts: [{ text: message }] }];
+  // Combine system instruction + user prompt for robust compatibility across all model tiers
+  let userText = systemPrompt + '\n\n---\nUser Input:\n' + message;
+  let parts = [{ text: userText }];
+
   if (hasImages) {
     for (const img of allImages) {
-      contents[0].parts.push({
+      parts.push({
         inline_data: { mime_type: img.mime, data: img.data }
       });
     }
   }
 
-  // UPDATED: Most stable and working Gemini models
+  let contents = [{ role: 'user', parts: parts }];
+
+  // Active production models on Gemini API
   const models = [
+    'gemini-2.5-flash',
     'gemini-2.0-flash',
-    'gemini-1.5-flash-latest',
-    'gemini-1.5-pro-latest'
+    'gemini-2.5-flash-lite'
   ];
 
   let lastError = '';
@@ -73,9 +70,12 @@ module.exports = async (req, res) => {
   for (const model of models) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 9500);
+      const timeoutId = setTimeout(() => controller.abort(), 13000);
 
-      const genConfig = { maxOutputTokens: 8192, temperature: isCBT ? 0.1 : 0.7 };
+      const genConfig = {
+        maxOutputTokens: 8192,
+        temperature: isCBT ? 0.15 : 0.7
+      };
       if (isCBT) genConfig.responseMimeType = 'application/json';
 
       const response = await fetch(
@@ -84,7 +84,6 @@ module.exports = async (req, res) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
           body: JSON.stringify({
-            systemInstruction: { parts: [{ text: systemPrompt }] },
             contents,
             generationConfig: genConfig
           }),
@@ -96,8 +95,8 @@ module.exports = async (req, res) => {
       const data = await response.json().catch(() => ({}));
 
       if (response.ok) {
-        const parts = data.candidates?.[0]?.content?.parts;
-        let text = parts ? parts.map(p => p.text || '').join('').trim() : '';
+        const candidateParts = data.candidates?.[0]?.content?.parts;
+        let text = candidateParts ? candidateParts.map(p => p.text || '').join('').trim() : '';
 
         if (text) {
           if (isCBT) {
@@ -108,7 +107,7 @@ module.exports = async (req, res) => {
           }
           return res.status(200).json({ message: text });
         }
-        lastError = `[${model}] Empty output`;
+        lastError = `[${model}] Empty output received`;
         continue;
       }
 
@@ -116,19 +115,19 @@ module.exports = async (req, res) => {
       lastError = `[${model}] ${errMsg}`;
 
       if (response.status === 401 || response.status === 403) {
-        return res.status(401).json({ error: 'AUTH_ERROR', message: 'API Key invalid or expired.' });
+        return res.status(401).json({ error: 'AUTH_ERROR', message: 'API Key galat hai ya permissions disabled hain.' });
       }
       if (response.status === 429) {
-        return res.status(429).json({ error: 'QUOTA_EXCEEDED', message: 'Quota limit cross ho gayi. 1 minute baad try karein.' });
+        return res.status(429).json({ error: 'QUOTA_EXCEEDED', message: 'Quota limit hit ho gayi hai. 1 minute baad try karein.' });
       }
     } catch (err) {
-      lastError = err.name === 'AbortError' ? `[${model}] Timeout (>9.5s)` : `[${model}] ${err.message}`;
+      lastError = err.name === 'AbortError' ? `[${model}] Request Timeout (>13s)` : `[${model}] ${err.message}`;
     }
   }
 
   return res.status(502).json({
     error: 'AI_TIMEOUT_OR_BUSY',
-    message: 'AI request process nahi ho saki. Chhote chunks ya clear photo upload karein.',
+    message: 'AI models ne respond nahi kiya.',
     detail: lastError
   });
 };
