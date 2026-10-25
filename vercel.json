@@ -1,12 +1,10 @@
 {
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "POST, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
-      ]
-    }
-  ]
+  "name": "ambition-cbt-mode",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CUET CBT Examination Platform",
+  "engines": {
+    "node": "24.x"
+  },
+  "dependencies": {}
 }
