@@ -1,0 +1,10 @@
+{
+  "name": "ambition-cbt-mode",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CUET CBT Examination Platform",
+  "engines": {
+    "node": "18.x"
+  },
+  "dependencies": {}
+}
