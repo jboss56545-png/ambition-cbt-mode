@@ -1,26 +1,40 @@
-// CBT Test Studio — AI Master Backend (PDF + Image + Scanned PDF)
+// Ambition CBT Mode — Production AI Backend
+// Secure, fast & optimized for Vercel Serverless limits
 
 module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const allowedOrigin = 'https://ambition-cbt-mode.vercel.app';
+  const origin = req.headers.origin;
+
+  // Domain security check (CORS)
+  if (origin === allowedOrigin || process.env.NODE_ENV === 'development') {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  }
+
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
 
-  const reply = (text) => res.status(200).json({ message: text });
-
   const { message, context, history, image, images } = req.body || {};
   if (!message || typeof message !== 'string' || message.length > 80000) {
-    return res.status(400).json({ error: 'BAD_INPUT', message: 'Message missing or too long.' });
+    return res.status(400).json({ error: 'BAD_INPUT', message: 'Message missing or invalid.' });
   }
 
   const key = (process.env.GEMINI_API_KEY || '').trim();
-  if (!key) return res.status(500).json({ error: 'NO_KEY', message: 'Setup: GEMINI_API_KEY missing on Vercel.' });
+  if (!key) {
+    return res.status(500).json({
+      error: 'NO_KEY',
+      message: 'GEMINI_API_KEY missing in Vercel Environment Variables.'
+    });
+  }
 
-  const isCBT = context && context.source === 'cbt-test-studio';
+  const isCBT = context && (context.source === 'ambition-cuet-cbt' || context.source === 'cbt-test-studio');
   const mode = (context && context.mode) || 'chat';
 
-  // Collect all images (single + array)
+  // Collect and validate base64 images
   let allImages = [];
   if (Array.isArray(images) && images.length) {
     allImages = images.filter(i => i && i.data && i.mime);
@@ -29,205 +43,144 @@ module.exports = async (req, res) => {
   }
   const hasImages = allImages.length > 0;
 
-  let system;
+  let systemPrompt = '';
 
-  // ===== SCANNED PDF / IMAGE OCR EXTRACT =====
+  // 1. IMAGE & SCANNED OCR EXTRACT
   if (hasImages && (mode === 'scanned-extract' || mode === 'image-extract' || mode === 'extract' || mode === 'notes')) {
-    system =
-      'You are an expert at extracting exam questions from photos/scans of Indian educational material (Oswaal, Arihant, MTG, NCERT, CBSE, CUET, JEE, NEET question papers, notes, textbook pages, handwritten or printed).\n\n' +
-      'You have received ' + allImages.length + ' page image(s). Read text carefully from ALL images.\n\n' +
-      'INPUT MAY CONTAIN:\n' +
-      '• Real MCQs with options (A/B/C/D or 1/2/3/4)\n' +
-      '• Match List I with List II questions\n' +
-      '• Assertion-Reason questions\n' +
-      '• Statement-based questions\n' +
-      '• Fill in the blanks\n' +
-      '• Theory paragraphs (for notes mode — generate MCQs)\n' +
-      '• Multiple columns, mixed English + Hindi text\n' +
-      '• Tables, diagrams (ignore diagrams, focus on text)\n\n' +
-      'YOUR MISSION:\n' +
-      'Extract ALL valid exam questions and convert to standard 4-option MCQ format.\n\n' +
-      'CONVERSION RULES:\n' +
-      '1. Standard MCQ: Copy question + options EXACTLY as in image.\n' +
-      '2. Match-the-Following: "Match List I with List II: [items]. Options: (1)... (2)... (3)... (4)...".\n' +
-      '3. Assertion-Reason: "Assertion (A): ... Reason (R): ... Options: (1) Both true, R explains A (2) Both true, R does not explain A (3) A true, R false (4) A false, R true".\n' +
-      '4. Statement-based: "Consider the following statements: I. ... II. ... Which are correct? (1)... (2)... (3)... (4)...".\n' +
-      '5. If image blurry, do your best — DO NOT invent questions.\n' +
-      '6. Do NOT extract page numbers, headers, footers, section headings.\n' +
-      '7. Do NOT extract answer keys/solutions as questions.\n\n' +
-      'STRICT RULES:\n' +
-      '1. Copy question text EXACTLY. Do NOT paraphrase.\n' +
-      '2. Preserve original answer if given (map A/B/C/D → 0/1/2/3, 1/2/3/4 → 0/1/2/3).\n' +
-      '3. Every question: exactly 4 options, ONE correct.\n' +
-      '4. If options missing but question exists, ADD 4 plausible distractors.\n' +
-      '5. "topic" = chapter name if visible, else "General".\n' +
-      '6. "diff" = easy/medium/hard.\n' +
-      '7. "explain" = short reasoning if available, else "".\n' +
-      '8. If NO questions found in these images, return [] — but only after thorough reading.\n\n' +
-      'FORMAT — Reply with ONLY a valid JSON array:\n' +
-      '[{"q":"question text","options":["A","B","C","D"],"ans":0,"topic":"chapter","diff":"easy","explain":""}]\n\n' +
-      'USER REQUEST:\n' + JSON.stringify(context || {});
-
-  // ===== TEXT EXTRACT =====
-  } else if (isCBT && mode === 'extract') {
-    system =
-      'You are an expert at extracting exam questions from Indian educational PDFs (Oswaal, Arihant, MTG, NCERT, CBSE, CUET, JEE, NEET).\n\n' +
-      'INPUT TEXT MAY CONTAIN:\n' +
-      '• Real MCQs (numbered)\n• Match List I with List II\n• Assertion-Reason\n• Statement-based\n• Sequence/Order\n• Fill in the blanks\n• Case-based\n' +
-      '• OMR grids (SKIP)\n• Answer keys, solutions (SKIP)\n• Theory paragraphs (SKIP)\n\n' +
-      'CONVERSION RULES:\n' +
-      '1. Standard MCQ: Copy question + options EXACTLY.\n' +
-      '2. Match: "Match List I with List II: [items]. Options: (1)... (2)... (3)... (4)...".\n' +
-      '3. A-R: "Assertion (A): ... Reason (R): ... Options: (1)... (2)... (3)... (4)...".\n' +
-      '4. Statement: "Consider following statements: I. ... II. ... Options: (1)... (2)... (3)... (4)...".\n' +
-      '5. Sequence: "Arrange: A... B... C... Options: (1) ABCD (2) BACD...".\n\n' +
-      'STRICT RULES:\n' +
-      '1. Copy question text EXACTLY.\n' +
-      '2. Preserve original answer (map A/B/C/D → 0/1/2/3, 1/2/3/4 → 0/1/2/3).\n' +
-      '3. Exactly 4 options, ONE correct.\n' +
-      '4. "topic" = chapter name, else "General".\n' +
-      '5. "diff" = easy/medium/hard.\n' +
-      '6. "explain" = short reasoning if available, else "".\n' +
-      '7. Extract EVERY valid question. If none, return [].\n\n' +
-      'FORMAT — Reply with ONLY a valid JSON array:\n' +
-      '[{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"ch","diff":"easy","explain":""}]\n\n' +
-      'USER REQUEST:\n' + JSON.stringify(context || {});
-
-  // ===== NOTES MODE =====
-  } else if (isCBT && mode === 'notes') {
-    system =
-      'You are an expert Indian exam question setter (Oswaal/Arihant/MTG style).\n\n' +
-      'Generate high-quality MCQs based on the CONCEPTS in the given notes.\n\n' +
+    systemPrompt =
+      'You are a high-speed Indian competitive exam question extractor for CUET UG.\n' +
+      'Extract all valid MCQs from the given images.\n' +
       'RULES:\n' +
-      '1. Each question: 4 options, ONE correct.\n' +
-      '2. Vary correct option index (0,1,2,3).\n' +
-      '3. Plausible distractors like real exams.\n' +
-      '4. "topic" = concept/chapter.\n' +
-      '5. "diff" = easy/medium/hard.\n' +
-      '6. "explain" = 1-2 sentence reasoning.\n' +
-      '7. Cover DIFFERENT concepts.\n\n' +
-      'FORMAT — Reply with ONLY a valid JSON array:\n' +
-      '[{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"topic","diff":"easy","explain":"why"}]\n\n' +
-      'USER REQUEST:\n' + JSON.stringify(context || {});
+      '1. NEVER invent questions. Extract ONLY what is visible in the image.\n' +
+      '2. Standard 4 options per question. ans must be exact 0-based integer index (0, 1, 2, or 3).\n' +
+      '3. Use LaTeX for math ($...$).\n' +
+      '4. Output ONLY a valid JSON array. No markdown, no prose.\n' +
+      'JSON Schema: [{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"chapter","diff":"medium","explain":""}]';
 
-  // ===== AI PRACTICE =====
+  // 2. TEXT-BASED QUESTION PAPER EXTRACT
+  } else if (isCBT && mode === 'extract') {
+    systemPrompt =
+      'You are an expert exam question extractor for CUET.\n' +
+      'Extract explicit MCQs from the provided text. Never invent questions.\n' +
+      'Options must be exactly 4. ans is index 0-3.\n' +
+      'Use LaTeX for math. Output ONLY a valid JSON array.\n' +
+      '[{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"chapter","diff":"medium","explain":""}]';
+
+  // 3. GENERATE MCQS FROM NOTES
+  } else if (isCBT && mode === 'notes') {
+    systemPrompt =
+      'You are a CUET question setter.\n' +
+      'Generate high-yield MCQs based on the provided notes/concepts.\n' +
+      '4 options, 1 correct. ans is index 0-3. Use LaTeX for math.\n' +
+      'Output ONLY a valid JSON array.\n' +
+      '[{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"chapter","diff":"medium","explain":""}]';
+
+  // 4. AI PRACTICE TEST GENERATION
   } else if (isCBT && mode === 'ai') {
-    system =
-      'You are an expert Indian competitive-exam question setter with 20 years experience.\n\n' +
-      'Generate MCQs matching EXACT style of PYQ books: Oswaal, Arihant, MTG, Disha.\n\n' +
-      'PATTERN: Recent exam trend, NCERT-based, common traps, mix of factual/conceptual/application.\n\n' +
-      'RULES: 4 options, ONE correct, vary index (0,1,2,3). "topic" = exact chapter. "diff" = easy/medium/hard. "explain" = 1-2 sentences.\n\n' +
-      'FORMAT — Reply with ONLY a valid JSON array:\n' +
-      '[{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"ch","diff":"easy","explain":"why"}]\n\n' +
-      'USER REQUEST:\n' + JSON.stringify(context || {});
+    systemPrompt =
+      'You are a premier CUET UG question setter.\n' +
+      'Generate NCERT-based PYQ-pattern MCQs.\n' +
+      '4 options, 1 correct. ans is index 0-3. Use LaTeX for math ($...$).\n' +
+      'Output ONLY a valid JSON array.\n' +
+      '[{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"chapter","diff":"medium","explain":""}]';
 
-  // ===== GENERAL CHAT =====
+  // 5. GENERAL CHAT / FALLBACK
   } else {
-    system =
-      'You are "The Raven", a wise and encouraging AI coach for competitive exam students (JEE, NEET, UPSC, CUET, Boards).\n\n' +
-      'Personality:\n' +
-      '- Supportive, motivating, slightly poetic.\n' +
-      '- Help with study plans, habits, focus, time management, mental health.\n' +
-      '- Analyze progress data (in context) and give actionable advice.\n' +
-      '- Concise and friendly. Emojis sparingly.\n' +
-      '- NEVER output JSON. Natural language (Hinglish/English mix OK).\n\n' +
-      'USER REQUEST:\n' + JSON.stringify(context || {}) + '\n\nUser Message: ' + message;
+    systemPrompt =
+      'You are Ambition AI Coach for CUET aspirants. Supportive, motivating, concise. Output plain text.';
   }
 
-  // Build contents
-  let msgs = (Array.isArray(history) ? history : [])
-    .slice(-10)
-    .filter(m => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string' && m.content);
-  while (msgs.length && msgs[0].role !== 'user') msgs.shift();
-  if (!msgs.length) msgs = [{ role: 'user', content: message }];
+  // Build payload
+  let contents = [{ role: 'user', parts: [{ text: message }] }];
 
-  let contents = msgs.map(m => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: m.content }]
-  }));
-
-  // Attach all images to LAST user message
   if (hasImages) {
-    const lastMsg = contents[contents.length - 1];
-    if (lastMsg && lastMsg.role === 'user') {
-      for (const img of allImages) {
-        lastMsg.parts.push({
-          inline_data: {
-            mime_type: img.mime,
-            data: img.data
-          }
-        });
-      }
+    for (const img of allImages) {
+      contents[0].parts.push({
+        inline_data: {
+          mime_type: img.mime,
+          data: img.data
+        }
+      });
     }
   }
 
+  // Fast & reliable models list (Free-tier safe)
   const models = [
     (process.env.GEMINI_MODEL || '').trim(),
-    'gemini-3.5-flash-lite',
-    'gemini-3.5-flash',
-    'gemini-flash-latest',
     'gemini-2.5-flash',
-    'gemini-2.5-flash-lite',
-    'gemini-2.0-flash'
+    'gemini-2.0-flash',
+    'gemini-1.5-flash'
   ].filter((m, i, a) => m && a.indexOf(m) === i);
 
-  let lastErr = '';
-  let sawQuota = false;
-  let authError = '';
+  let lastError = '';
 
   for (const model of models) {
     try {
-      console.log('[ai-coach] Trying model:', model, '| Images:', allImages.length);
-      const temp = isCBT ? 0.15 : 0.85;
-      const genConfig = { maxOutputTokens: 16384, temperature: temp };
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 9500); // 9.5s timeout to stay inside Vercel limits
+
+      const genConfig = {
+        maxOutputTokens: 8192,
+        temperature: isCBT ? 0.1 : 0.7
+      };
       if (isCBT) genConfig.responseMimeType = 'application/json';
 
-      const r = await fetch(
-        'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent',
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': key
+          },
           body: JSON.stringify({
-            systemInstruction: { parts: [{ text: system }] },
+            systemInstruction: { parts: [{ text: systemPrompt }] },
             contents,
             generationConfig: genConfig
-          })
+          }),
+          signal: controller.signal
         }
       );
-      const data = await r.json().catch(() => ({}));
 
-      if (r.ok) {
-        const parts = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts;
+      clearTimeout(timeoutId);
+      const data = await response.json().catch(() => ({}));
+
+      if (response.ok) {
+        const parts = data.candidates?.[0]?.content?.parts;
         let text = parts ? parts.map(p => p.text || '').join('').trim() : '';
+
         if (text) {
           if (isCBT) {
             text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
-            const fb = text.indexOf('[');
-            const lb = text.lastIndexOf(']');
-            if (fb >= 0 && lb > fb) text = text.slice(fb, lb + 1);
+            const start = text.indexOf('[');
+            const end = text.lastIndexOf(']');
+            if (start >= 0 && end > start) text = text.slice(start, end + 1);
           }
-          console.log('[ai-coach] SUCCESS:', model);
-          return reply(text);
+          return res.status(200).json({ message: text });
         }
-        lastErr = '[' + model + '] Empty response';
+        lastError = `[${model}] Empty output`;
         continue;
       }
 
-      const msg = (data.error && data.error.message) || ('HTTP ' + r.status);
-      lastErr = '[' + model + '] ' + r.status + ': ' + msg;
-      console.error('[ai-coach]', lastErr);
+      const errMsg = data.error?.message || `HTTP ${response.status}`;
+      lastError = `[${model}] ${errMsg}`;
 
-      if (r.status === 401 || r.status === 403 || (r.status === 400 && /api key/i.test(msg))) { authError = msg; break; }
-      if (r.status === 429) sawQuota = true;
-    } catch (e) {
-      lastErr = '[' + model + '] ' + (e && e.message ? e.message : 'network error');
-      console.error('[ai-coach]', lastErr);
+      if (response.status === 401 || response.status === 403) {
+        return res.status(401).json({ error: 'AUTH_ERROR', message: 'Vercel me GEMINI_API_KEY galat hai ya expire ho gayi hai.' });
+      }
+      if (response.status === 429) {
+        return res.status(429).json({ error: 'QUOTA_EXCEEDED', message: 'Gemini free quota limit cross ho gayi. 1 minute baad try karein.' });
+      }
+    } catch (err) {
+      lastError = err.name === 'AbortError' ? `[${model}] Timeout (>9.5s)` : `[${model}] ${err.message}`;
     }
   }
 
-  if (authError) return res.status(401).json({ error: 'AUTH_ERROR', message: 'Google API key problem: ' + authError, detail: lastErr });
-  if (sawQuota) return res.status(429).json({ error: 'QUOTA_EXCEEDED', message: 'Free limit poori hai. 1-2 minute baad try karo.', detail: lastErr });
-  return res.status(502).json({ error: 'AI_UNAVAILABLE', message: 'AI se jawab nahi mila. Sabhi models fail ho gaye.', detail: lastErr });
+  return res.status(502).json({
+    error: 'AI_TIMEOUT_OR_BUSY',
+    message: 'AI request process nahi ho saki. Chhote chunks ya clear photo upload karein.',
+    detail: lastError
+  });
 };
 
-module.exports.config = { maxDuration: 60 };
+module.exports.config = { maxDuration: 15 };
