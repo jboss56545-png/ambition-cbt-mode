@@ -1,5 +1,5 @@
 // Ambition CBT Mode — Production AI Backend
-// Updated with verified active Google Gemini models
+// Updated with Gemini 3.5 Models
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -44,7 +44,6 @@ module.exports = async (req, res) => {
     systemPrompt = 'You are Ambition AI Coach for CUET aspirants. Supportive, motivating, concise. Output plain text.';
   }
 
-  // Combine system instruction + user prompt for robust compatibility across all model tiers
   let userText = systemPrompt + '\n\n---\nUser Input:\n' + message;
   let parts = [{ text: userText }];
 
@@ -58,11 +57,10 @@ module.exports = async (req, res) => {
 
   let contents = [{ role: 'user', parts: parts }];
 
-  // Active production models on Gemini API
+  // UPDATED: Using exactly what Google API requested
   const models = [
-    'gemini-2.5-flash',
-    'gemini-2.0-flash',
-    'gemini-2.5-flash-lite'
+    'gemini-3.5-flash-lite',
+    'gemini-3.5-flash'
   ];
 
   let lastError = '';
@@ -115,7 +113,7 @@ module.exports = async (req, res) => {
       lastError = `[${model}] ${errMsg}`;
 
       if (response.status === 401 || response.status === 403) {
-        return res.status(401).json({ error: 'AUTH_ERROR', message: 'API Key galat hai ya permissions disabled hain.' });
+        return res.status(401).json({ error: 'AUTH_ERROR', message: 'API Key galat hai.' });
       }
       if (response.status === 429) {
         return res.status(429).json({ error: 'QUOTA_EXCEEDED', message: 'Quota limit hit ho gayi hai. 1 minute baad try karein.' });
