@@ -10,7 +10,6 @@
 <!-- ===== PWA SETUP ===== -->
 <link rel="manifest" href="/manifest.json" />
 <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3404/3404134.png">
-<!-- ===================== -->
 
 <style>
 :root{--bg:#0b0d12;--bg-2:#0f1219;--card:#161a24;--card-2:#1c2130;--border:#252b3a;--text:#e8ecf5;--muted:#8b95ad;--accent:#6366f1;--accent-2:#a855f7;--green:#22c55e;--red:#ef4444;--purple:#a855f7;--grey:#4b5563;--orange:#f59e0b;--radius:16px;--radius-sm:10px;--shadow:0 10px 34px rgba(0,0,0,.45);--shadow-sm:0 4px 14px rgba(15,23,42,.28);--tap:44px}
@@ -32,214 +31,97 @@ a{color:var(--accent-2);text-decoration:none}
 .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:16px}
 .logo-dot{width:11px;height:11px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 0 16px rgba(139,92,246,.7)}
 .ambition-brand{gap:10px;letter-spacing:-.02em}.ambition-mark{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:var(--card-2);border:1px solid var(--border);flex-shrink:0}.ambition-mark svg{width:25px;height:25px;display:block}.brand-light{font-weight:500;color:var(--muted);letter-spacing:0}
-.analysis-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}.analysis-stat{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:14px}.analysis-stat .value{font-size:23px;font-weight:850;line-height:1.2}.analysis-stat .label{font-size:11px;color:var(--muted);margin-top:5px}.chart-wrap{width:100%;overflow:hidden}.history-chart{display:block;width:100%;height:auto;min-height:150px}.chart-note{font-size:11px;color:var(--muted);margin-top:8px}.history-record{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}.history-record:last-child{border-bottom:0}.history-record .record-name{font-weight:700;font-size:13px}.history-record .record-meta{font-size:11px;color:var(--muted);margin-top:3px}.history-record .record-score{text-align:right;font-weight:800;white-space:nowrap}.history-record .record-pct{font-size:11px;color:var(--muted);font-weight:600}
-@media(min-width:620px){.analysis-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.analysis-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}.analysis-stat{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:14px}.analysis-stat .value{font-size:23px;font-weight:850;line-height:1.2}.analysis-stat .label{font-size:11px;color:var(--muted);margin-top:5px}
 .icon-btn{width:var(--tap);height:var(--tap);border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--card);border:1px solid var(--border);font-size:17px;transition:.16s;flex-shrink:0}
 .icon-btn:active{transform:scale(.93)}
-@media(hover:hover){.icon-btn:hover{background:var(--card-2)}}
 .hero{padding:10px 0 26px}
 .hero h1{margin:0 0 10px;font-size:30px;line-height:1.12;font-weight:800;background:linear-gradient(120deg,var(--text) 20%,var(--accent) 65%,var(--accent-2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-@media(min-width:620px){.hero h1{font-size:36px}}
 .hero p{margin:0;color:var(--muted);font-size:14.5px;max-width:520px}
 .section-title{font-size:12px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-weight:700;margin:26px 0 12px}
-.section-title:first-child{margin-top:8px}
 .exam-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 @media(min-width:620px){.exam-grid{grid-template-columns:repeat(3,1fr)}}
-@media(min-width:880px){.exam-grid{grid-template-columns:repeat(4,1fr)}}
-.exam-card{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 14px;text-align:left;transition:.12s;display:flex;flex-direction:column;gap:8px;min-height:120px;cursor:pointer;-webkit-appearance:none;appearance:none}
-.exam-card:active{transform:scale(.96);border-color:var(--accent)}
-@media(hover:hover){.exam-card:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 12px 30px rgba(99,102,241,.22)}}
-.exam-card .emoji{font-size:26px;line-height:1;pointer-events:none}
-.exam-card .name{font-weight:700;font-size:15px;pointer-events:none}
-.exam-card .sub{font-size:11.5px;color:var(--muted);pointer-events:none}
-.exam-card::after{content:'';position:absolute;inset:auto -30% -60% auto;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,.28),transparent 70%);pointer-events:none}
+.exam-card{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 14px;text-align:left;transition:.12s;display:flex;flex-direction:column;gap:8px;min-height:120px;cursor:pointer}
 .mode-grid{display:grid;gap:14px;margin-top:8px}
 @media(min-width:640px){.mode-grid{grid-template-columns:1fr 1fr}}
-.mode-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 18px;text-align:left;transition:.12s;display:flex;flex-direction:column;gap:8px;cursor:pointer;-webkit-appearance:none;appearance:none;min-height:var(--tap)}
-.mode-card:active{transform:scale(.98);border-color:var(--accent-2)}
-@media(hover:hover){.mode-card:hover{transform:translateY(-3px);border-color:var(--accent-2);box-shadow:0 14px 34px rgba(139,92,246,.22)}}
+.mode-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 18px;text-align:left;transition:.12s;display:flex;flex-direction:column;gap:8px;cursor:pointer;min-height:var(--tap)}
 .mode-icon{font-size:32px;pointer-events:none}
 .mode-title{font-weight:750;font-size:18px;pointer-events:none}
 .mode-sub{font-size:13px;color:var(--muted);pointer-events:none}
 .chip-grid{display:flex;flex-wrap:wrap;gap:9px}
-.chip{background:var(--card);border:1px solid var(--border);border-radius:999px;padding:10px 16px;font-size:13.5px;font-weight:600;transition:.15s;color:var(--text);min-height:var(--tap);display:inline-flex;align-items:center;cursor:pointer;-webkit-appearance:none;appearance:none}
-.chip:active{transform:scale(.95)}
-@media(hover:hover){.chip:hover{border-color:var(--accent)}}
-.chip.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent;color:#fff;box-shadow:0 6px 18px rgba(99,102,241,.35)}
+.chip{background:var(--card);border:1px solid var(--border);border-radius:999px;padding:10px 16px;font-size:13.5px;font-weight:600;transition:.15s;color:var(--text);min-height:var(--tap);display:inline-flex;align-items:center;cursor:pointer}
+.chip.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent;color:#fff}
 .chip-row{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
 .check-list{display:grid;gap:8px;max-height:340px;overflow-y:auto;padding:4px}
 @media(min-width:700px){.check-list{grid-template-columns:1fr 1fr}}
-.check-item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 13px;font-size:13.5px;cursor:pointer;transition:.14s;text-align:left;min-height:var(--tap);-webkit-appearance:none;appearance:none;color:var(--text)}
-.check-item:active{transform:scale(.98)}
-@media(hover:hover){.check-item:hover{border-color:var(--accent)}}
+.check-item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 13px;font-size:13.5px;cursor:pointer;transition:.14s;text-align:left;color:var(--text)}
 .check-item.on{border-color:var(--accent);background:rgba(99,102,241,.13)}
-.check-box{width:19px;height:19px;min-width:19px;border-radius:6px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;transition:.14s}
+.check-box{width:19px;height:19px;border-radius:6px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff}
 .check-item.on .check-box{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent}
-.btn{border-radius:12px;padding:11px 18px;font-weight:650;font-size:14px;background:var(--card-2);border:1px solid var(--border);color:var(--text);transition:.16s;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:var(--tap);cursor:pointer;-webkit-appearance:none;appearance:none}
-.btn:active{transform:scale(.97)}
-@media(hover:hover){.btn:hover{transform:translateY(-1px);border-color:var(--accent)}}
-.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent;box-shadow:0 8px 22px rgba(99,102,241,.34)}
-.btn.ghost{background:transparent}
+.btn{border-radius:12px;padding:11px 18px;font-weight:650;font-size:14px;background:var(--card-2);border:1px solid var(--border);color:var(--text);display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:var(--tap);cursor:pointer}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent}
 .btn.danger{border-color:var(--red);color:var(--red)}
 .btn.big{width:100%;padding:15px;font-size:15.5px;margin-top:26px;min-height:52px}
 .btn.small{padding:8px 14px;font-size:12.5px;border-radius:9px;min-height:38px}
-.btn:disabled{opacity:.45;pointer-events:none}
-.btn-row{display:flex;gap:9px;flex-wrap:wrap}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm)}
-.card h3{margin:0 0 12px;font-size:15px}
 input[type=file]{width:100%;padding:14px;border-radius:12px;border:1.5px dashed var(--border);background:var(--bg-2);font-size:13px;cursor:pointer;color:var(--text)}
-input[type=number],input[type=text],input[type=password]{background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:11px 12px;outline:none;width:100%;transition:.15s;color:var(--text)}
-input[type=number]{width:110px}
-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,.16)}
-@media(max-width:640px){input[type=number],input[type=text],input[type=password],input[type=file]{font-size:16px}}
-.field{margin-bottom:16px}
-.field label{display:block;font-size:12.5px;font-weight:650;margin-bottom:7px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
 .progress-outer{height:8px;background:var(--card-2);border-radius:99px;overflow:hidden;margin-top:10px}
 .progress-inner{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .3s;border-radius:99px}
-.overlay{position:fixed;inset:0;background:rgba(5,7,12,.8);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:900;padding:24px;text-align:center}
+.overlay{position:fixed;inset:0;background:rgba(5,7,12,.8);backdrop-filter:blur(7px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:900;padding:24px;text-align:center}
 .spinner{width:52px;height:52px;border-radius:50%;border:4px solid rgba(139,92,246,.18);border-top-color:var(--accent-2);animation:spin .85s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 #loaderText{font-weight:600;font-size:15px;max-width:400px}
 #loaderSub{color:var(--muted);font-size:13px;max-width:420px}
 #screen-test{flex-direction:column;height:100vh;height:100dvh;background:var(--bg);overflow:hidden;position:fixed;inset:0;z-index:50}
-.test-topbar{display:flex;align-items:center;gap:10px;padding:10px 12px;padding-top:max(10px,env(safe-area-inset-top));border-bottom:1px solid var(--border);background:var(--bg-2);flex-shrink:0}
-.test-title{flex:1;font-weight:650;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.marking-badge{font-size:11px;font-weight:700;padding:6px 10px;border-radius:9px;background:var(--card);border:1px solid var(--border);color:var(--muted);flex-shrink:0;white-space:nowrap;font-variant-numeric:tabular-nums}
-.timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;flex-shrink:0}
-.timer.warn{border-color:var(--red);color:var(--red);animation:pulse 1s infinite}
-@keyframes pulse{50%{opacity:.55}}
-.test-body{flex:1;display:flex;overflow:hidden;position:relative;min-height:0}
-.q-area{flex:1;overflow-y:auto;padding:18px 16px 40px;-webkit-overflow-scrolling:touch;min-width:0}
+.test-topbar{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border);background:var(--bg-2);flex-shrink:0}
+.test-title{flex:1;font-weight:650;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.marking-badge{font-size:11px;font-weight:700;padding:6px 10px;border-radius:9px;background:var(--card);border:1px solid var(--border);color:var(--muted);flex-shrink:0}
+.timer{font-weight:700;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;flex-shrink:0}
+.test-body{flex:1;display:flex;overflow:hidden;position:relative}
+.q-area{flex:1;overflow-y:auto;padding:18px 16px 40px}
 .q-meta{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-.q-counter{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.09em}
-.badge{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:99px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
-.badge.easy{background:rgba(34,197,94,.16);color:#4ade80}
-.badge.medium{background:rgba(245,158,11,.16);color:#fbbf24}
-.badge.hard{background:rgba(239,68,68,.16);color:#f87171}
+.q-counter{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase}
+.badge{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:99px;text-transform:uppercase}
 .badge.topic{background:rgba(99,102,241,.16);color:#a5b4fc}
-.q-text{font-size:16.5px;line-height:1.7;font-weight:550;margin-bottom:20px;word-wrap:break-word;white-space:normal;overflow-x:auto}
-@media(min-width:640px){.q-text{font-size:17.5px}}
+.badge.medium{background:rgba(245,158,11,.16);color:#fbbf24}
+.q-text{font-size:16.5px;line-height:1.7;font-weight:550;margin-bottom:20px;word-wrap:break-word}
 .options{display:flex;flex-direction:column;gap:10px}
-.option{display:flex;align-items:flex-start;gap:12px;text-align:left;width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:14px 15px;font-size:14.5px;line-height:1.6;transition:.15s;min-height:var(--tap);-webkit-appearance:none;appearance:none;color:var(--text);cursor:pointer}
-.option:active{transform:scale(.985)}
-@media(hover:hover){.option:hover{border-color:var(--accent);transform:translateX(2px)}}
+.option{display:flex;align-items:flex-start;gap:12px;text-align:left;width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:14px 15px;font-size:14.5px;line-height:1.6;transition:.15s;color:var(--text);cursor:pointer}
 .option.selected{border-color:transparent;background:linear-gradient(135deg,rgba(99,102,241,.22),rgba(168,85,247,.22));box-shadow:0 0 0 1.5px var(--accent) inset}
-.opt-key{width:28px;height:28px;min-width:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;background:var(--card-2);border:1px solid var(--border);transition:.15s;flex-shrink:0;margin-top:2px}
-.option.selected .opt-key{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent}
+.opt-key{width:28px;height:28px;min-width:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;background:var(--card-2);border:1px solid var(--border);flex-shrink:0;margin-top:2px}
+.option.selected .opt-key{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff}
 .option-text{flex:1;overflow-x:auto;word-wrap:break-word}
-.palette{width:290px;flex-shrink:0;border-left:1px solid var(--border);background:var(--bg-2);padding:16px;overflow-y:auto;transition:transform .26s cubic-bezier(.4,0,.2,1)}
-.palette-head{font-size:12px;text-transform:uppercase;letter-spacing:.1em;font-weight:750;color:var(--muted);margin-bottom:12px}
-.legend{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;font-size:12px;color:var(--muted)}
-.legend span{display:flex;align-items:center;gap:8px}
-.dot{width:12px;height:12px;border-radius:4px;flex-shrink:0}
-.dot.grey{background:var(--grey)}.dot.red{background:var(--red)}
-.dot.green{background:var(--green)}.dot.purple{background:var(--purple)}
+.palette{width:290px;flex-shrink:0;border-left:1px solid var(--border);background:var(--bg-2);padding:16px;overflow-y:auto}
+.palette-head{font-size:12px;text-transform:uppercase;font-weight:750;color:var(--muted);margin-bottom:12px}
 .palette-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.pal-btn{aspect-ratio:1;border-radius:10px;font-weight:750;font-size:13px;color:#fff;display:flex;align-items:center;justify-content:center;transition:.14s;border:2px solid transparent;min-width:0;padding:0;-webkit-appearance:none;appearance:none}
-.pal-btn:active{transform:scale(.92)}
-.pal-btn.grey{background:var(--grey)}.pal-btn.red{background:var(--red)}
-.pal-btn.green{background:var(--green)}.pal-btn.purple{background:var(--purple)}
-.pal-btn.cur{border-color:var(--text);transform:scale(1.07);box-shadow:0 0 0 3px rgba(99,102,241,.28)}
-.test-footer{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--border);background:var(--bg-2);flex-shrink:0;flex-wrap:wrap;padding-bottom:max(10px,env(safe-area-inset-bottom))}
-.test-footer .btn{flex:1 1 auto;min-width:72px;padding:10px 8px;font-size:12px;min-height:var(--tap);white-space:nowrap}
-@media(min-width:600px){.test-footer .btn{font-size:13px;padding:11px 10px}}
-@media(max-width:899px){.palette{position:absolute;top:0;right:0;bottom:0;transform:translateX(102%);z-index:60;box-shadow:-14px 0 40px rgba(0,0,0,.5);max-width:88vw}.palette.open{transform:none}}
+.pal-btn{aspect-ratio:1;border-radius:10px;font-weight:750;font-size:13px;color:#fff;display:flex;align-items:center;justify-content:center;border:2px solid transparent}
+.pal-btn.grey{background:var(--grey)}.pal-btn.red{background:var(--red)}.pal-btn.green{background:var(--green)}.pal-btn.purple{background:var(--purple)}
+.pal-btn.cur{border-color:var(--text);transform:scale(1.07)}
+.test-footer{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--border);background:var(--bg-2);flex-shrink:0;flex-wrap:wrap}
+.test-footer .btn{flex:1 1 auto;font-size:12px}
+@media(max-width:899px){.palette{position:absolute;top:0;right:0;bottom:0;transform:translateX(102%);z-index:60;transition:transform .25s}.palette.open{transform:none}}
 @media(min-width:900px){#btnPaletteToggle{display:none}}
-.bar-row{margin-bottom:14px}
-.bar-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;font-weight:600;gap:10px}
-.bar-outer{height:9px;background:var(--card-2);border-radius:99px;overflow:hidden}
-.bar-inner{height:100%;border-radius:99px;transition:width .8s}
-.bar-inner.good{background:linear-gradient(90deg,#16a34a,#4ade80)}
-.bar-inner.mid{background:linear-gradient(90deg,#d97706,#fbbf24)}
-.bar-inner.bad{background:linear-gradient(90deg,#dc2626,#f87171)}
-.tag-list{display:flex;flex-wrap:wrap;gap:8px}
-.tag{font-size:12.5px;font-weight:650;padding:6px 12px;border-radius:99px}
-.tag.weak{background:rgba(239,68,68,.14);color:#f87171;border:1px solid rgba(239,68,68,.3)}
-.tag.strong{background:rgba(34,197,94,.14);color:#4ade80;border:1px solid rgba(34,197,94,.3)}
-.review-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
-.review-item .rq{font-weight:600;font-size:14.5px;margin-bottom:12px;line-height:1.65;word-wrap:break-word;white-space:normal;overflow-x:auto}
-.rev-opt{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:10px;font-size:13.5px;margin-bottom:6px;border:1px solid transparent;background:var(--card-2);word-wrap:break-word;overflow-x:auto}
-.rev-opt.correct{background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.4)}
-.rev-opt.wrong{background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.4)}
-.rev-explain{margin-top:12px;padding:11px 13px;border-radius:10px;background:var(--card-2);font-size:13px;color:var(--muted);border-left:3px solid var(--accent)}
-.verdict{font-size:11px;font-weight:750;padding:3px 9px;border-radius:99px;letter-spacing:.05em;white-space:nowrap}
-.verdict.ok{background:rgba(34,197,94,.16);color:#4ade80}
-.verdict.no{background:rgba(239,68,68,.16);color:#f87171}
-.verdict.sk{background:rgba(139,148,163,.18);color:var(--muted)}
-.modal-overlay{position:fixed;inset:0;background:rgba(5,7,12,.75);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:18px;animation:fadeUp .2s ease;overflow-y:auto}
-.modal{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;max-width:460px;width:100%;box-shadow:var(--shadow);max-height:88vh;overflow-y:auto;margin:auto}
-.modal h3{margin:0 0 8px;font-size:18px}
-.modal p{margin:0 0 18px;color:var(--muted);font-size:13.5px;line-height:1.6}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
-.modal-actions .btn{flex:1;min-width:110px}
+.modal-overlay{position:fixed;inset:0;background:rgba(5,7,12,.75);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:18px}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;max-width:460px;width:100%}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
 .bank-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:11px;display:flex;flex-direction:column;gap:11px}
-.bank-item .bi-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.bank-item .bi-name{font-weight:650;font-size:14px;word-break:break-word}
-.bank-item .bi-meta{font-size:12px;color:var(--muted);margin-top:3px}
-.bank-item .bi-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.bank-item .bi-mode{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.05em}
-.bi-mode.extract{background:rgba(34,197,94,.16);color:#4ade80}
-.bi-mode.notes{background:rgba(168,85,247,.16);color:#c084fc}
-.bi-mode.image{background:rgba(56,189,248,.16);color:#7dd3fc}
-.bi-mode.scanned{background:rgba(251,146,60,.16);color:#fdba74}
-.appfooter{margin-top:56px;padding-top:24px;border-top:1px solid var(--border);text-align:center;font-size:13px}
-.appfooter a{font-weight:650;opacity:.85;transition:.15s}
-.appfooter a:hover{opacity:1}
-.resume{background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(168,85,247,.18));border:1px solid rgba(139,92,246,.4);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}
-.resume .rt{font-weight:650;font-size:13.5px}
-.resume .rs{font-size:12px;color:var(--muted)}
-.hist-item{display:flex;justify-content:space-between;gap:10px;padding:11px 14px;background:var(--card);border:1px solid var(--border);border-radius:11px;margin-bottom:8px;font-size:13px;align-items:center;flex-wrap:wrap}
-.hist-item .hp{font-weight:750}
-::-webkit-scrollbar{width:9px;height:9px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:9px}
-::-webkit-scrollbar-thumb:hover{background:var(--grey)}
+.scorecard{background:linear-gradient(180deg,var(--card),var(--card-2));border:2px solid var(--border);border-radius:20px;padding:24px 20px;text-align:center;margin-bottom:18px}
+.scorecard-score{font-size:54px;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.scorecard-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.scr-meta-item{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px}
+.scr-meta-val{font-size:16px;font-weight:800}
+.scr-meta-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;margin-top:4px}
 
-/* ===== SCORECARD STYLES ===== */
-.scorecard{background:linear-gradient(180deg,var(--card),var(--card-2));border:2px solid var(--border);border-radius:20px;padding:24px 20px;box-shadow:var(--shadow);margin-bottom:18px;position:relative;overflow:hidden}
-.scorecard::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
-.scorecard-head{text-align:center;margin-bottom:16px}
-.scorecard-exam{font-size:11px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.15em}
-.scorecard-title{font-size:20px;font-weight:800;margin:4px 0}
-.scorecard-date{font-size:11px;color:var(--muted)}
-.scorecard-big{display:flex;align-items:baseline;justify-content:center;gap:10px;margin:14px 0 4px}
-.scorecard-score{font-size:56px;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.scorecard-divider{font-size:38px;font-weight:300;color:var(--muted)}
-.scorecard-max{font-size:38px;font-weight:700;color:var(--muted)}
-.scorecard-pct{text-align:center;font-size:14px;font-weight:700;margin-bottom:18px}
-.scorecard-pct .muted{font-weight:600;font-size:12px}
-.scorecard-table{background:var(--bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px}
-.scr-row{display:grid;grid-template-columns:1.4fr .8fr 1fr 1fr;gap:6px;padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);align-items:center}
-.scr-row:last-child{border-bottom:none}
-.scr-head{background:var(--card-2);font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:800;color:var(--muted);padding:9px 14px}
-.scr-correct{color:var(--green)}
-.scr-wrong{color:var(--red)}
-.scr-skip{color:var(--muted)}
-.scr-total{background:linear-gradient(90deg,rgba(99,102,241,.14),rgba(168,85,247,.14));font-weight:800;font-size:14px;border-top:2px solid var(--border)}
-.scr-row span:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:750}
-.scr-row span:nth-child(2),.scr-row span:nth-child(3){text-align:center}
-.scr-green{color:var(--green)!important}
-.scr-red{color:var(--red)!important}
-.scr-muted{color:var(--muted)!important}
-.scr-total-val{color:var(--accent-2)!important;font-size:15px}
-.scr-label{font-weight:750}
-.scorecard-formula{text-align:center;font-size:11px;color:var(--muted);padding:9px;background:var(--bg);border-radius:8px;margin-bottom:14px;font-weight:600;line-height:1.5}
-.scorecard-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.scr-meta-item{text-align:center;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 6px}
-.scr-meta-val{font-size:15px;font-weight:800;color:var(--text)}
-.scr-meta-lbl{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-top:3px}
+/* ===== BRAND FOOTER ===== */
+.asviro-footer{margin-top:40px;padding:20px 0;text-align:center;font-size:12.5px;color:var(--muted);border-top:1px solid var(--border)}
+.asviro-footer a{color:#a855f7;font-weight:700;text-decoration:none;transition:0.15s;display:inline-flex;align-items:center;gap:5px}
+.asviro-footer a:hover{color:#6366f1;text-decoration:underline}
 
-/* ===== MATHJAX DARK-THEME FIX ===== */
+/* MathJax Styling */
 mjx-container{color:var(--text)!important;max-width:100%;overflow-x:auto}
 mjx-container svg{fill:var(--text)!important;stroke:var(--text)!important}
 mjx-container svg path{fill:var(--text)!important;stroke:var(--text)!important}
-mjx-container svg g{fill:var(--text)!important;stroke:var(--text)!important}
-mjx-container svg use{fill:var(--text)!important;stroke:var(--text)!important}
-mjx-container svg rect{fill:var(--text)!important}
-mjx-container[display="true"]{display:block;overflow-x:auto;margin:6px 0}
 </style>
 
-<!-- MathJax for LaTeX rendering -->
 <script>
 window.MathJax = {
   tex: {
@@ -263,13 +145,17 @@ window.MathJax = {
     </header>
     <div class="hero">
       <h1>Your CUET preparation, one test at a time.</h1>
-      <p>Practice CUET UG with AI tests or your own PDFs, photos and question papers. Track every score and improve with clear analysis.</p>
+      <p>Practice CUET UG with AI tests or your own PDFs, photos and question papers. Track every score with instant analytics.</p>
     </div>
     <div id="resumeBanner"></div>
     <h2 class="section-title">Choose your CUET practice mode</h2>
     <div class="exam-grid" id="examGrid"></div>
     <div id="analysisWrap"></div>
     <div id="historyWrap"></div>
+
+    <footer class="asviro-footer">
+      Powered by <a href="https://asviro-studio.vercel.app" target="_blank" rel="noopener">ASVIRO STUDIO ↗</a>
+    </footer>
   </div>
 </section>
 
@@ -277,31 +163,35 @@ window.MathJax = {
   <div class="wrap">
     <header class="appbar">
       <button type="button" class="icon-btn" id="btnBackHome">←</button>
-      <div class="appbar-title" id="examTitle">Exam</div>
+      <div class="appbar-title" id="examTitle">CUET UG 2026</div>
       <div style="width:44px"></div>
     </header>
     <div class="mode-grid">
       <button type="button" class="mode-card" id="btnModeAI">
         <div class="mode-icon">🧪</div>
         <div class="mode-title">AI Practice Test</div>
-        <div class="mode-sub">AI-generated PYQ-style questions (Oswaal/Arihant pattern)</div>
+        <div class="mode-sub">NCERT-based PYQ pattern mock tests</div>
       </button>
       <button type="button" class="mode-card" id="btnModeBook">
         <div class="mode-icon">📄</div>
         <div class="mode-title">Extract from Question Paper</div>
-        <div class="mode-sub">PDF / DOCX → extract EXACT questions (auto OCR if scanned)</div>
+        <div class="mode-sub">Upload PDF / DOCX question papers</div>
       </button>
       <button type="button" class="mode-card" id="btnModeNotes">
         <div class="mode-icon">📝</div>
         <div class="mode-title">Generate from Notes</div>
-        <div class="mode-sub">PDF / DOCX notes → AI generates MCQs from concepts</div>
+        <div class="mode-sub">AI converts theoretical notes into MCQs</div>
       </button>
       <button type="button" class="mode-card" id="btnModeImage">
         <div class="mode-icon">📷</div>
         <div class="mode-title">Extract from Photo / Image</div>
-        <div class="mode-sub">Camera photo ya screenshot → AI image se questions nikalega</div>
+        <div class="mode-sub">Textbook photos, exercise problems & PYQs solved into MCQs</div>
       </button>
     </div>
+
+    <footer class="asviro-footer">
+      Powered by <a href="https://asviro-studio.vercel.app" target="_blank" rel="noopener">ASVIRO STUDIO ↗</a>
+    </footer>
   </div>
 </section>
 
@@ -315,29 +205,24 @@ window.MathJax = {
     <h2 class="section-title">Select Subject</h2>
     <div class="chip-grid" id="subjectGrid"></div>
     <div id="setupPanel" class="hidden">
-      <div id="markingSchemeBox"></div>
       <h2 class="section-title">Select Chapters <span class="muted" id="chCount"></span></h2>
       <div class="btn-row" style="margin-bottom:12px">
         <button type="button" class="btn small" id="btnFullSubject">✓ Full Subject</button>
-        <button type="button" class="btn small ghost" id="btnClearChapters">Clear</button>
+        <button type="button" class="btn small" id="btnClearChapters">Clear</button>
       </div>
       <div class="check-list" id="chapterList"></div>
       <h2 class="section-title">Number of Questions</h2>
       <div class="chip-row" id="numChips"></div>
-      <div id="customNumWrap" class="hidden" style="margin-top:12px;display:flex;align-items:center;gap:10px">
-        <input type="number" id="customNum" min="1" max="200" value="15">
-        <span class="muted small">questions (1–200)</span>
-      </div>
       <h2 class="section-title">Difficulty</h2>
       <div class="chip-row" id="diffChips"></div>
       <h2 class="section-title">Timer</h2>
       <div class="chip-row" id="timerChips"></div>
-      <div id="timerMinutesWrap" class="hidden" style="margin-top:12px;display:flex;align-items:center;gap:10px">
-        <input type="number" id="timerMinutes" min="1" max="300" value="15">
-        <span class="muted small">minutes countdown</span>
-      </div>
       <button type="button" class="btn primary big" id="btnStartTest">⚡ Start Test</button>
     </div>
+
+    <footer class="asviro-footer">
+      Powered by <a href="https://asviro-studio.vercel.app" target="_blank" rel="noopener">ASVIRO STUDIO ↗</a>
+    </footer>
   </div>
 </section>
 
@@ -349,16 +234,20 @@ window.MathJax = {
       <div style="width:44px"></div>
     </header>
     <div class="card">
-      <h3 id="uploadCardTitle">📄 Add a file</h3>
-      <p class="muted small" id="uploadCardHint" style="margin:0 0 12px">Supports PDF, TXT, DOCX, and images.</p>
-      <input type="file" id="fileInput" accept=".pdf,.txt,.docx,.jpg,.jpeg,.png,.webp,.heic,text/plain,application/pdf,image/*">
+      <h3 id="uploadCardTitle">📄 Add a file or photo</h3>
+      <p class="muted small" id="uploadCardHint" style="margin:0 0 12px">Supports JPG, PNG, WEBP, and PDF files.</p>
+      <input type="file" id="fileInput" accept=".pdf,.txt,.docx,.jpg,.jpeg,.png,.webp,image/*">
       <div id="uploadProgress" class="hidden" style="margin-top:14px">
-        <div class="small muted" id="uploadProgressText">Working…</div>
+        <div class="small muted" id="uploadProgressText">Reading file…</div>
         <div class="progress-outer"><div class="progress-inner" id="uploadProgressBar" style="width:0%"></div></div>
       </div>
     </div>
     <h2 class="section-title">Your Question Banks</h2>
-    <div id="bankList"><p class="muted small">No banks yet. Upload a file to create one.</p></div>
+    <div id="bankList"><p class="muted small">No banks uploaded yet.</p></div>
+
+    <footer class="asviro-footer">
+      Powered by <a href="https://asviro-studio.vercel.app" target="_blank" rel="noopener">ASVIRO STUDIO ↗</a>
+    </footer>
   </div>
 </section>
 
@@ -366,32 +255,26 @@ window.MathJax = {
   <div class="test-topbar">
     <button type="button" class="icon-btn" id="btnPaletteToggle" title="Palette">☰</button>
     <div class="test-title" id="testTitle">Test</div>
-    <div class="marking-badge" id="markingBadge">—</div>
+    <div class="marking-badge" id="markingBadge">+5 / -1</div>
     <div class="timer" id="timerDisplay">00:00</div>
   </div>
   <div class="test-body">
     <div class="q-area" id="qArea">
       <div class="q-meta">
-        <span class="q-counter" id="qCounter">Question 1 of 10</span>
-        <span class="badge topic" id="qTopic"></span>
-        <span class="badge medium" id="qDiff"></span>
+        <span class="q-counter" id="qCounter">Question 1</span>
+        <span class="badge topic" id="qTopic">CUET</span>
+        <span class="badge medium" id="qDiff">Medium</span>
       </div>
       <div class="q-text" id="qText"></div>
       <div class="options" id="optionsBox"></div>
     </div>
     <aside class="palette" id="palette">
       <div class="palette-head">Question Palette</div>
-      <div class="legend">
-        <span><i class="dot grey"></i> Not visited</span>
-        <span><i class="dot red"></i> Not answered</span>
-        <span><i class="dot green"></i> Answered</span>
-        <span><i class="dot purple"></i> Marked for review</span>
-      </div>
       <div class="palette-grid" id="paletteGrid"></div>
     </aside>
   </div>
   <div class="test-footer">
-    <button type="button" class="btn" id="btnPrev">← Previous</button>
+    <button type="button" class="btn" id="btnPrev">← Prev</button>
     <button type="button" class="btn" id="btnMark">🚩 Mark</button>
     <button type="button" class="btn" id="btnClear">Clear</button>
     <button type="button" class="btn primary" id="btnNext">Save &amp; Next →</button>
@@ -403,16 +286,20 @@ window.MathJax = {
   <div class="wrap">
     <header class="appbar">
       <button type="button" class="icon-btn" id="btnResultHome">←</button>
-      <div class="appbar-title">Result &amp; Analysis</div>
+      <div class="appbar-title">Scorecard</div>
       <div style="width:44px"></div>
     </header>
     <div id="resultBody"></div>
+
+    <footer class="asviro-footer">
+      Powered by <a href="https://asviro-studio.vercel.app" target="_blank" rel="noopener">ASVIRO STUDIO ↗</a>
+    </footer>
   </div>
 </section>
 
 <div id="loader" class="overlay hidden">
   <div class="spinner"></div>
-  <div id="loaderText">AI is generating your questions…</div>
+  <div id="loaderText">AI is solving and preparing questions…</div>
   <div id="loaderSub"></div>
   <div id="loaderActions" class="btn-row hidden" style="justify-content:center"></div>
 </div>
@@ -421,110 +308,71 @@ window.MathJax = {
 <script>
 "use strict";
 
-/* ============ DATA ============ */
+/* ============ CUET SYLLABUS ============ */
 var CH_PHY_12=["Electric Charges and Fields","Electrostatic Potential","Current Electricity","Moving Charges and Magnetism","Magnetism and Matter","Electromagnetic Induction","Alternating Current","Electromagnetic Waves","Ray Optics","Wave Optics","Dual Nature of Radiation","Atoms","Nuclei","Semiconductor Electronics"];
 var CH_CHEM_12=["Solutions","Electrochemistry","Chemical Kinetics","d- and f-Block Elements","Coordination Compounds","Haloalkanes and Haloarenes","Alcohols Phenols and Ethers","Aldehydes Ketones and Carboxylic Acids","Amines","Biomolecules"];
 var CH_MATH_12=["Relations and Functions","Inverse Trigonometric Functions","Matrices","Determinants","Continuity and Differentiability","Application of Derivatives","Integrals","Application of Integrals","Differential Equations","Vector Algebra","Three Dimensional Geometry","Linear Programming","Probability"];
 var CH_BIO_12=["Sexual Reproduction in Flowering Plants","Human Reproduction","Reproductive Health","Principles of Inheritance and Variation","Molecular Basis of Inheritance","Evolution","Human Health and Disease","Microbes in Human Welfare","Biotechnology Principles and Processes","Biotechnology and its Applications","Organisms and Populations","Ecosystem","Biodiversity and Conservation"];
 
 var EXAM_DATA={
-  CUET:{icon:"🎓",full:"CUET UG",subjects:{
-    "Biology (Class 12)":CH_BIO_12,
-    "Chemistry (Class 12)":CH_CHEM_12,
-    "Physics (Class 12)":CH_PHY_12,
+  CUET:{icon:"🎓",full:"CUET UG 2026",subjects:{
     "Mathematics (Class 12)":CH_MATH_12,
-    "English":["Reading Comprehension","Vocabulary","Grammar","Sentence Correction","Synonyms and Antonyms","Idioms and Phrases","Fill in the Blanks","Para Jumbles","One Word Substitution","Spotting Errors"],
-    "General Test":["Current Affairs","General Knowledge","Quantitative Reasoning","Logical Reasoning","Data Interpretation","Numerical Ability","Static GK","Indian Polity","Economics","General Science"]
+    "Physics (Class 12)":CH_PHY_12,
+    "Chemistry (Class 12)":CH_CHEM_12,
+    "Biology (Class 12)":CH_BIO_12,
+    "English":["Reading Comprehension","Vocabulary","Grammar","Synonyms and Antonyms","Sentence Correction","Fill in the Blanks"],
+    "General Test":["General Knowledge","Current Affairs","Numerical Ability","Quantitative Reasoning","Logical Reasoning"]
   }}
 };
 
-var MARKING_SCHEMES = {
-  CUET: { correct: 5, wrong: -1, label: 'Correct +5 | Wrong -1' }
-};
-function getMarking(exam){
-  return MARKING_SCHEMES.CUET;
-}
-function fmtMarks(n){
-  if(!isFinite(n)) return '0';
-  var r = Math.round(n*100)/100;
-  return (r % 1 === 0) ? String(r) : r.toFixed(2).replace(/0+$/,'').replace(/\.$/,'');
-}
-
 /* ============ STORAGE ============ */
-var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},raw:function(k,d){try{var v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},setRaw:function(k,v){try{localStorage.setItem(k,v)}catch(e){}},del:function(k){try{localStorage.removeItem(k)}catch(e){}}};
-var K={THEME:'cbt_theme',SEEN:'cbt_seen_hashes',RECENT:'cbt_recent_q',ACTIVE:'cbt_active_test',HISTORY:'cbt_history',BOOKS:'cbt_book_cursors'};
-var MemBanks={};
-var IDB={db:null,open:function(){var self=this;if(self.db)return Promise.resolve(self.db);return new Promise(function(res,rej){var req;try{req=indexedDB.open('cbt_studio_db',1)}catch(e){rej(e);return}req.onupgradeneeded=function(e){var db=e.target.result;if(!db.objectStoreNames.contains('banks'))db.createObjectStore('banks',{keyPath:'id'})};req.onsuccess=function(e){self.db=e.target.result;res(self.db)};req.onerror=function(){rej(req.error)}})},put:function(obj){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').put(obj);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})}).catch(function(e){MemBanks[obj.id]=obj})},all:function(){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readonly');var r=tx.objectStore('banks').getAll();r.onsuccess=function(){res(r.result||[])};r.onerror=function(){rej(r.error)}})}).catch(function(){return Object.keys(MemBanks).map(function(k){return MemBanks[k]})})},del:function(id){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').delete(id);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})}).catch(function(){delete MemBanks[id]})}};
+var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del:function(k){try{localStorage.removeItem(k)}catch(e){}}};
+var K={ACTIVE:'cbt_active_test',HISTORY:'cbt_history'};
+var IDB={db:null,open:function(){var self=this;if(self.db)return Promise.resolve(self.db);return new Promise(function(res,rej){var req;try{req=indexedDB.open('ambition_db',1)}catch(e){rej(e);return}req.onupgradeneeded=function(e){var db=e.target.result;if(!db.objectStoreNames.contains('banks'))db.createObjectStore('banks',{keyPath:'id'})};req.onsuccess=function(e){self.db=e.target.result;res(self.db)};req.onerror=function(){rej(req.error)}})},put:function(obj){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').put(obj);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})},all:function(){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readonly');var r=tx.objectStore('banks').getAll();r.onsuccess=function(){res(r.result||[])};r.onerror=function(){rej(r.error)}})})},del:function(id){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').delete(id);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})}};
 
-/* ============ UTILS ============ */
 function $(id){return document.getElementById(id)}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function fmtTime(sec){sec=Math.max(0,Math.floor(sec));var m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function showScreen(id){var all=document.querySelectorAll('.screen');for(var i=0;i<all.length;i++)all[i].classList.remove('active');var el=$(id);if(el)el.classList.add('active');window.scrollTo(0,0);document.body.classList.toggle('no-scroll',id==='screen-test')}
 
 function renderMath(el){
   if(!el) return;
   if(window.MathJax && MathJax.typesetPromise){
-    try{ MathJax.typesetPromise([el]).catch(function(e){console.warn('MathJax:',e.message)}); }catch(e){}
+    try{ MathJax.typesetPromise([el]).catch(function(){}); }catch(e){}
   } else {
-    setTimeout(function(){ renderMath(el); }, 400);
+    setTimeout(function(){ renderMath(el); }, 350);
   }
 }
 
-function hashStr(s){var h=0,i;for(i=0;i<s.length;i++){h=(h<<5)-h+s.charCodeAt(i);h|=0}return(h>>>0).toString(36)}
-function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
-function fmtTime(sec){sec=Math.max(0,Math.floor(sec));var m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
-function showScreen(id){var all=document.querySelectorAll('.screen');for(var i=0;i<all.length;i++)all[i].classList.remove('active');var el=$(id);if(el)el.classList.add('active');window.scrollTo(0,0);document.body.classList.toggle('no-scroll',id==='screen-test')}
-function getSeen(){return LS.get(K.SEEN,[])}
-function addSeen(list){var arr=getSeen().concat(list);LS.set(K.SEEN,arr.slice(-5000))}
-function getRecentQ(){return LS.get(K.RECENT,[])}
-function addRecentQ(qs){var arr=getRecentQ().concat(qs.map(function(q){return String(q.q).slice(0,130)}));LS.set(K.RECENT,arr.slice(-45))}
-function dedupeQuestions(list){var seen={},i,out=[],q,key,prev=getSeen();for(i=0;i<prev.length;i++)seen[prev[i]]=1;for(i=0;i<list.length;i++){q=list[i];key=hashStr(String(q.q).toLowerCase().replace(/\s+/g,' ').trim());if(seen[key])continue;seen[key]=1;q._h=key;out.push(q)}return out}
-
-/* ============ UI HELPERS ============ */
-function showLoader(text,sub,retryFn){$('loaderText').textContent=text||'Working…';$('loaderSub').textContent=sub||'';var acts=$('loaderActions');acts.innerHTML='';if(retryFn){var b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent='🔄 Retry';b.onclick=function(){hideLoader();retryFn()};acts.appendChild(b);var c=document.createElement('button');c.type='button';c.className='btn';c.textContent='Cancel';c.onclick=function(){hideLoader()};acts.appendChild(c);acts.classList.remove('hidden')}else acts.classList.add('hidden');$('loader').classList.remove('hidden')}
+/* ============ DIALOG & LOADER ============ */
+function showLoader(text,sub){$('loaderText').textContent=text||'Working…';$('loaderSub').textContent=sub||'';$('loader').classList.remove('hidden')}
 function hideLoader(){$('loader').classList.add('hidden')}
-function dialog(opts){return new Promise(function(resolve){var ov=document.createElement('div');ov.className='modal-overlay';var box=document.createElement('div');box.className='modal';box.innerHTML='<h3>'+esc(opts.title||'')+'</h3><p>'+(opts.html||esc(opts.message||''))+'</p>';var acts=document.createElement('div');acts.className='modal-actions';(opts.buttons||[{text:'OK',primary:true,value:true}]).forEach(function(b){var btn=document.createElement('button');btn.type='button';btn.className='btn'+(b.primary?' primary':'')+(b.danger?' danger':'');btn.textContent=b.text;btn.onclick=function(){if(ov.parentNode)document.body.removeChild(ov);resolve(b.value)};acts.appendChild(btn)});box.appendChild(acts);ov.appendChild(box);ov.addEventListener('click',function(e){if(e.target===ov){if(ov.parentNode)document.body.removeChild(ov);resolve(null)}});document.body.appendChild(ov)})}
+function dialog(opts){return new Promise(function(resolve){var ov=document.createElement('div');ov.className='modal-overlay';var box=document.createElement('div');box.className='modal';box.innerHTML='<h3>'+esc(opts.title||'')+'</h3><p style="margin:12px 0;line-height:1.5;color:var(--muted)">'+esc(opts.message||'')+'</p>';var acts=document.createElement('div');acts.className='modal-actions';(opts.buttons||[{text:'OK',primary:true,value:true}]).forEach(function(b){var btn=document.createElement('button');btn.className='btn'+(b.primary?' primary':'');btn.textContent=b.text;btn.onclick=function(){document.body.removeChild(ov);resolve(b.value)};acts.appendChild(btn)});box.appendChild(acts);ov.appendChild(box);document.body.appendChild(ov)})}
 
-/* ============ AI CALL & PARSER ============ */
-var AI_API_URL='/api/ai-coach';
+/* ============ AI ENGINE ============ */
 function aiCall(message,context){
-    var payload={message:message,context:context};
-    if(context && context.images){ payload.images=context.images; delete context.images; }
-    else if(context && context.image){ payload.image=context.image; delete context.image; }
-    return fetch(AI_API_URL,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload)
-    }).then(function(res){
-        if(!res.ok){
-            return res.text().then(function(t){
-                var msg='HTTP '+res.status;
-                try{
-                    var j=JSON.parse(t);
-                    if(j&&j.message)msg=j.message;
-                    if(j&&j.detail)msg+=' — '+j.detail;
-                }catch(e){msg+=': '+t.slice(0,180);}
-                var err=new Error(msg);
-                err.status=res.status;
-                throw err;
-            });
-        }
-        return res.json();
-    }).then(function(data){
-        var text=(data&&(data.message||data.text||data.reply))||'';
-        if(!text)throw new Error('Empty AI response');
-        return String(text);
-    });
+  var payload={message:message,context:context};
+  if(context&&context.image){payload.image=context.image;delete context.image;}
+  return fetch('/api/ai-coach',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  }).then(function(res){
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    return res.json();
+  }).then(function(data){
+    var text=data&&data.message;
+    if(!text) throw new Error('Empty AI response');
+    return String(text);
+  });
 }
 
-// ROBUST JSON REPAIR AND PARSER
 function safeParseJSON(text){
-  if(!text) throw new Error('Empty response');
   var t = String(text).trim();
   t = t.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
   var s = t.indexOf('['), e = t.lastIndexOf(']');
   if(s >= 0 && e > s) t = t.slice(s, e + 1);
   try { return JSON.parse(t); } catch(err){}
-
-  // Auto repair partial/truncated JSON array
   try {
     var lastBrace = t.lastIndexOf('}');
     if(lastBrace > 0){
@@ -533,85 +381,43 @@ function safeParseJSON(text){
       return JSON.parse(candidate);
     }
   }catch(e2){}
-  throw new Error('Could not parse AI response.');
-}
-
-function normQ(q){
-  if(!q||typeof q!=='object')return null;
-  var text=q.q||q.question||q.Q||q.text||'';
-  var opts=q.options||q.opts||q.choices||q.answers||[];
-  if(!Array.isArray(opts))opts=[];
-  opts=opts.map(function(o){if(o&&typeof o==='object')return String(o.text||o.value||o.label||JSON.stringify(o));return String(o)}).filter(function(o){return o.trim().length});
-  
-  if(!text) return null;
-  while(opts.length < 4){
-    opts.push("None of the above / Option " + (opts.length + 1));
-  }
-  opts = opts.slice(0, 4);
-
-  var ans=q.ans;
-  if(ans===undefined||ans===null)ans=q.answer;
-  if(typeof ans==='string'){
-    var tr=ans.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
-    var idx='ABCD'.indexOf(tr.charAt(0));
-    if(tr.length===1&&idx>=0&&idx<opts.length){ans=idx}
-    else{var n=parseInt(tr,10);if(!isNaN(n)&&n>=1&&n<=opts.length){ans=n-1}else{ans=0}}
-  }
-  ans=Number(ans);
-  if(!isFinite(ans)||ans<0||ans>=opts.length||Math.floor(ans)!==ans) ans=0;
-  var diff=String(q.diff||q.difficulty||'medium').toLowerCase();
-  if(diff.indexOf('easy')>=0)diff='easy';else if(diff.indexOf('hard')>=0)diff='hard';else diff='medium';
-  return{q:String(text).trim(),options:opts,ans:ans,topic:String(q.topic||q.chapter||q.subject||'CUET Section'),diff:diff,explain:String(q.explain||q.explanation||q.reason||'')}
+  throw new Error('AI response structure could not be parsed.');
 }
 
 function normaliseList(raw){
-  var arr=[];
-  if(Array.isArray(raw)) arr=raw;
-  else if(raw&&typeof raw==='object'){
-    if(Array.isArray(raw.questions)) arr=raw.questions;
-    else if(Array.isArray(raw.data)) arr=raw.data;
-    else if(Array.isArray(raw.result)) arr=raw.result;
-  }
-  var out=[];
-  for(var i=0;i<arr.length;i++){
-    var n=normQ(arr[i]);
-    if(n) out.push(n);
+  var arr = Array.isArray(raw) ? raw : (raw && raw.questions ? raw.questions : []);
+  var out = [];
+  for(var i=0; i<arr.length; i++){
+    var item = arr[i];
+    if(!item || typeof item !== 'object') continue;
+    var q = item.q || item.question || item.text;
+    var opts = item.options || item.opts || [];
+    if(!q) continue;
+    while(opts.length < 4) opts.push('None of the above');
+    opts = opts.slice(0, 4);
+    var ans = Number(item.ans);
+    if(isNaN(ans) || ans < 0 || ans > 3) ans = 0;
+    out.push({
+      q: String(q).trim(),
+      options: opts.map(String),
+      ans: ans,
+      topic: String(item.topic || 'CUET UG'),
+      diff: String(item.diff || 'medium'),
+      explain: String(item.explain || '')
+    });
   }
   return out;
 }
 
-/* ============ PROMPTS ============ */
-function buildPromptAI(cfg){
-  return 'Generate exactly '+cfg.count+' high quality CUET UG exam MCQs.\n'+
-  'EXAM: CUET UG\nSUBJECT: '+cfg.subject+'\nSCOPE: '+(cfg.chapters.join(', '))+'\nDIFFICULTY: '+cfg.difficulty+'\n'+
-  'Ensure factually 100% correct answers. Exactly 4 options, ans is 0 to 3. Math in $...$.\n'+
-  'OUTPUT ONLY RAW JSON ARRAY: [{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"chapter","diff":"medium","explain":""}]';
-}
-
-function buildPromptExtract(text,count,subjectName){
-  return 'Extract valid MCQs from this CUET study material or question paper. If not directly formatted, construct standard 4-option MCQs from the given text.\n'+
-  'SUBJECT: '+(subjectName||'CUET')+'\nEach MCQ must have exactly 4 options. "ans" must be 0, 1, 2, or 3.\n'+
-  'OUTPUT ONLY RAW JSON ARRAY.\n\n--- TEXT ---\n'+text+'\n--- END ---';
-}
-
-function buildPromptNotes(text,count,subjectName){
-  return 'Generate '+count+' high-yield CUET MCQs from the concepts in these notes.\n'+
-  'SUBJECT: '+(subjectName||'CUET')+'\n4 options, 1 correct. "ans" is 0-3. Math in $...$.\n'+
-  'OUTPUT ONLY RAW JSON ARRAY: [{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"Subject","diff":"medium","explain":""}]\n\n--- NOTES ---\n'+text;
-}
-
-/* ============ FILE HANDLING & COMPRESSION ============ */
-function readAsArrayBuffer(file){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(fr.result)};fr.onerror=function(){rej(fr.error)};fr.readAsArrayBuffer(file)})}
-function readAsText(file){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(String(fr.result||''))};fr.onerror=function(){rej(fr.error)};fr.readAsText(file)})}
-
-function compressAndBase64Image(file){
+/* ============ IMAGE COMPRESSION ============ */
+function compressImage(file){
   return new Promise(function(resolve, reject){
-    var img = new Image();
     var reader = new FileReader();
     reader.onload = function(e){
+      var img = new Image();
       img.onload = function(){
         var canvas = document.createElement('canvas');
-        var maxDim = 1200;
+        var maxDim = 1400;
         var w = img.width, h = img.height;
         if(w > maxDim || h > maxDim){
           if(w > h){ h = Math.round((h * maxDim)/w); w = maxDim; }
@@ -620,9 +426,8 @@ function compressAndBase64Image(file){
         canvas.width = w; canvas.height = h;
         var ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, w, h);
-        var dataUrl = canvas.toDataURL('image/jpeg', 0.80);
-        var b64 = dataUrl.split(',')[1];
-        resolve({ data: b64, mime: 'image/jpeg' });
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        resolve({ data: dataUrl.split(',')[1], mime: 'image/jpeg' });
       };
       img.onerror = reject;
       img.src = e.target.result;
@@ -632,351 +437,244 @@ function compressAndBase64Image(file){
   });
 }
 
-function extractPdf(file, onProgress){
-  if(typeof pdfjsLib === 'undefined') return Promise.reject(new Error('PDF library failed to load'));
-  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  return readAsArrayBuffer(file).then(function(buf){
-    return pdfjsLib.getDocument({data:buf}).promise;
-  }).then(function(pdf){
-    var total = Math.min(pdf.numPages, 30);
-    var pages = [];
-    var chain = Promise.resolve();
-    for(var p = 1; p <= total; p++){
-      (function(pn){
-        chain = chain.then(function(){
-          return pdf.getPage(pn).then(function(page){
-            return page.getTextContent();
-          }).then(function(c){
-            var s = c.items.map(function(it){return it.str;}).join(' ');
-            pages.push(s);
-            if(onProgress) onProgress(pn, total);
-          }).catch(function(){ pages.push(''); });
-        });
-      })(p);
-    }
-    return chain.then(function(){ return pages.join('\n\n'); });
-  });
-}
-
-function chunkText(text,size){size=size||8000;var chunks=[];var i=0;while(i<text.length){var end=Math.min(i+size,text.length);chunks.push(text.slice(i,end));i=end}return chunks}
-
 /* ============ STATE ============ */
-var state={exam:'CUET',subject:null,chapters:[],count:10,difficulty:'Mixed',timerMode:'up',timerMinutes:15};
+var state={exam:'CUET',subject:null,chapters:[],count:10,difficulty:'Mixed',timerMode:'up'};
 var uploadMode='extract';
-var T=null,timerHandle=null,autosaveHandle=null;
+var T=null,timerHandle=null;
 
-/* ============ UI RENDERING ============ */
+/* ============ HOME & ANALYTICS ============ */
 function renderHome(){
   var grid=$('examGrid');grid.innerHTML='';
   var b=document.createElement('button');
-  b.type='button';b.className='exam-card';b.setAttribute('data-exam','CUET');
-  b.innerHTML='<div class="emoji">🎓</div><div class="name">CUET UG 2026</div><div class="sub">Practice • PYQs • PDF Question Banks</div><div class="sub" style="color:var(--accent);font-weight:700;margin-top:2px">Correct +5 | Wrong -1</div>';
+  b.className='exam-card';
+  b.innerHTML='<div style="font-size:26px">🎓</div><div style="font-weight:700;font-size:16px">CUET UG 2026</div><div class="muted small">Practice • PYQs • Image Solver</div><div style="color:var(--accent);font-weight:700;font-size:12px;margin-top:4px">+5 Correct | -1 Negative</div>';
+  b.onclick=function(){openExam('CUET')};
   grid.appendChild(b);
-  renderResumeBanner();renderHistory();
+  renderHistory();
 }
-function bindExamGrid(){
-  var grid=$('examGrid');if(!grid)return;
-  grid.addEventListener('click',function(e){
-    e.preventDefault();openExam('CUET');
-  },false);
-}
-function openExam(key){state.exam='CUET';$('examTitle').textContent='🎓 CUET UG Examination';showScreen('screen-exam')}
+function openExam(){showScreen('screen-exam')}
 
-function renderResumeBanner(){var saved=LS.get(K.ACTIVE,null);var host=$('resumeBanner');if(!saved||saved.submitted){host.innerHTML='';return}var answered=saved.answers.filter(function(a){return a!==null&&a!==undefined}).length;host.innerHTML='<div class="resume"><div><div class="rt">⏸ Unfinished: '+esc(saved.name)+'</div><div class="rs">'+answered+' / '+saved.questions.length+' answered</div></div><div class="btn-row"><button type="button" class="btn primary small" id="btnResume">Resume</button><button type="button" class="btn small" id="btnDiscard">Discard</button></div></div>';$('btnResume').onclick=function(){T=saved;$('testTitle').textContent=T.name;showScreen('screen-test');startTimers();renderQuestion();renderPalette()};$('btnDiscard').onclick=function(){LS.del(K.ACTIVE);host.innerHTML=''}}
 function renderHistory(){
-  var hist=LS.get(K.HISTORY,[]),host=$('historyWrap'),analysis=$('analysisWrap');
-  if(!Array.isArray(hist))hist=[];
-  var valid=hist.filter(function(h){return h&&typeof h.pct==='number';});
-  if(!valid.length){
-    analysis.innerHTML='<h2 class="section-title">Your Exam Analytics</h2><div class="card"><p class="muted small" style="margin:0">Score records will appear here after your first CUET practice test.</p></div>';
-    host.innerHTML='';return;
+  var hist=LS.get(K.HISTORY,[]);
+  var analysis=$('analysisWrap');
+  if(!hist.length){
+    analysis.innerHTML='<h2 class="section-title">Your Performance</h2><div class="card"><p class="muted small" style="margin:0">Completed test scores and topic analysis will appear here.</p></div>';
+    return;
   }
-  var avg=Math.round(valid.reduce(function(a,h){return a+h.pct;},0)/valid.length);
-  var best=valid.reduce(function(a,h){return h.pct>a.pct?h:a;},valid[0]);
-  var totalQ=valid.reduce(function(a,h){return a+(Number(h.total)||0);},0);
-  
-  analysis.innerHTML='<h2 class="section-title">Your Exam Analytics</h2><div class="analysis-grid">'+
-    '<div class="analysis-stat"><div class="value">'+valid.length+'</div><div class="label">Tests completed</div></div>'+
-    '<div class="analysis-stat"><div class="value">'+avg+'%</div><div class="label">Average score</div></div>'+
-    '<div class="analysis-stat"><div class="value">'+best.pct+'%</div><div class="label">Best score</div></div>'+
-    '<div class="analysis-stat"><div class="value">'+totalQ+'</div><div class="label">Total questions</div></div>'+
+  var avg=Math.round(hist.reduce(function(a,h){return a+h.pct},0)/hist.length);
+  analysis.innerHTML='<h2 class="section-title">Your Performance</h2><div class="analysis-grid">'+
+    '<div class="analysis-stat"><div class="value">'+hist.length+'</div><div class="label">Tests taken</div></div>'+
+    '<div class="analysis-stat"><div class="value">'+avg+'%</div><div class="label">Average accuracy</div></div>'+
     '</div>';
-    
-  var html='<h2 class="section-title">All Test Records</h2><div class="card">';
-  valid.slice(0,50).forEach(function(h,i){
-    var title=h.name||('CUET Test '+(valid.length-i));
-    html+='<div class="history-record"><div style="min-width:0"><div class="record-name">'+esc(title)+'</div><div class="record-meta">'+esc(h.date||'Date')+' · '+(Number(h.total)||0)+' Qs</div></div><div class="record-score">'+fmtMarks(Number(h.score)||0)+'/'+fmtMarks(Number(h.maxMarks)||0)+'<div class="record-pct">'+Number(h.pct||0)+'%</div></div></div>';
-  });
-  html+='</div>';host.innerHTML=html;
 }
 
 /* ============ SETUP ============ */
-function openSetup(){state.subject=null;state.chapters=[];state.count=10;state.difficulty='Mixed';$('setupTitle').textContent='🧪 CUET AI Practice Test';renderSubjects();renderNumberChips();renderDiffChips();renderTimerChips();$('setupPanel').classList.add('hidden');showScreen('screen-setup')}
-function renderSubjects(){var subs=Object.keys(EXAM_DATA.CUET.subjects);var g=$('subjectGrid');g.innerHTML='';subs.forEach(function(s){var b=document.createElement('button');b.type='button';b.className='chip';b.textContent=s;b.onclick=function(){selectSubject(s,b)};g.appendChild(b)})}
+function openSetup(){state.subject=null;state.chapters=[];state.count=10;renderSubjects();renderChips();$('setupPanel').classList.add('hidden');showScreen('screen-setup')}
+function renderSubjects(){var subs=Object.keys(EXAM_DATA.CUET.subjects);var g=$('subjectGrid');g.innerHTML='';subs.forEach(function(s){var b=document.createElement('button');b.className='chip';b.textContent=s;b.onclick=function(){selectSubject(s,b)};g.appendChild(b)})}
 function selectSubject(name,btn){state.subject=name;state.chapters=[];var all=$('subjectGrid').querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');btn.classList.add('active');renderChapters();$('setupPanel').classList.remove('hidden')}
-function renderChapters(){var list=EXAM_DATA.CUET.subjects[state.subject]||[];var host=$('chapterList');host.innerHTML='';list.forEach(function(c){var d=document.createElement('button');d.type='button';d.className='check-item';d.innerHTML='<span class="check-box">✓</span><span>'+esc(c)+'</span>';d.onclick=function(){toggleChapter(c,d)};host.appendChild(d)});updateChapterCount()}
-function toggleChapter(c,el){var idx=state.chapters.indexOf(c);if(idx>=0){state.chapters.splice(idx,1);el.classList.remove('on')}else{state.chapters.push(c);el.classList.add('on')}updateChapterCount()}
-function setFullSubject(){var list=EXAM_DATA.CUET.subjects[state.subject]||[];state.chapters=list.slice();var items=$('chapterList').querySelectorAll('.check-item');for(var i=0;i<items.length;i++)items[i].classList.add('on');updateChapterCount()}
-function clearChapters(){state.chapters=[];var items=$('chapterList').querySelectorAll('.check-item');for(var i=0;i<items.length;i++)items[i].classList.remove('on');updateChapterCount()}
-function updateChapterCount(){var total=(EXAM_DATA.CUET.subjects[state.subject]||[]).length;var sel=state.chapters.length;$('chCount').textContent=sel?('('+sel+' of '+total+')'):'(Full Subject Selected)'}
-function renderNumberChips(){var opts=[10,15,20,30];var host=$('numChips');host.innerHTML='';opts.forEach(function(o){var b=document.createElement('button');b.type='button';b.className='chip'+(state.count===o?' active':'');b.textContent=o;b.onclick=function(){state.count=o;var all=host.querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');b.classList.add('active')};host.appendChild(b)})}
-function renderDiffChips(){var opts=['Easy','Medium','Hard','Mixed'];var host=$('diffChips');host.innerHTML='';opts.forEach(function(o){var b=document.createElement('button');b.type='button';b.className='chip'+(state.difficulty===o?' active':'');b.textContent=o;b.onclick=function(){state.difficulty=o;var all=host.querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');b.classList.add('active')};host.appendChild(b)})}
-function renderTimerChips(){var opts=[{k:'up',t:'⏱ Count Up'},{k:'down',t:'⏳ 15 Min Countdown'}];var host=$('timerChips');host.innerHTML='';opts.forEach(function(o){var b=document.createElement('button');b.type='button';b.className='chip'+(state.timerMode===o.k?' active':'');b.textContent=o.t;b.onclick=function(){state.timerMode=o.k;var all=host.querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');b.classList.add('active')};host.appendChild(b)})}
-
-/* ============ AI GENERATION ============ */
-function startAITest(){
-  if(!state.subject){dialog({title:'Pick a subject',message:'Please select a CUET subject first.'});return}
-  var chapters=state.chapters.length?state.chapters:['Full Syllabus'];
-  var cfg={exam:'CUET',subject:state.subject,chapters:chapters,count:state.count,difficulty:state.difficulty};
-  var prompt=buildPromptAI(cfg);
-  
-  function attempt(){
-    showLoader('AI is generating questions…','CUET • '+state.subject+' ('+state.count+' Qs)',attempt);
-    aiCall(prompt,{source:'ambition-cuet-cbt',mode:'ai',expectsJSON:true}).then(function(text){
-      var list=normaliseList(safeParseJSON(text));
-      if(!list.length) throw new Error('No questions received.');
-      hideLoader();
-      launchTest({
-        name:'CUET • '+state.subject,
-        exam:'CUET',
-        subject:state.subject,
-        source:'ai',
-        questions:list.slice(0,state.count),
-        timerMode:state.timerMode,
-        limitSec:state.timerMode==='down'?15*60:0
-      });
-    }).catch(function(err){
-      showLoader('Could not generate questions',err.message||'Unknown',attempt);
-    });
-  }
-  attempt();
+function renderChapters(){var list=EXAM_DATA.CUET.subjects[state.subject]||[];var host=$('chapterList');host.innerHTML='';list.forEach(function(c){var d=document.createElement('button');d.className='check-item';d.innerHTML='<span class="check-box">✓</span><span>'+esc(c)+'</span>';d.onclick=function(){toggleChapter(c,d)};host.appendChild(d)})}
+function toggleChapter(c,el){var idx=state.chapters.indexOf(c);if(idx>=0){state.chapters.splice(idx,1);el.classList.remove('on')}else{state.chapters.push(c);el.classList.add('on')}}
+function renderChips(){
+  var nc=$('numChips');nc.innerHTML='';[10,15,20].forEach(function(n){var b=document.createElement('button');b.className='chip'+(state.count===n?' active':'');b.textContent=n;b.onclick=function(){state.count=n;renderChips()};nc.appendChild(b)});
+  var dc=$('diffChips');dc.innerHTML='';['Easy','Medium','Hard','Mixed'].forEach(function(d){var b=document.createElement('button');b.className='chip'+(state.difficulty===d?' active':'');b.textContent=d;b.onclick=function(){state.difficulty=d;renderChips()};dc.appendChild(b)});
+  var tc=$('timerChips');tc.innerHTML='';[{k:'up',t:'⏱ Count Up'},{k:'down',t:'⏳ 15 Min'}].forEach(function(tm){var b=document.createElement('button');b.className='chip'+(state.timerMode===tm.k?' active':'');b.textContent=tm.t;b.onclick=function(){state.timerMode=tm.k;renderChips()};tc.appendChild(b)});
 }
 
-/* ============ UPLOAD LOGIC ============ */
+/* ============ AI GENERATION & UPLOAD ============ */
+function startAITest(){
+  var chapters=state.chapters.length?state.chapters:['Full Syllabus'];
+  var prompt='Generate '+state.count+' CUET MCQs for '+state.subject+' (Topics: '+chapters.join(', ')+'). Difficulty: '+state.difficulty+'. Raw JSON format.';
+  showLoader('AI is generating questions…');
+  aiCall(prompt,{source:'ambition-cuet-cbt',mode:'ai'}).then(function(res){
+    var list=normaliseList(safeParseJSON(res));
+    hideLoader();
+    if(!list.length) throw new Error('No questions generated');
+    launchTest({name:'CUET • '+state.subject,questions:list,timerMode:state.timerMode});
+  }).catch(function(err){
+    hideLoader();
+    dialog({title:'Error',message:err.message||'Failed to generate questions.'});
+  });
+}
+
 function openUpload(mode){
-  uploadMode=mode||'extract';
-  $('uploadTitle').textContent = mode==='image'?'📷 Upload Question Photo':(mode==='notes'?'📝 Upload Notes':'📄 Upload Question Paper');
+  uploadMode=mode;
+  $('uploadTitle').textContent=mode==='image'?'📷 Upload Question Photo':'📄 Upload Document';
   renderBanks();
   showScreen('screen-upload');
 }
 
 function renderBanks(){
-  var host=$('bankList');host.innerHTML='<p class="muted small">Loading banks…</p>';
+  var host=$('bankList');
   IDB.all().then(function(banks){
     if(!banks.length){host.innerHTML='<p class="muted small">No banks uploaded yet.</p>';return}
     host.innerHTML='';
     banks.forEach(function(b){
-      var d=document.createElement('div');
-      d.className='bank-item';
-      d.innerHTML='<div class="bi-top"><div><div class="bi-name">📄 '+esc(b.name)+'</div><div class="bi-meta">'+b.questions.length+' questions saved</div></div></div><div class="bi-actions"><button type="button" class="btn small primary" data-act="start">▶ Start Test</button><button type="button" class="btn small danger" data-act="del">Delete</button></div>';
-      d.querySelector('[data-act="start"]').onclick=function(){
-        launchTest({name:b.name,exam:'CUET',subject:b.subject||'CUET',source:'bank',questions:b.questions,timerMode:'up'});
-      };
-      d.querySelector('[data-act="del"]').onclick=function(){
-        IDB.del(b.id).then(renderBanks);
-      };
+      var d=document.createElement('div');d.className='bank-item';
+      d.innerHTML='<div style="font-weight:700">📄 '+esc(b.name)+'</div><div class="muted small">'+b.questions.length+' questions saved</div><div class="btn-row"><button class="btn small primary" data-act="start">▶ Start Test</button><button class="btn small danger" data-act="del">Delete</button></div>';
+      d.querySelector('[data-act="start"]').onclick=function(){launchTest({name:b.name,questions:b.questions,timerMode:'up'})};
+      d.querySelector('[data-act="del"]').onclick=function(){IDB.del(b.id).then(renderBanks)};
       host.appendChild(d);
     });
   });
 }
 
-function handleImageUpload(file){
-  var progressWrap=$('uploadProgress');var progressBar=$('uploadProgressBar');var progressText=$('uploadProgressText');
-  progressWrap.classList.remove('hidden');progressBar.style.width='25%';progressText.textContent='Optimizing image…';
-
-  compressAndBase64Image(file).then(function(imgData){
-    progressBar.style.width='50%';progressText.textContent='AI reading photo…';
-    var prompt = 'Extract all MCQs visible on this image. Ensure each has 4 options and valid answer index 0 to 3. If blurred, synthesize 1-2 CUET MCQs from the visible topic.';
-    return aiCall(prompt, {
-      source:'ambition-cuet-cbt',
-      mode:'image-extract',
-      expectsJSON:true,
-      image:imgData
-    });
-  }).then(function(raw){
-    progressBar.style.width='85%';progressText.textContent='Structuring questions…';
-    var list = normaliseList(safeParseJSON(raw));
-    if(!list.length) throw new Error('AI could not extract questions. Please upload a clear photo.');
-    
-    var bank={id:'bank_'+Date.now(),name:file.name,exam:'CUET',mode:'image',questions:list};
-    return IDB.put(bank).then(function(){
-      progressWrap.classList.add('hidden');
-      renderBanks();
-      dialog({title:'✅ Success',message:list.length+' questions successfully extracted from photo!'});
-    });
-  }).catch(function(err){
-    progressWrap.classList.add('hidden');
-    dialog({title:'Image Extract Error',message:err.message||'Server busy or invalid image format.'});
-  });
-}
-
 function handleFileUpload(file){
   if(!file) return;
-  var fname=(file.name||'').toLowerCase();
-  var isImg = file.type.indexOf('image/')===0 || /\.(jpg|jpeg|png|webp)$/i.test(fname);
-  if(isImg || uploadMode==='image') return handleImageUpload(file);
-
   var progressWrap=$('uploadProgress');var progressBar=$('uploadProgressBar');var progressText=$('uploadProgressText');
-  progressWrap.classList.remove('hidden');progressBar.style.width='20%';progressText.textContent='Reading PDF…';
+  progressWrap.classList.remove('hidden');progressBar.style.width='30%';progressText.textContent='Reading and optimizing image…';
 
-  var readPromise = fname.endsWith('.pdf') ? extractPdf(file, function(p,tot){
-    progressBar.style.width = Math.round(20 + (p/tot)*30) + '%';
-    progressText.textContent = 'Reading PDF page '+p+' of '+tot+'…';
-  }) : readAsText(file);
-
-  readPromise.then(function(text){
-    if(!text || text.trim().length < 50) throw new Error('PDF has no selectable text. If it is a scanned document, please take a photo of the page and upload in "Photo" mode.');
-    progressBar.style.width='60%';progressText.textContent='AI generating MCQs from text…';
-    var chunk = text.slice(0, 10000);
-    var prompt = uploadMode==='notes' ? buildPromptNotes(chunk, 15, 'CUET') : buildPromptExtract(chunk, 15, 'CUET');
-    return aiCall(prompt, { source:'ambition-cuet-cbt', mode:'extract', expectsJSON:true });
-  }).then(function(raw){
-    progressBar.style.width='90%';progressText.textContent='Finalizing…';
-    var list = normaliseList(safeParseJSON(raw));
-    if(!list.length) throw new Error('Could not parse questions from document.');
-    var bank={id:'bank_'+Date.now(),name:file.name,exam:'CUET',mode:'pdf',questions:list};
+  compressImage(file).then(function(imgData){
+    progressBar.style.width='60%';progressText.textContent='AI solving and structuring MCQs…';
+    var prompt='Analyze the questions in this image. Solve each question and output as a valid 4-option MCQ with correct answer index. Use LaTeX for math.';
+    return aiCall(prompt,{source:'ambition-cuet-cbt',mode:'image-extract',image:imgData});
+  }).then(function(res){
+    progressBar.style.width='90%';
+    var list=normaliseList(safeParseJSON(res));
+    if(!list.length) throw new Error('Questions could not be parsed from image.');
+    var bank={id:'bank_'+Date.now(),name:file.name,questions:list};
     return IDB.put(bank).then(function(){
       progressWrap.classList.add('hidden');
       renderBanks();
-      dialog({title:'✅ Saved',message:list.length+' questions added to question bank!'});
+      dialog({title:'✅ Success',message:list.length+' questions successfully extracted and solved into MCQs!'});
     });
   }).catch(function(err){
     progressWrap.classList.add('hidden');
-    dialog({title:'Upload Notice',message:err.message});
+    dialog({title:'Image Processing Error',message:err.message||'Could not process image.'});
   });
 }
 
 /* ============ CBT ENGINE ============ */
 function launchTest(cfg){
-  var mk=getMarking('CUET');
-  T={id:'test_'+Date.now(),name:cfg.name,exam:'CUET',subject:cfg.subject||'',source:cfg.source||'ai',timerMode:cfg.timerMode||'up',limitSec:cfg.limitSec||0,marking:mk,elapsed:0,questions:cfg.questions,answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false}),visited:cfg.questions.map(function(_,i){return i===0}),cur:0,startedAt:Date.now(),submitted:false};
-  LS.set(K.ACTIVE,T);
+  T={name:cfg.name,questions:cfg.questions,cur:0,elapsed:0,timerMode:cfg.timerMode||'up',answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false})};
   $('testTitle').textContent=T.name;
-  var mkEl=$('markingBadge');
-  if(mkEl)mkEl.textContent='📊 +'+fmtMarks(mk.correct)+' / '+fmtMarks(mk.wrong);
-  showScreen('screen-test');$('palette').classList.remove('open');startTimers();renderQuestion();renderPalette();
+  showScreen('screen-test');
+  startTimer();
+  renderQuestion();
+  renderPalette();
 }
-function startTimers(){stopTimers();updateTimerDisplay();timerHandle=setInterval(function(){if(!T||T.submitted)return;T.elapsed++;updateTimerDisplay();if(T.timerMode==='down'&&T.limitSec>0&&T.elapsed>=T.limitSec){clearInterval(timerHandle);timerHandle=null;doSubmit()}},1000);autosaveHandle=setInterval(function(){if(!T||T.submitted)return;LS.set(K.ACTIVE,T)},5000)}
-function stopTimers(){if(timerHandle){clearInterval(timerHandle);timerHandle=null}if(autosaveHandle){clearInterval(autosaveHandle);autosaveHandle=null}}
-function updateTimerDisplay(){if(!T)return;var el=$('timerDisplay');if(T.timerMode==='down'&&T.limitSec>0){var remaining=Math.max(0,T.limitSec-T.elapsed);el.textContent=fmtTime(remaining);el.classList.toggle('warn',remaining<=60)}else{el.textContent=fmtTime(T.elapsed);el.classList.remove('warn')}}
+
+function startTimer(){
+  if(timerHandle) clearInterval(timerHandle);
+  timerHandle=setInterval(function(){
+    if(!T) return;
+    T.elapsed++;
+    $('timerDisplay').textContent=fmtTime(T.elapsed);
+  },1000);
+}
 
 function renderQuestion(){
-  if(!T)return;var q=T.questions[T.cur];if(!q)return;
+  if(!T) return;
+  var q=T.questions[T.cur];
   $('qCounter').textContent='Question '+(T.cur+1)+' of '+T.questions.length;
-  $('qTopic').textContent=q.topic||'CUET Section';
-  var dEl=$('qDiff');dEl.textContent=q.diff||'medium';dEl.className='badge '+(q.diff||'medium');
-  $('qText').textContent=q.q||'';
+  $('qTopic').textContent=q.topic;
+  $('qDiff').textContent=q.diff;
+  $('qText').innerHTML=q.q;
+  
   var box=$('optionsBox');box.innerHTML='';
   var letters=['A','B','C','D'];
   q.options.forEach(function(opt,i){
-    var b=document.createElement('button');b.type='button';
+    var b=document.createElement('button');
     b.className='option'+(T.answers[T.cur]===i?' selected':'');
-    b.innerHTML='<span class="opt-key">'+letters[i]+'</span><span class="option-text">'+esc(opt)+'</span>';
-    b.onclick=function(){T.answers[T.cur]=i;T.visited[T.cur]=true;LS.set(K.ACTIVE,T);renderQuestion();renderPalette()};
+    b.innerHTML='<span class="opt-key">'+letters[i]+'</span><span class="option-text">'+opt+'</span>';
+    b.onclick=function(){T.answers[T.cur]=i;renderQuestion();renderPalette()};
     box.appendChild(b);
   });
-  $('btnNext').textContent=(T.cur===T.questions.length-1)?'Review & Submit':'Save & Next →';
+  
   $('btnPrev').disabled=(T.cur===0);
-  $('btnMark').textContent=T.marked[T.cur]?'🚩 Unmark':'🚩 Mark';
-  $('qArea').scrollTop=0;
-  renderPalette();
+  $('btnNext').textContent=(T.cur===T.questions.length-1)?'Review & Submit':'Save & Next →';
   renderMath($('qText'));
-  renderMath($('optionsBox'));
+  renderMath(box);
 }
-function renderPalette(){if(!T)return;var grid=$('paletteGrid');grid.innerHTML='';T.questions.forEach(function(q,i){var cls='grey';if(T.marked[i])cls='purple';else if(T.answers[i]!==null&&T.answers[i]!==undefined)cls='green';else if(T.visited[i])cls='red';var b=document.createElement('button');b.type='button';b.className='pal-btn '+cls+(i===T.cur?' cur':'');b.textContent=i+1;b.onclick=function(){T.visited[i]=true;T.cur=i;LS.set(K.ACTIVE,T);$('palette').classList.remove('open');renderQuestion()};grid.appendChild(b)})}
-function goNext(){if(!T)return;if(T.cur<T.questions.length-1){T.cur++;T.visited[T.cur]=true;LS.set(K.ACTIVE,T);renderQuestion()}else confirmSubmit()}
-function goPrev(){if(!T||T.cur===0)return;T.cur--;T.visited[T.cur]=true;LS.set(K.ACTIVE,T);renderQuestion()}
-function toggleMark(){if(!T)return;T.marked[T.cur]=!T.marked[T.cur];T.visited[T.cur]=true;LS.set(K.ACTIVE,T);renderQuestion()}
-function clearAnswer(){if(!T)return;T.answers[T.cur]=null;T.visited[T.cur]=true;LS.set(K.ACTIVE,T);renderQuestion()}
-function confirmSubmit(){if(!T)return;dialog({title:'Submit test?',message:'Are you sure you want to complete your test?',buttons:[{text:'Continue',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){if(ok)doSubmit()})}
 
-function doSubmit(){
-  if(!T)return;
-  T.submitted=true;
-  stopTimers();
-  var questions=T.questions;
-  var mk=getMarking('CUET');
-  var correctCount=0,wrongCount=0,skippedCount=0;
-  var marksObtained=0;
-  var maxMarks=questions.length*mk.correct;
-  var details=questions.map(function(q,i){
-    var user=(T.answers[i]===null||T.answers[i]===undefined)?-1:T.answers[i];
-    var ok=(user===q.ans);
-    var qMarks=0;
-    if(user<0){skippedCount++;qMarks=0;}
-    else if(ok){correctCount++;qMarks=mk.correct;}
-    else{wrongCount++;qMarks=mk.wrong;}
-    marksObtained+=qMarks;
-    return{q:q,user:user,ok:ok,marks:qMarks};
+function renderPalette(){
+  if(!T) return;
+  var grid=$('paletteGrid');grid.innerHTML='';
+  T.questions.forEach(function(_,i){
+    var cls='grey';
+    if(T.marked[i]) cls='purple';
+    else if(T.answers[i]!==null) cls='green';
+    var b=document.createElement('button');
+    b.className='pal-btn '+cls+(i===T.cur?' cur':'');
+    b.textContent=i+1;
+    b.onclick=function(){T.cur=i;renderQuestion();renderPalette();$('palette').classList.remove('open')};
+    grid.appendChild(b);
   });
-  marksObtained=Math.round(marksObtained*100)/100;
-  var pct=maxMarks>0?Math.max(0,Math.round((marksObtained/maxMarks)*100)):0;
-  var result={
-    name:T.name,exam:'CUET',subject:T.subject,date:new Date().toLocaleDateString(),
-    score:marksObtained,maxMarks:maxMarks,
-    correctCount:correctCount,wrongCount:wrongCount,skippedCount:skippedCount,
-    total:questions.length,pct:pct,elapsed:T.elapsed,
-    marking:mk,details:details
-  };
+}
+
+function goNext(){
+  if(T.cur < T.questions.length-1){ T.cur++; renderQuestion(); renderPalette(); }
+  else submitTest();
+}
+function goPrev(){ if(T.cur > 0){ T.cur--; renderQuestion(); renderPalette(); } }
+function toggleMark(){ T.marked[T.cur]=!T.marked[T.cur]; renderQuestion(); renderPalette(); }
+function clearAns(){ T.answers[T.cur]=null; renderQuestion(); renderPalette(); }
+
+function submitTest(){
+  if(timerHandle) clearInterval(timerHandle);
+  var correct=0,wrong=0;
+  T.questions.forEach(function(q,i){
+    if(T.answers[i]===null) return;
+    if(T.answers[i]===q.ans) correct++;
+    else wrong++;
+  });
+  var score=(correct*5)-(wrong*1);
+  var max=T.questions.length*5;
+  var pct=Math.max(0,Math.round((score/max)*100));
+  
+  var record={name:T.name,score:score,max:max,pct:pct,correct:correct,wrong:wrong};
   var hist=LS.get(K.HISTORY,[]);
-  hist.unshift(result);
-  LS.set(K.HISTORY,hist.slice(0,100));
-  LS.del(K.ACTIVE);
-  renderResult(result);
+  hist.unshift(record);
+  LS.set(K.HISTORY,hist);
+
+  $('resultBody').innerHTML='<div class="scorecard">'+
+    '<div class="muted small" style="text-transform:uppercase;letter-spacing:1px;font-weight:700">CUET UG Scorecard</div>'+
+    '<div class="scorecard-score">'+score+'</div>'+
+    '<div class="muted" style="margin:4px 0 16px">Out of '+max+' Marks ('+pct+'%)</div>'+
+    '<div class="scorecard-meta">'+
+    '<div class="scr-meta-item"><div class="scr-meta-val" style="color:var(--green)">'+correct+'</div><div class="scr-meta-lbl">Correct (+'+(correct*5)+')</div></div>'+
+    '<div class="scr-meta-item"><div class="scr-meta-val" style="color:var(--red)">'+wrong+'</div><div class="scr-meta-lbl">Wrong (-'+wrong+')</div></div>'+
+    '<div class="scr-meta-item"><div class="scr-meta-val">'+fmtTime(T.elapsed)+'</div><div class="scr-meta-lbl">Time</div></div>'+
+    '</div></div>'+
+    '<button class="btn primary big" id="btnResHome">🏠 Back to Home</button>';
+    
+  $('btnResHome').onclick=function(){renderHome();showScreen('screen-home')};
   showScreen('screen-result');
 }
 
-function renderResult(r){
-  var host=$('resultBody');
-  var html = '<div class="scorecard">';
-  html += '<div class="scorecard-head"><div class="scorecard-exam">CUET UG 2026</div><div class="scorecard-title">Scorecard</div><div class="scorecard-date">'+esc(r.date)+'</div></div>';
-  html += '<div class="scorecard-big"><div class="scorecard-score">'+fmtMarks(r.score)+'</div><div class="scorecard-divider">/</div><div class="scorecard-max">'+fmtMarks(r.maxMarks)+'</div></div>';
-  html += '<div class="scorecard-pct">'+r.pct+'%</div>';
-  html += '<div class="scorecard-meta">';
-  html += '<div class="scr-meta-item"><div class="scr-meta-val" style="color:var(--green)">'+r.correctCount+'</div><div class="scr-meta-lbl">Correct</div></div>';
-  html += '<div class="scr-meta-item"><div class="scr-meta-val" style="color:var(--red)">'+r.wrongCount+'</div><div class="scr-meta-lbl">Wrong</div></div>';
-  html += '<div class="scr-meta-item"><div class="scr-meta-val">'+fmtTime(r.elapsed)+'</div><div class="scr-meta-lbl">Time</div></div>';
-  html += '</div></div>';
-  
-  html += '<div class="btn-row" style="margin-bottom:20px"><button type="button" class="btn primary" id="rHome">🏠 Return Home</button></div>';
-  host.innerHTML=html;
-  $('rHome').onclick=function(){renderHome();showScreen('screen-home')};
-}
-
-/* ============ SETTINGS ============ */
-function openSettings(){
-  dialog({title:'⚙️ Settings',message:'Ambition CBT Mode is running on verified CUET UG 2026 Engine.'});
-}
-
-/* ============ INIT & EVENTS ============ */
+/* ============ EVENTS ============ */
 function wireEvents(){
-  $('btnOpenSettings').onclick=openSettings;
-  $('btnBackHome').onclick=function(){renderHome();showScreen('screen-home')};
+  $('btnOpenSettings').onclick=function(){dialog({title:'Settings',message:'Ambition CBT Mode is running with full Math & LaTeX rendering.'})};
+  $('btnBackHome').onclick=function(){showScreen('screen-home')};
   $('btnModeAI').onclick=openSetup;
   $('btnModeBook').onclick=function(){openUpload('extract')};
   $('btnModeNotes').onclick=function(){openUpload('notes')};
   $('btnModeImage').onclick=function(){openUpload('image')};
   $('btnSetupBack').onclick=function(){showScreen('screen-exam')};
-  $('btnFullSubject').onclick=setFullSubject;
-  $('btnClearChapters').onclick=clearChapters;
-  $('btnStartTest').onclick=startAITest;
   $('btnUploadBack').onclick=function(){showScreen('screen-exam')};
-  $('fileInput').onchange=function(e){var f=e.target.files&&e.target.files[0];if(f)handleFileUpload(f);e.target.value=''};
+  $('btnFullSubject').onclick=function(){
+    state.chapters=(EXAM_DATA.CUET.subjects[state.subject]||[]).slice();
+    document.querySelectorAll('.check-item').forEach(function(i){i.classList.add('on')});
+  };
+  $('btnClearChapters').onclick=function(){
+    state.chapters=[];
+    document.querySelectorAll('.check-item').forEach(function(i){i.classList.remove('on')});
+  };
+  $('btnStartTest').onclick=startAITest;
+  $('fileInput').onchange=function(e){if(e.target.files[0]) handleFileUpload(e.target.files[0]); e.target.value='';};
   $('btnPaletteToggle').onclick=function(){$('palette').classList.toggle('open')};
-  $('btnPrev').onclick=goPrev;
   $('btnNext').onclick=goNext;
+  $('btnPrev').onclick=goPrev;
   $('btnMark').onclick=toggleMark;
-  $('btnClear').onclick=clearAnswer;
-  $('btnSubmit').onclick=confirmSubmit;
+  $('btnClear').onclick=clearAns;
+  $('btnSubmit').onclick=function(){dialog({title:'Submit Test?',message:'Are you sure you want to finish the exam?',buttons:[{text:'Continue',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){if(ok) submitTest()})};
   $('btnResultHome').onclick=function(){renderHome();showScreen('screen-home')};
 }
 
 (function init(){
-  wireEvents();renderHome();bindExamGrid();showScreen('screen-home');
+  wireEvents();
+  renderHome();
+  showScreen('screen-home');
   IDB.open().catch(function(){});
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js').catch(function(){});
-  }
 })();
 </script>
 </body>
