@@ -1,5 +1,5 @@
 // Ambition CBT Mode — Production AI Backend
-// Robust JSON extractor for Text, Scanned PDFs & Photos
+// Powered by ASVIRO STUDIO
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,7 +22,6 @@ module.exports = async (req, res) => {
   const isCBT = context && (context.source === 'ambition-cuet-cbt' || context.source === 'cbt-test-studio');
   const mode = (context && context.mode) || 'chat';
 
-  // Extract all images
   let allImages = [];
   if (Array.isArray(images) && images.length) {
     allImages = images.filter(i => i && i.data && i.mime);
@@ -35,51 +34,57 @@ module.exports = async (req, res) => {
 
   if (hasImages || mode === 'image-extract' || mode === 'scanned-extract') {
     systemPrompt =
-      'You are a high-speed Indian competitive exam (CUET/CBSE) question extractor.\n' +
-      'TASK: Look at the image carefully and extract all Multiple Choice Questions (MCQs).\n' +
-      'RULES:\n' +
-      '1. Extract every MCQ visible with all 4 options (A, B, C, D).\n' +
-      '2. If the answer is marked or obvious, set "ans" as 0 (for A), 1 (for B), 2 (for C), or 3 (for D). If unsure, solve it factually and assign correct option index (0 to 3).\n' +
-      '3. If question has less than 4 options, make plausible options so there are exactly 4.\n' +
-      '4. If no complete question is visible, construct 1-2 standard CUET MCQs based on whatever text/topic is visible.\n' +
-      '5. For math/formulas use LaTeX notation wrapped in $...$.\n' +
-      '6. OUTPUT ONLY A RAW JSON ARRAY of objects. Never wrap in markdown, never output prose.\n' +
-      'Format:\n' +
-      '[{"q":"Question text","options":["Option A","Option B","Option C","Option D"],"ans":0,"topic":"Subject","diff":"medium","explain":"Brief reason"}]';
+      'You are an expert Indian exam question extractor and solver for CUET UG and CBSE Class 12.\n' +
+      'INPUT: A photo or scan of questions, textbook exercises, PYQs, or test papers (e.g. Mathematics Integrals, Calculus, Physics, Chemistry, Biology).\n\n' +
+      'MISSION:\n' +
+      'Identify ALL distinct questions visible in the image and convert EVERY question into a standard 4-option MCQ format.\n\n' +
+      'CRITICAL RULES FOR NON-MCQ & DIRECT QUESTIONS:\n' +
+      '1. If questions already have options (A/B/C/D), copy them accurately.\n' +
+      '2. If questions do NOT have options (like "Evaluate \\int x^2 \\sin^2 x dx" or numbered exercise problems), YOU MUST SOLVE THE QUESTION CAREFULLY.\n' +
+      '3. Create 4 plausible options (A, B, C, D) where ONE option is the factually and mathematically correct solution, and the other 3 are realistic distractors.\n' +
+      '4. "ans" MUST be the exact 0-based integer index of the correct option (0 for A, 1 for B, 2 for C, 3 for D).\n' +
+      '5. For ALL mathematical and scientific formulas, symbols, fractions, powers, and integrals, ALWAYS wrap them in LaTeX syntax: $...$.\n' +
+      '6. "topic" = Chapter name if identifiable (e.g. "Integrals", "Calculus"), else "CUET Mathematics".\n' +
+      '7. "diff" = easy, medium, or hard.\n' +
+      '8. "explain" = brief step-by-step solution.\n\n' +
+      'FORMAT:\n' +
+      'Return ONLY a valid, raw JSON array of objects without any markdown fences or conversational text:\n' +
+      '[{"q":"Evaluate $\\\\int \\\\frac{x + \\\\sin x}{1 + \\\\cos x} dx$","options":["$x \\\\tan\\\\frac{x}{2} + C$","$\\\\tan\\\\frac{x}{2} + C$","$x \\\\cot\\\\frac{x}{2} + C$","$\\\\ln\vert{}1+\\\\cos x\vert{} + C$"],"ans":0,"topic":"Integrals","diff":"medium","explain":"Using half angle identities..."}]';
   } else if (isCBT && mode === 'extract') {
     systemPrompt =
       'You are an expert CUET exam question extractor.\n' +
-      'TASK: Extract questions from the provided text into standard 4-option MCQs.\n' +
-      'If explicit MCQs exist, extract them accurately. If not, generate standard CUET MCQs based on the provided text concepts.\n' +
-      'Options must be exactly 4. "ans" must be integer 0, 1, 2, or 3. Math in $...$.\n' +
-      'OUTPUT ONLY JSON ARRAY: [{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"Subject","diff":"medium","explain":""}]';
+      'Convert questions or exercise problems into standard 4-option MCQs. If options are missing, solve and create 4 options with one correct answer.\n' +
+      'Math in $...$. "ans" must be integer 0 to 3.\n' +
+      'Return ONLY a raw JSON array: [{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"Subject","diff":"medium","explain":""}]';
   } else if (isCBT && (mode === 'notes' || mode === 'ai')) {
     systemPrompt =
       'You are a senior CUET UG paper setter.\n' +
-      'Generate high-yield NCERT/PYQ standard MCQs based on the prompt.\n' +
-      'Exactly 4 options, "ans" is 0-3, vary answer keys. Math in $...$.\n' +
-      'OUTPUT ONLY JSON ARRAY: [{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"Subject","diff":"medium","explain":""}]';
+      'Generate high-yield NCERT standard MCQs. 4 options, 1 correct. Math in $...$.\n' +
+      'Return ONLY a raw JSON array: [{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"Subject","diff":"medium","explain":""}]';
   } else {
-    systemPrompt = 'You are Ambition AI Coach for CUET aspirants. Concise, supportive, helpful.';
+    systemPrompt = 'You are Ambition AI Coach. Supportive, encouraging, concise.';
   }
 
-  // Construct request contents
-  let parts = [];
+  let contents = [
+    {
+      role: 'user',
+      parts: [
+        { text: systemPrompt + '\n\nUser Request / Context:\n' + message }
+      ]
+    }
+  ];
+
   if (hasImages) {
     for (const img of allImages) {
-      parts.push({
-        inlineData: {
-          mimeType: img.mime || 'image/jpeg',
+      contents[0].parts.push({
+        inline_data: {
+          mime_type: img.mime || 'image/jpeg',
           data: img.data
         }
       });
     }
   }
-  parts.push({ text: systemPrompt + '\n\nUser Content/Instruction:\n' + message });
 
-  const contents = [{ role: 'user', parts: parts }];
-
-  // Fallback models in priority order
   const models = [
     'gemini-3.5-flash-lite',
     'gemini-3.5-flash',
@@ -92,15 +97,13 @@ module.exports = async (req, res) => {
   for (const model of models) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 13500);
+      const timeoutId = setTimeout(() => controller.abort(), 14000);
 
       const genConfig = {
         maxOutputTokens: 8192,
-        temperature: isCBT ? 0.1 : 0.7
+        temperature: isCBT ? 0.15 : 0.7
       };
-      if (isCBT) {
-        genConfig.responseMimeType = 'application/json';
-      }
+      if (isCBT) genConfig.responseMimeType = 'application/json';
 
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
@@ -126,13 +129,11 @@ module.exports = async (req, res) => {
         let text = candidateParts ? candidateParts.map(p => p.text || '').join('').trim() : '';
 
         if (text) {
-          if (isCBT) {
-            text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
-            const start = text.indexOf('[');
-            const end = text.lastIndexOf(']');
-            if (start >= 0 && end > start) {
-              text = text.slice(start, end + 1);
-            }
+          text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
+          const start = text.indexOf('[');
+          const end = text.lastIndexOf(']');
+          if (start >= 0 && end > start) {
+            text = text.slice(start, end + 1);
           }
           return res.status(200).json({ message: text });
         }
@@ -150,13 +151,13 @@ module.exports = async (req, res) => {
         return res.status(429).json({ error: 'QUOTA_EXCEEDED', message: 'API quota exceeded. Please wait a minute.' });
       }
     } catch (err) {
-      lastError = err.name === 'AbortError' ? `[${model}] Timeout (>13.5s)` : `[${model}] ${err.message}`;
+      lastError = err.name === 'AbortError' ? `[${model}] Timeout (>14s)` : `[${model}] ${err.message}`;
     }
   }
 
   return res.status(502).json({
     error: 'AI_FAILED',
-    message: 'Could not extract questions from file/image.',
+    message: 'Could not extract questions from image/file.',
     detail: lastError
   });
 };
