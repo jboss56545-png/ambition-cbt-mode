@@ -1,4 +1,4 @@
-// CBT Test Studio — AI Master Backend (PDF + Image + Scanned PDF)
+// Ambition CBT Mode — Blazing Fast AI Backend
 // Powered by ASVIRO STUDIO
 
 async function fetchGemini(model, key, body, timeoutMs) {
@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
   }
 
   const key = (process.env.GEMINI_API_KEY || '').trim();
-  if (!key) return res.status(500).json({ error: 'NO_KEY', message: 'Setup: GEMINI_API_KEY missing on Vercel.' });
+  if (!key) return res.status(500).json({ error: 'NO_KEY', message: 'GEMINI_API_KEY missing on Vercel.' });
 
   const isCBT = context && (context.source === 'cbt-test-studio' || context.source === 'ambition-cuet-cbt');
   const mode = (context && context.mode) || 'chat';
@@ -54,62 +54,51 @@ module.exports = async (req, res) => {
 
   if (hasImages && (mode === 'scanned-extract' || mode === 'image-extract' || mode === 'extract' || mode === 'notes')) {
     system =
-      'You are an expert at extracting exam questions from photos/scans of Indian educational material.\n\n' +
-      'YOUR MISSION:\n' +
-      'Extract ALL valid exam questions and convert to standard 4-option MCQ format.\n\n' +
-      'STRICT RULES:\n' +
-      '1. Copy question text EXACTLY. Do NOT paraphrase.\n' +
-      '2. Preserve original answer if given (map A/B/C/D → 0/1/2/3, 1/2/3/4 → 0/1/2/3).\n' +
-      '3. Every question: exactly 4 options, ONE correct.\n' +
-      '4. If options are missing (direct question), YOU MUST SOLVE IT. Add 4 plausible options where EXACTLY ONE IS 100% CORRECT mathematically/factually.\n' +
-      '5. "topic" = chapter name if visible, else "General".\n' +
-      '6. "diff" = easy/medium/hard.\n' +
-      '7. "explain" = short reasoning if available, else "".\n' +
-      '8. For ALL math formulas, ALWAYS use LaTeX with `$` syntax. Example: `$\\int x^2 dx$`, `$\\frac{a}{b}$`.\n' +
-      '9. If NO questions found in these images, return [] — but only after thorough reading.\n\n' +
+      'You are an expert Indian exam question extractor.\n\n' +
+      'MISSION: Extract ALL valid exam questions and convert to standard 4-option MCQ format.\n\n' +
+      'CRITICAL FORMATTING RULES:\n' +
+      '1. Question text must be EXACT. If it has statements (A, B, C, D), put EACH statement on a NEW LINE using \\n (e.g., "Identify the correct statements:\\nA. Statement 1\\nB. Statement 2").\n' +
+      '2. If Match the following, format list items on new lines.\n' +
+      '3. REMOVE all option prefixes from the options array! Do NOT include (a), (b), (A), (B), 1, 2. Just the raw text.\n' +
+      '   Example: If option is "(a) A, D, E only", the array should be ["A, D, E only", ...].\n' +
+      '4. Exactly 4 options, ONE correct. "ans" = 0-based index (0,1,2,3).\n' +
+      '5. If direct question, SOLVE carefully. Only 1 option must be 100% correct.\n' +
+      '6. Use LaTeX `$` for math formulas.\n\n' +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
-      '[{"q":"question text","options":["A","B","C","D"],"ans":0,"topic":"chapter","diff":"easy","explain":""}]\n\n' +
+      '[{"q":"...","options":["text1","text2","text3","text4"],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(context || {});
 
   } else if (isCBT && mode === 'extract') {
     system =
-      'You are an expert at extracting exam questions from Indian educational PDFs.\n\n' +
-      'STRICT RULES:\n' +
-      '1. Copy question text EXACTLY.\n' +
-      '2. Preserve original answer (map A/B/C/D → 0/1/2/3).\n' +
-      '3. Exactly 4 options, ONE correct.\n' +
-      '4. If options are missing, YOU MUST SOLVE IT. Create 4 options where ONLY ONE IS 100% CORRECT.\n' +
-      '5. "topic" = chapter name, else "General".\n' +
-      '6. "diff" = easy/medium/hard.\n' +
-      '7. "explain" = short reasoning if available, else "".\n' +
-      '8. For ALL math formulas, ALWAYS use LaTeX with `$` syntax. Example: `$\\int x^2 dx$`, `$\\frac{a}{b}$`.\n' +
-      '9. Extract EVERY valid question. If none, return [].\n\n' +
+      'You are an expert CUET exam question extractor.\n\n' +
+      'RULES:\n' +
+      '1. Question text EXACT. Statements (A, B, C, D) on new lines using \\n.\n' +
+      '2. REMOVE option prefixes (a), (b), (A), 1. from the array items.\n' +
+      '3. Exactly 4 options, ONE correct. "ans" = 0 to 3.\n' +
+      '4. If direct question, SOLVE carefully.\n' +
+      '5. Use LaTeX `$` for math.\n\n' +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
-      '[{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"ch","diff":"easy","explain":""}]\n\n' +
+      '[{"q":"...","options":["text1","text2","text3","text4"],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(context || {});
 
   } else if (isCBT && mode === 'notes') {
     system =
-      'You are an expert Indian exam question setter.\n' +
-      'Generate high-quality MCQs based on the CONCEPTS in the given notes.\n' +
-      'RULES: 4 options, ONE correct, vary index (0,1,2,3), plausible distractors, cover DIFFERENT concepts.\n' +
-      'For ALL math formulas, ALWAYS use LaTeX with `$` syntax.\n' +
+      'You are a senior CUET UG paper setter.\n' +
+      'Generate high-yield NCERT MCQs. 4 options, 1 correct. REMOVE any prefixes from options array. Math in `$...$`.\n' +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
-      '[{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"topic","diff":"easy","explain":"why"}]\n\n' +
+      '[{"q":"...","options":["text1","text2","text3","text4"],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(context || {});
 
   } else if (isCBT && mode === 'ai') {
     system =
-      'You are an expert Indian competitive-exam question setter with 20 years experience.\n' +
-      'Generate MCQs matching EXACT style of PYQ books (Oswaal, Arihant, MTG).\n' +
-      'RULES: 4 options, ONE correct, vary index (0,1,2,3). "topic" = exact chapter. "diff" = easy/medium/hard.\n' +
-      'For ALL math formulas, ALWAYS use LaTeX with `$` syntax. Example: `$\\int x^2 dx$`, `$\\frac{a}{b}$`.\n' +
+      'You are an expert CUET UG paper setter. Generate MCQs matching Oswaal/Arihant style.\n' +
+      '4 options, 1 correct. REMOVE any prefixes from options array. Math in `$...$`.\n' +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
-      '[{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"ch","diff":"easy","explain":"why"}]\n\n' +
+      '[{"q":"...","options":["text1","text2","text3","text4"],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(context || {});
 
   } else {
-    system = 'You are "The Raven", a wise and encouraging AI coach for competitive exam students. Supportive, motivating, concise. Natural language (Hinglish/English mix OK).\n\n' +
+    system = 'You are "The Raven", a wise and encouraging AI coach for competitive exam students. Supportive, concise.\n\n' +
       'USER REQUEST:\n' + JSON.stringify(context || {}) + '\n\nUser Message: ' + message;
   }
 
@@ -135,13 +124,12 @@ module.exports = async (req, res) => {
     }
   }
 
+  // ✅ SPEED BOOST: Fastest models first
   const models = [
-    (process.env.GEMINI_MODEL || '').trim(),
-    'gemini-3.5-flash-lite',
+    'gemini-3.5-flash-lite',   
     'gemini-2.5-flash',
-    'gemini-3.5-flash',
-    'gemini-flash-latest'
-  ].filter((m, i, a) => m && a.indexOf(m) === i);
+    'gemini-3.5-flash'
+  ];
 
   let lastErr = '';
   let sawQuota = false;
@@ -150,14 +138,15 @@ module.exports = async (req, res) => {
   for (const model of models) {
     try {
       const temp = isCBT ? 0.15 : 0.85;
-      const genConfig = { maxOutputTokens: 8192, temperature: temp };
+      // Tokens reduced to 4096 for lightning fast generation
+      const genConfig = { maxOutputTokens: 4096, temperature: temp };
       if (isCBT) genConfig.responseMimeType = 'application/json';
 
       const r = await fetchGemini(model, key, {
         systemInstruction: { parts: [{ text: system }] },
         contents,
         generationConfig: genConfig
-      }, 45000);
+      }, 30000); // 30s timeout per model
 
       const data = await r.json().catch(() => ({}));
 
@@ -188,9 +177,9 @@ module.exports = async (req, res) => {
     }
   }
 
-  if (authError) return res.status(401).json({ error: 'AUTH_ERROR', message: 'Google API key problem: ' + authError, detail: lastErr });
-  if (sawQuota) return res.status(429).json({ error: 'QUOTA_EXCEEDED', message: 'API quota limit hit. Please wait 1 minute.', detail: lastErr });
-  return res.status(502).json({ error: 'AI_UNAVAILABLE', message: 'AI is currently busy. Please retry.', detail: lastErr });
+  if (authError) return res.status(401).json({ error: 'AUTH_ERROR', message: 'API Key problem: ' + authError });
+  if (sawQuota) return res.status(429).json({ error: 'QUOTA_EXCEEDED', message: 'API quota limit hit. Wait 1 min.' });
+  return res.status(502).json({ error: 'AI_UNAVAILABLE', message: 'AI is busy. Please retry.' });
 };
 
 module.exports.config = { maxDuration: 60 };
