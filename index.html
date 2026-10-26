@@ -11,6 +11,7 @@
 <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3404/3404134.png">
 
 <style>
+/* CSS Same as before */
 :root{--bg:#0b0d12;--bg-2:#0f1219;--card:#161a24;--card-2:#1c2130;--border:#252b3a;--text:#e8ecf5;--muted:#8b95ad;--accent:#6366f1;--accent-2:#a855f7;--green:#22c55e;--red:#ef4444;--purple:#a855f7;--grey:#4b5563;--orange:#f59e0b;--radius:16px;--radius-sm:10px;--shadow:0 10px 34px rgba(0,0,0,.45);--shadow-sm:0 4px 14px rgba(15,23,42,.28);--tap:44px}
 [data-theme="light"]{--bg:#f5f6fb;--bg-2:#fff;--card:#fff;--card-2:#f2f4fa;--border:#e4e7f0;--text:#0f172a;--muted:#6b7280;--grey:#cbd5e1;--shadow:0 10px 30px rgba(15,23,42,.10);--shadow-sm:0 4px 14px rgba(15,23,42,.07)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -282,12 +283,10 @@ window.MathJax = {
 <script>
 "use strict";
 
-/* ============ PDF.JS CONFIG ============ */
 if (typeof pdfjsLib !== 'undefined') {
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 }
 
-/* ============ CUET SYLLABUS ============ */
 var CH_PHY_12=["Electric Charges and Fields","Electrostatic Potential","Current Electricity","Moving Charges and Magnetism","Magnetism and Matter","Electromagnetic Induction","Alternating Current","Electromagnetic Waves","Ray Optics","Wave Optics","Dual Nature of Radiation","Atoms","Nuclei","Semiconductor Electronics"];
 var CH_CHEM_12=["Solutions","Electrochemistry","Chemical Kinetics","d- and f-Block Elements","Coordination Compounds","Haloalkanes and Haloarenes","Alcohols Phenols and Ethers","Aldehydes Ketones and Carboxylic Acids","Amines","Biomolecules"];
 var CH_MATH_12=["Relations and Functions","Inverse Trigonometric Functions","Matrices","Determinants","Continuity and Differentiability","Application of Derivatives","Integrals","Application of Integrals","Differential Equations","Vector Algebra","Three Dimensional Geometry","Linear Programming","Probability"];
@@ -304,7 +303,6 @@ var EXAM_DATA={
   }}
 };
 
-/* ============ STORAGE ============ */
 var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del:function(k){try{localStorage.removeItem(k)}catch(e){}}};
 var K={ACTIVE:'cbt_active_test',HISTORY:'cbt_history'};
 var IDB={db:null,open:function(){var self=this;if(self.db)return Promise.resolve(self.db);return new Promise(function(res,rej){var req;try{req=indexedDB.open('ambition_db',1)}catch(e){rej(e);return}req.onupgradeneeded=function(e){var db=e.target.result;if(!db.objectStoreNames.contains('banks'))db.createObjectStore('banks',{keyPath:'id'})};req.onsuccess=function(e){self.db=e.target.result;res(self.db)};req.onerror=function(){rej(req.error)}})},put:function(obj){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').put(obj);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})},all:function(){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readonly');var r=tx.objectStore('banks').getAll();r.onsuccess=function(){res(r.result||[])};r.onerror=function(){rej(r.error)}})})},del:function(id){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').delete(id);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})}};
@@ -323,16 +321,14 @@ function renderMath(el){
   }
 }
 
-/* ============ DIALOG & LOADER ============ */
 function showLoader(text,sub){$('loaderText').textContent=text||'Working…';$('loaderSub').textContent=sub||'';$('loader').classList.remove('hidden')}
 function hideLoader(){$('loader').classList.add('hidden')}
 function dialog(opts){return new Promise(function(resolve){var ov=document.createElement('div');ov.className='modal-overlay';var box=document.createElement('div');box.className='modal';box.innerHTML='<h3>'+esc(opts.title||'')+'</h3><p style="margin:12px 0;line-height:1.5;color:var(--muted)">'+esc(opts.message||'')+'</p>';var acts=document.createElement('div');acts.className='modal-actions';(opts.buttons||[{text:'OK',primary:true,value:true}]).forEach(function(b){var btn=document.createElement('button');btn.className='btn'+(b.primary?' primary':'');btn.textContent=b.text;btn.onclick=function(){document.body.removeChild(ov);resolve(b.value)};acts.appendChild(btn)});box.appendChild(acts);ov.appendChild(box);document.body.appendChild(ov)})}
 
-/* ============ AI ENGINE (with timeout + retry) ============ */
 async function aiCall(message, context, opts) {
   opts = opts || {};
-  var timeoutMs = opts.timeoutMs || 45000;
-  var retries = opts.retries === undefined ? 1 : opts.retries;
+  var timeoutMs = opts.timeoutMs || 60000;
+  var retries = opts.retries === undefined ? 0 : opts.retries; // Default 0 retries for PDF chunks to avoid long loops
 
   var payload = { message: message, context: context ? Object.assign({}, context) : {} };
   if (context && context.image) { payload.image = context.image; delete payload.context.image; }
@@ -353,25 +349,19 @@ async function aiCall(message, context, opts) {
       if (!res.ok) {
         var body = '';
         try { body = await res.text(); } catch (e) {}
-        var err = new Error('Server ' + res.status + (body ? ': ' + body.slice(0, 180) : ''));
+        var err = new Error('Server ' + res.status + (body ? ': ' + body.slice(0, 100) : ''));
         err.status = res.status;
-        if (res.status === 429) err.message = 'Server busy. Please wait and retry.';
-        if (res.status >= 500 && attempt < retries) {
-          await new Promise(function(r) { setTimeout(r, 800 * (attempt + 1)); });
-          lastErr = err;
-          continue;
-        }
         throw err;
       }
       var data = await res.json();
-      var text = data && (data.message || data.text || data.reply);
+      var text = data && (data.message || data.text);
       if (!text) throw new Error('Empty AI response');
       return String(text);
     } catch (e) {
       clearTimeout(timer);
       lastErr = e;
       if (attempt < retries && (e.name === 'AbortError' || e instanceof TypeError)) {
-        await new Promise(function(r) { setTimeout(r, 800 * (attempt + 1)); });
+        await new Promise(function(r) { setTimeout(r, 1000); });
         continue;
       }
       throw e;
@@ -416,7 +406,6 @@ function normaliseList(raw){
   return out;
 }
 
-/* ============ IMAGE COMPRESSION (fast) ============ */
 function compressImage(file, maxDim, quality){
   maxDim = maxDim || 1024;
   quality = quality || 0.72;
@@ -445,7 +434,6 @@ function compressImage(file, maxDim, quality){
   });
 }
 
-/* ============ PDF EXTRACTION ============ */
 async function extractPDFText(file, onProgress) {
   var buf = await file.arrayBuffer();
   var pdf = await pdfjsLib.getDocument({ data: buf }).promise;
@@ -479,12 +467,10 @@ async function renderPDFPages(file, maxPages) {
   return { images: images, pageCount: pdf.numPages, renderedCount: total };
 }
 
-/* ============ STATE ============ */
 var state={exam:'CUET',subject:null,chapters:[],count:10,difficulty:'Mixed',timerMode:'up'};
 var uploadMode='extract';
 var T=null,timerHandle=null;
 
-/* ============ HOME & ANALYTICS ============ */
 function renderHome(){
   var grid=$('examGrid');grid.innerHTML='';
   var b=document.createElement('button');
@@ -510,7 +496,6 @@ function renderHistory(){
     '</div>';
 }
 
-/* ============ SETUP ============ */
 function openSetup(){state.subject=null;state.chapters=[];state.count=10;renderSubjects();renderChips();$('setupPanel').classList.add('hidden');showScreen('screen-setup')}
 function renderSubjects(){var subs=Object.keys(EXAM_DATA.CUET.subjects);var g=$('subjectGrid');g.innerHTML='';subs.forEach(function(s){var b=document.createElement('button');b.className='chip';b.textContent=s;b.onclick=function(){selectSubject(s,b)};g.appendChild(b)})}
 function selectSubject(name,btn){state.subject=name;state.chapters=[];var all=$('subjectGrid').querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');btn.classList.add('active');renderChapters();$('setupPanel').classList.remove('hidden')}
@@ -522,7 +507,6 @@ function renderChips(){
   var tc=$('timerChips');tc.innerHTML='';[{k:'up',t:'⏱ Count Up'},{k:'down',t:'⏳ 15 Min'}].forEach(function(tm){var b=document.createElement('button');b.className='chip'+(state.timerMode===tm.k?' active':'');b.textContent=tm.t;b.onclick=function(){state.timerMode=tm.k;renderChips()};tc.appendChild(b)});
 }
 
-/* ============ AI TEST ============ */
 function startAITest(){
   if(!state.subject){dialog({title:'Pick a subject',message:'Please select a subject first.'});return}
   var chapters=state.chapters.length?state.chapters:['Full Syllabus'];
@@ -539,7 +523,6 @@ function startAITest(){
   });
 }
 
-/* ============ UPLOAD ============ */
 function openUpload(mode){
   uploadMode=mode;
   $('uploadTitle').textContent=mode==='image'?'📷 Upload Question Photo':(mode==='notes'?'📝 Upload Notes':'📄 Upload Document');
@@ -564,7 +547,6 @@ function renderBanks(){
   });
 }
 
-/* ============ MAIN FILE HANDLER ============ */
 async function handleFileUpload(file){
   if(!file) return;
   var fname=(file.name||'').toLowerCase();
@@ -598,7 +580,7 @@ async function handleFileUpload(file){
     } else if(isText){
       questions = await processTextFile(file, progressBar, progressText);
     } else {
-      throw new Error('Unsupported file type. Use PDF, image, or TXT.');
+      throw new Error('Unsupported file type.');
     }
 
     if(!questions || !questions.length) throw new Error('No valid questions found in the file.');
@@ -619,11 +601,10 @@ async function handleFileUpload(file){
     }).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'up'}); });
   } catch(err){
     progressWrap.classList.add('hidden');
-    dialog({title:'Upload failed',message:(err.message||'Unknown error')+'\n\nRetry?'});
+    dialog({title:'Upload failed',message:(err.message||'Unknown error')});
   }
 }
 
-/* ============ IMAGE PROCESSOR ============ */
 async function processImageFile(file, bar, text){
   bar.style.width='15%';
   text.textContent='Compressing image…';
@@ -639,11 +620,9 @@ async function processImageFile(file, bar, text){
   );
 
   bar.style.width='90%';
-  text.textContent='Parsing response…';
   return normaliseList(safeParseJSON(raw));
 }
 
-/* ============ TEXT PROCESSOR ============ */
 async function processTextFile(file, bar, text){
   bar.style.width='15%';
   text.textContent='Reading text…';
@@ -664,12 +643,11 @@ async function processTextFile(file, bar, text){
   return normaliseList(safeParseJSON(raw));
 }
 
-/* ============ PDF PROCESSOR (FAST PATH) ============ */
+// ✅ FIXED PDF PROCESSING (Sequential, Larger Chunks, 429 handling)
 async function processPDFFile(file, bar, text){
   bar.style.width='10%';
   text.textContent='Loading PDF…';
 
-  // Step 1: Try fast text extraction
   var extracted;
   try {
     extracted = await extractPDFText(file, function(page, total){
@@ -677,78 +655,92 @@ async function processPDFFile(file, bar, text){
       text.textContent = 'Extracting text… page '+page+'/'+total;
     });
   } catch(e) {
-    console.warn('PDF text extraction failed:', e.message);
     extracted = { text: '', pageCount: 0 };
   }
 
   var textLen = (extracted.text || '').trim().length;
 
-  // FAST PATH: text-based PDF
+  // FAST PATH: Text-based PDF
   if(textLen > 500){
     bar.style.width='30%';
-    text.textContent='Text extracted ('+textLen+' chars). AI is reading…';
+    text.textContent='Text extracted. AI is reading…';
 
+    // Chunk size 25,000 chars instead of 12,000 (fewer API calls)
+    var chunks = chunkText(extracted.text, 25000);
     var mode = uploadMode === 'notes' ? 'notes' : 'extract';
-    var raw = await aiCall(
-      (mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + extracted.text.slice(0, 35000),
-      {source:'ambition-cuet-cbt', mode: mode},
-      {timeoutMs: 60000}
-    );
-
-    bar.style.width='90%';
-    return normaliseList(safeParseJSON(raw));
+    var collected = [];
+    
+    for(var i=0; i<chunks.length; i++){
+      bar.style.width = (30 + (i/chunks.length)*60) + '%';
+      text.textContent = 'Processing Part '+(i+1)+'/'+chunks.length+' — '+collected.length+' questions collected…';
+      
+      try {
+        var raw = await aiCall(
+          (mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + chunks[i],
+          {source:'ambition-cuet-cbt', mode: mode},
+          {timeoutMs: 60000, retries: 1} // 1 retry
+        );
+        var list = normaliseList(safeParseJSON(raw));
+        collected = collected.concat(list);
+      } catch(e) {
+        console.warn('Chunk '+(i+1)+' failed:', e.message);
+        // If rate limited, wait 5 seconds before next chunk
+        if(e.message.includes('429') || e.message.includes('quota')) {
+          text.textContent = 'Rate limit hit. Waiting 5s…';
+          await new Promise(r => setTimeout(r, 5000));
+        }
+      }
+    }
+    return collected;
   }
 
-  // SLOW PATH: scanned PDF — render pages as images
-  console.log('[CBT] Scanned PDF detected. Rendering pages as images…');
+  // SLOW PATH: Scanned PDF (Images)
   bar.style.width='25%';
   text.textContent='Scanned PDF — rendering pages…';
-
   var rendered = await renderPDFPages(file, 10);
   if(!rendered.images.length) throw new Error('Could not render PDF pages.');
 
-  bar.style.width='45%';
-  text.textContent='Rendered '+rendered.images.length+' pages. AI is reading (parallel)…';
-
-  // Process in parallel batches of 2
-  var BATCH_SIZE = 2;
-  var batches = [];
-  for(var i=0; i<rendered.images.length; i+=BATCH_SIZE){
-    batches.push(rendered.images.slice(i, i+BATCH_SIZE));
-  }
+  bar.style.width='40%';
+  text.textContent='Rendered '+rendered.images.length+' pages. AI is reading…';
 
   var collected = [];
-  var completed = 0;
-  var concurrency = 2;
-
-  for(var b=0; b<batches.length; b+=concurrency){
-    var group = batches.slice(b, b+concurrency);
-    var results = await Promise.all(group.map(function(batch){
-      return aiCall(
-        'Extract ALL MCQs from these pages. Copy options exactly. If direct question, solve and create 4 options. "ans" = 0-based index. Return raw JSON array only.',
-        {source:'ambition-cuet-cbt', mode: uploadMode==='notes' ? 'notes' : 'scanned-extract', images: batch},
-        {timeoutMs: 60000}
-      ).catch(function(e){
-        console.warn('Batch failed:', e.message);
-        return '';
-      });
-    }));
-
-    results.forEach(function(r){
-      if(r){
-        try { collected = collected.concat(normaliseList(safeParseJSON(r))); } catch(e){}
+  for(var i=0; i<rendered.images.length; i++){
+    bar.style.width = (40 + (i/rendered.images.length)*50) + '%';
+    text.textContent = 'Processing page '+(i+1)+'/'+rendered.images.length+'…';
+    try {
+      var raw = await aiCall(
+        'Extract ALL MCQs from this page. Copy options exactly. If direct question, solve and create 4 options. "ans" = 0-based index. Return raw JSON array only.',
+        {source:'ambition-cuet-cbt', mode: uploadMode==='notes' ? 'notes' : 'scanned-extract', image: rendered.images[i]},
+        {timeoutMs: 60000, retries: 1}
+      );
+      collected = collected.concat(normaliseList(safeParseJSON(raw)));
+    } catch(e) {
+      console.warn('Page '+(i+1)+' failed:', e.message);
+      if(e.message.includes('429')) {
+        text.textContent = 'Rate limit hit. Waiting 5s…';
+        await new Promise(r => setTimeout(r, 5000));
       }
-    });
-
-    completed += group.length;
-    bar.style.width = (45 + (completed/batches.length)*50) + '%';
-    text.textContent = 'Processed '+completed+'/'+batches.length+' batches — '+collected.length+' questions so far';
+    }
   }
-
   return collected;
 }
 
-/* ============ CBT ENGINE ============ */
+function chunkText(text, size){
+  var chunks = [];
+  var i = 0;
+  while(i < text.length){
+    var end = Math.min(i + size, text.length);
+    if(end < text.length){
+      var slice = text.slice(i, end);
+      var lastBreak = Math.max(slice.lastIndexOf('\n\n'), slice.lastIndexOf('. '));
+      if(lastBreak > size * 0.5) end = i + lastBreak + 1;
+    }
+    chunks.push(text.slice(i, end));
+    i = end;
+  }
+  return chunks;
+}
+
 function launchTest(cfg){
   T={name:cfg.name,questions:cfg.questions,cur:0,elapsed:0,timerMode:cfg.timerMode||'up',answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false})};
   $('testTitle').textContent=T.name;
@@ -843,7 +835,6 @@ function submitTest(){
   showScreen('screen-result');
 }
 
-/* ============ EVENTS ============ */
 function wireEvents(){
   $('btnOpenSettings').onclick=function(){dialog({title:'Settings',message:'Ambition CBT Mode — full Math & LaTeX rendering.'})};
   $('btnBackHome').onclick=function(){showScreen('screen-home')};
