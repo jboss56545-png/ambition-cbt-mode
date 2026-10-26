@@ -11,7 +11,6 @@
 <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3404/3404134.png">
 
 <style>
-/* CSS Same as before */
 :root{--bg:#0b0d12;--bg-2:#0f1219;--card:#161a24;--card-2:#1c2130;--border:#252b3a;--text:#e8ecf5;--muted:#8b95ad;--accent:#6366f1;--accent-2:#a855f7;--green:#22c55e;--red:#ef4444;--purple:#a855f7;--grey:#4b5563;--orange:#f59e0b;--radius:16px;--radius-sm:10px;--shadow:0 10px 34px rgba(0,0,0,.45);--shadow-sm:0 4px 14px rgba(15,23,42,.28);--tap:44px}
 [data-theme="light"]{--bg:#f5f6fb;--bg-2:#fff;--card:#fff;--card-2:#f2f4fa;--border:#e4e7f0;--text:#0f172a;--muted:#6b7280;--grey:#cbd5e1;--shadow:0 10px 30px rgba(15,23,42,.10);--shadow-sm:0 4px 14px rgba(15,23,42,.07)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -89,7 +88,11 @@ input[type=file]{width:100%;padding:14px;border-radius:12px;border:1.5px dashed 
 .option.selected{border-color:transparent;background:linear-gradient(135deg,rgba(99,102,241,.22),rgba(168,85,247,.22));box-shadow:0 0 0 1.5px var(--accent) inset}
 .opt-key{width:28px;height:28px;min-width:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;background:var(--card-2);border:1px solid var(--border);flex-shrink:0;margin-top:2px}
 .option.selected .opt-key{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff}
-.option-text{flex:1;overflow-x:auto;word-wrap:break-word}
+
+/* ✅ FIX: Hidden scrollbar for Option Text */
+.option-text{flex:1;overflow-x:auto;word-wrap:break-word;scrollbar-width:none;-ms-overflow-style:none}
+.option-text::-webkit-scrollbar{display:none}
+
 .palette{width:290px;flex-shrink:0;border-left:1px solid var(--border);background:var(--bg-2);padding:16px;overflow-y:auto}
 .palette-head{font-size:12px;text-transform:uppercase;font-weight:750;color:var(--muted);margin-bottom:12px}
 .palette-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
@@ -328,7 +331,7 @@ function dialog(opts){return new Promise(function(resolve){var ov=document.creat
 async function aiCall(message, context, opts) {
   opts = opts || {};
   var timeoutMs = opts.timeoutMs || 60000;
-  var retries = opts.retries === undefined ? 0 : opts.retries; // Default 0 retries for PDF chunks to avoid long loops
+  var retries = opts.retries === undefined ? 0 : opts.retries;
 
   var payload = { message: message, context: context ? Object.assign({}, context) : {} };
   if (context && context.image) { payload.image = context.image; delete payload.context.image; }
@@ -381,6 +384,18 @@ function safeParseJSON(text){
   throw new Error('AI returned non-JSON. Please retry.');
 }
 
+// ✅ FIX: Function to auto-wrap naked LaTeX math in $
+function autoWrapMath(str) {
+  if (!str) return '';
+  str = String(str).trim();
+  if (str.indexOf('$') !== -1) return str; // If it already has $, assume it's handled
+  // If it contains LaTeX commands like \frac, \int, etc., wrap it in $
+  if (/\\[a-zA-Z]+/.test(str)) {
+    return '$' + str + '$';
+  }
+  return str;
+}
+
 function normaliseList(raw){
   var arr = Array.isArray(raw) ? raw : (raw && raw.questions ? raw.questions : []);
   var out = [];
@@ -394,9 +409,14 @@ function normaliseList(raw){
     opts = opts.slice(0, 4);
     var ans = Number(item.ans);
     if(isNaN(ans) || ans < 0 || ans > 3) ans = 0;
+    
+    // Apply auto-wrap to question and options
+    var fixedQ = autoWrapMath(q);
+    var fixedOpts = opts.map(function(o) { return autoWrapMath(o); });
+
     out.push({
-      q: String(q).trim(),
-      options: opts.map(String),
+      q: fixedQ,
+      options: fixedOpts,
       ans: ans,
       topic: String(item.topic || 'CUET UG'),
       diff: String(item.diff || 'medium'),
@@ -643,7 +663,6 @@ async function processTextFile(file, bar, text){
   return normaliseList(safeParseJSON(raw));
 }
 
-// ✅ FIXED PDF PROCESSING (Sequential, Larger Chunks, 429 handling)
 async function processPDFFile(file, bar, text){
   bar.style.width='10%';
   text.textContent='Loading PDF…';
@@ -660,12 +679,10 @@ async function processPDFFile(file, bar, text){
 
   var textLen = (extracted.text || '').trim().length;
 
-  // FAST PATH: Text-based PDF
   if(textLen > 500){
     bar.style.width='30%';
     text.textContent='Text extracted. AI is reading…';
 
-    // Chunk size 25,000 chars instead of 12,000 (fewer API calls)
     var chunks = chunkText(extracted.text, 25000);
     var mode = uploadMode === 'notes' ? 'notes' : 'extract';
     var collected = [];
@@ -678,13 +695,12 @@ async function processPDFFile(file, bar, text){
         var raw = await aiCall(
           (mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + chunks[i],
           {source:'ambition-cuet-cbt', mode: mode},
-          {timeoutMs: 60000, retries: 1} // 1 retry
+          {timeoutMs: 60000, retries: 1}
         );
         var list = normaliseList(safeParseJSON(raw));
         collected = collected.concat(list);
       } catch(e) {
         console.warn('Chunk '+(i+1)+' failed:', e.message);
-        // If rate limited, wait 5 seconds before next chunk
         if(e.message.includes('429') || e.message.includes('quota')) {
           text.textContent = 'Rate limit hit. Waiting 5s…';
           await new Promise(r => setTimeout(r, 5000));
@@ -694,7 +710,6 @@ async function processPDFFile(file, bar, text){
     return collected;
   }
 
-  // SLOW PATH: Scanned PDF (Images)
   bar.style.width='25%';
   text.textContent='Scanned PDF — rendering pages…';
   var rendered = await renderPDFPages(file, 10);
