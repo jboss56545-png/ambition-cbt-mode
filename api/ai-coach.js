@@ -1,5 +1,5 @@
 // CBT Test Studio — AI Master Backend (PDF + Image + Scanned PDF)
-// Updated: Added AbortController for timeout safety & optimized config
+// Powered by ASVIRO STUDIO
 
 async function fetchGemini(model, key, body, timeoutMs) {
   const controller = new AbortController();
@@ -53,47 +53,57 @@ module.exports = async (req, res) => {
   let system = '';
 
   if (hasImages && (mode === 'scanned-extract' || mode === 'image-extract' || mode === 'extract' || mode === 'notes')) {
-    system = 'You are an expert at extracting exam questions from photos/scans of Indian educational material...\n\n' +
+    system =
+      'You are an expert at extracting exam questions from photos/scans of Indian educational material.\n\n' +
+      'YOUR MISSION:\n' +
       'Extract ALL valid exam questions and convert to standard 4-option MCQ format.\n\n' +
       'STRICT RULES:\n' +
       '1. Copy question text EXACTLY. Do NOT paraphrase.\n' +
-      '2. Preserve original answer if given (map A/B/C/D → 0/1/2/3).\n' +
+      '2. Preserve original answer if given (map A/B/C/D → 0/1/2/3, 1/2/3/4 → 0/1/2/3).\n' +
       '3. Every question: exactly 4 options, ONE correct.\n' +
-      '4. If options missing but question exists, ADD 4 plausible distractors.\n' +
+      '4. If options are missing (direct question), YOU MUST SOLVE IT. Add 4 plausible options where EXACTLY ONE IS 100% CORRECT mathematically/factually.\n' +
       '5. "topic" = chapter name if visible, else "General".\n' +
       '6. "diff" = easy/medium/hard.\n' +
-      '7. "explain" = short reasoning if available, else "".\n\n' +
+      '7. "explain" = short reasoning if available, else "".\n' +
+      '8. For ALL math formulas, ALWAYS use LaTeX with `$` syntax. Example: `$\\int x^2 dx$`, `$\\frac{a}{b}$`.\n' +
+      '9. If NO questions found in these images, return [] — but only after thorough reading.\n\n' +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
       '[{"q":"question text","options":["A","B","C","D"],"ans":0,"topic":"chapter","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(context || {});
 
   } else if (isCBT && mode === 'extract') {
-    system = 'You are an expert at extracting exam questions from Indian educational PDFs.\n\n' +
-      'CONVERSION RULES:\n' +
-      '1. Standard MCQ: Copy question + options EXACTLY.\n' +
-      '2. Match: "Match List I with List II: [items]. Options: (1)... (2)... (3)... (4)...".\n' +
-      '3. A-R: "Assertion (A): ... Reason (R): ... Options: (1)... (2)... (3)... (4)...".\n\n' +
+    system =
+      'You are an expert at extracting exam questions from Indian educational PDFs.\n\n' +
       'STRICT RULES:\n' +
       '1. Copy question text EXACTLY.\n' +
       '2. Preserve original answer (map A/B/C/D → 0/1/2/3).\n' +
       '3. Exactly 4 options, ONE correct.\n' +
-      '4. Extract EVERY valid question. If none, return [].\n\n' +
+      '4. If options are missing, YOU MUST SOLVE IT. Create 4 options where ONLY ONE IS 100% CORRECT.\n' +
+      '5. "topic" = chapter name, else "General".\n' +
+      '6. "diff" = easy/medium/hard.\n' +
+      '7. "explain" = short reasoning if available, else "".\n' +
+      '8. For ALL math formulas, ALWAYS use LaTeX with `$` syntax. Example: `$\\int x^2 dx$`, `$\\frac{a}{b}$`.\n' +
+      '9. Extract EVERY valid question. If none, return [].\n\n' +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
       '[{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"ch","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(context || {});
 
   } else if (isCBT && mode === 'notes') {
-    system = 'You are an expert Indian exam question setter.\n' +
+    system =
+      'You are an expert Indian exam question setter.\n' +
       'Generate high-quality MCQs based on the CONCEPTS in the given notes.\n' +
       'RULES: 4 options, ONE correct, vary index (0,1,2,3), plausible distractors, cover DIFFERENT concepts.\n' +
+      'For ALL math formulas, ALWAYS use LaTeX with `$` syntax.\n' +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
       '[{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"topic","diff":"easy","explain":"why"}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(context || {});
 
   } else if (isCBT && mode === 'ai') {
-    system = 'You are an expert Indian competitive-exam question setter with 20 years experience.\n' +
+    system =
+      'You are an expert Indian competitive-exam question setter with 20 years experience.\n' +
       'Generate MCQs matching EXACT style of PYQ books (Oswaal, Arihant, MTG).\n' +
       'RULES: 4 options, ONE correct, vary index (0,1,2,3). "topic" = exact chapter. "diff" = easy/medium/hard.\n' +
+      'For ALL math formulas, ALWAYS use LaTeX with `$` syntax. Example: `$\\int x^2 dx$`, `$\\frac{a}{b}$`.\n' +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
       '[{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"ch","diff":"easy","explain":"why"}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(context || {});
@@ -140,7 +150,6 @@ module.exports = async (req, res) => {
   for (const model of models) {
     try {
       const temp = isCBT ? 0.15 : 0.85;
-      // Tokens reduced slightly for speed, but enough for 30 questions
       const genConfig = { maxOutputTokens: 8192, temperature: temp };
       if (isCBT) genConfig.responseMimeType = 'application/json';
 
@@ -148,7 +157,7 @@ module.exports = async (req, res) => {
         systemInstruction: { parts: [{ text: system }] },
         contents,
         generationConfig: genConfig
-      }, 45000); // 45 seconds timeout per model
+      }, 45000);
 
       const data = await r.json().catch(() => ({}));
 
@@ -172,7 +181,7 @@ module.exports = async (req, res) => {
       lastErr = '[' + model + '] ' + r.status + ': ' + msg;
       
       if (r.status === 401 || r.status === 403) { authError = msg; break; }
-      if (r.status === 429) { sawQuota = true; break; } // Stop trying if quota hit
+      if (r.status === 429) { sawQuota = true; break; }
       
     } catch (e) {
       lastErr = '[' + model + '] ' + (e.name === 'AbortError' ? 'Timeout' : e.message);
