@@ -82,14 +82,13 @@ input[type=file]{width:100%;padding:14px;border-radius:12px;border:1.5px dashed 
 .badge{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:99px;text-transform:uppercase}
 .badge.topic{background:rgba(99,102,241,.16);color:#a5b4fc}
 .badge.medium{background:rgba(245,158,11,.16);color:#fbbf24}
-.q-text{font-size:16.5px;line-height:1.7;font-weight:550;margin-bottom:20px;word-wrap:break-word}
+.q-text{font-size:16.5px;line-height:1.7;font-weight:550;margin-bottom:20px;word-wrap:break-word;white-space:pre-wrap;}
 .options{display:flex;flex-direction:column;gap:10px}
 .option{display:flex;align-items:flex-start;gap:12px;text-align:left;width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:14px 15px;font-size:14.5px;line-height:1.6;transition:.15s;color:var(--text);cursor:pointer}
 .option.selected{border-color:transparent;background:linear-gradient(135deg,rgba(99,102,241,.22),rgba(168,85,247,.22));box-shadow:0 0 0 1.5px var(--accent) inset}
 .opt-key{width:28px;height:28px;min-width:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;background:var(--card-2);border:1px solid var(--border);flex-shrink:0;margin-top:2px}
 .option.selected .opt-key{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff}
 
-/* ✅ FIX: Hidden scrollbar for Option Text */
 .option-text{flex:1;overflow-x:auto;word-wrap:break-word;scrollbar-width:none;-ms-overflow-style:none}
 .option-text::-webkit-scrollbar{display:none}
 
@@ -384,16 +383,22 @@ function safeParseJSON(text){
   throw new Error('AI returned non-JSON. Please retry.');
 }
 
-// ✅ FIX: Function to auto-wrap naked LaTeX math in $
 function autoWrapMath(str) {
   if (!str) return '';
   str = String(str).trim();
-  if (str.indexOf('$') !== -1) return str; // If it already has $, assume it's handled
-  // If it contains LaTeX commands like \frac, \int, etc., wrap it in $
+  if (str.indexOf('$') !== -1) return str; 
   if (/\\[a-zA-Z]+/.test(str)) {
     return '$' + str + '$';
   }
   return str;
+}
+
+// ✅ STRIPS "(a)", "(1)", "A." etc from start of options
+function cleanOptionText(str) {
+  if (!str) return '';
+  var s = String(str).trim();
+  s = s.replace(/^[\(\[]?\s*[a-dA-D1-4i-vI-V]\s*[\)\].:-]\s*/i, '');
+  return s.trim();
 }
 
 function normaliseList(raw){
@@ -410,9 +415,12 @@ function normaliseList(raw){
     var ans = Number(item.ans);
     if(isNaN(ans) || ans < 0 || ans > 3) ans = 0;
     
-    // Apply auto-wrap to question and options
     var fixedQ = autoWrapMath(q);
-    var fixedOpts = opts.map(function(o) { return autoWrapMath(o); });
+    
+    // Sanitize options
+    var fixedOpts = opts.map(function(o) { 
+      return autoWrapMath(cleanOptionText(o)); 
+    });
 
     out.push({
       q: fixedQ,
@@ -663,6 +671,7 @@ async function processTextFile(file, bar, text){
   return normaliseList(safeParseJSON(raw));
 }
 
+// ✅ FAST PDF PROCESSING (Parallel chunks with 2 concurrency)
 async function processPDFFile(file, bar, text){
   bar.style.width='10%';
   text.textContent='Loading PDF…';
@@ -683,29 +692,33 @@ async function processPDFFile(file, bar, text){
     bar.style.width='30%';
     text.textContent='Text extracted. AI is reading…';
 
+    // Chunk size 25000
     var chunks = chunkText(extracted.text, 25000);
     var mode = uploadMode === 'notes' ? 'notes' : 'extract';
     var collected = [];
+    var concurrency = 2; // Do 2 chunks at a time
     
-    for(var i=0; i<chunks.length; i++){
-      bar.style.width = (30 + (i/chunks.length)*60) + '%';
-      text.textContent = 'Processing Part '+(i+1)+'/'+chunks.length+' — '+collected.length+' questions collected…';
-      
-      try {
-        var raw = await aiCall(
-          (mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + chunks[i],
+    for(var b=0; b<chunks.length; b+=concurrency){
+      var group = chunks.slice(b, b+concurrency);
+      bar.style.width = (30 + (b/chunks.length)*60) + '%';
+      text.textContent = 'Processing parts '+(b+1)+' to '+Math.min(b+concurrency, chunks.length)+' of '+chunks.length+' — '+collected.length+' questions collected…';
+
+      var results = await Promise.all(group.map(function(chunk){
+        return aiCall(
+          (mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + chunk,
           {source:'ambition-cuet-cbt', mode: mode},
           {timeoutMs: 60000, retries: 1}
-        );
-        var list = normaliseList(safeParseJSON(raw));
-        collected = collected.concat(list);
-      } catch(e) {
-        console.warn('Chunk '+(i+1)+' failed:', e.message);
-        if(e.message.includes('429') || e.message.includes('quota')) {
-          text.textContent = 'Rate limit hit. Waiting 5s…';
-          await new Promise(r => setTimeout(r, 5000));
+        ).catch(function(e){
+          console.warn('Chunk failed:', e.message);
+          return '';
+        });
+      }));
+
+      results.forEach(function(r){
+        if(r) {
+          try { collected = collected.concat(normaliseList(safeParseJSON(r))); } catch(e){}
         }
-      }
+      });
     }
     return collected;
   }
@@ -731,10 +744,6 @@ async function processPDFFile(file, bar, text){
       collected = collected.concat(normaliseList(safeParseJSON(raw)));
     } catch(e) {
       console.warn('Page '+(i+1)+' failed:', e.message);
-      if(e.message.includes('429')) {
-        text.textContent = 'Rate limit hit. Waiting 5s…';
-        await new Promise(r => setTimeout(r, 5000));
-      }
     }
   }
   return collected;
