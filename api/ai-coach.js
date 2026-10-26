@@ -1,5 +1,50 @@
-// Ambition CBT Mode — Production AI Backend
+// Ambition CBT Mode — High Speed AI Backend
 // Powered by ASVIRO STUDIO
+
+async function callGemini(model, key, contents, genConfig, timeoutMs) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({ contents, generationConfig: genConfig }),
+        signal: controller.signal
+      }
+    );
+    clearTimeout(timeoutId);
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const msg = data.error?.message || `HTTP ${response.status}`;
+      const err = new Error(msg);
+      err.status = response.status;
+      err.model = model;
+      throw err;
+    }
+    const candidateParts = data.candidates?.[0]?.content?.parts;
+    const text = candidateParts ? candidateParts.map(p => p.text || '').join('').trim() : '';
+    if (!text) throw new Error(`[${model}] Empty output`);
+    return text;
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
+      const e = new Error(`[${model}] Timeout (>${timeoutMs}ms)`);
+      e.model = model;
+      throw e;
+    }
+    throw err;
+  }
+}
+
+function cleanJSON(text) {
+  text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
+  const start = text.indexOf('[');
+  const end = text.lastIndexOf(']');
+  if (start >= 0 && end > start) text = text.slice(start, end + 1);
+  return text;
+}
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -35,132 +80,95 @@ module.exports = async (req, res) => {
   if (hasImages || mode === 'image-extract' || mode === 'scanned-extract') {
     systemPrompt =
       'You are an expert Indian exam question extractor and solver for CUET UG and CBSE Class 12.\n' +
-      'INPUT: A photo or scan of questions, textbook exercises, PYQs, or test papers (e.g. Mathematics Integrals, Calculus, Physics, Chemistry, Biology).\n\n' +
+      'INPUT: A photo or scan of questions, textbook exercises, PYQs, or test papers.\n\n' +
       'MISSION:\n' +
       'Identify ALL distinct questions visible in the image and convert EVERY question into a standard 4-option MCQ format.\n\n' +
-      'CRITICAL RULES FOR NON-MCQ & DIRECT QUESTIONS:\n' +
-      '1. If questions already have options (A/B/C/D), copy them accurately.\n' +
-      '2. If questions do NOT have options (like "Evaluate \\int x^2 \\sin^2 x dx" or numbered exercise problems), YOU MUST SOLVE THE QUESTION CAREFULLY.\n' +
-      '3. Create 4 plausible options (A, B, C, D) where ONE option is the factually and mathematically correct solution, and the other 3 are realistic distractors.\n' +
-      '4. "ans" MUST be the exact 0-based integer index of the correct option (0 for A, 1 for B, 2 for C, 3 for D).\n' +
-      '5. For ALL mathematical and scientific formulas, symbols, fractions, powers, and integrals, ALWAYS wrap them in LaTeX syntax: $...$.\n' +
-      '6. "topic" = Chapter name if identifiable (e.g. "Integrals", "Calculus"), else "CUET Mathematics".\n' +
-      '7. "diff" = easy, medium, or hard.\n' +
-      '8. "explain" = brief step-by-step solution.\n\n' +
-      'FORMAT:\n' +
-      'Return ONLY a valid, raw JSON array of objects without any markdown fences or conversational text:\n' +
-      '[{"q":"Evaluate $\\\\int \\\\frac{x + \\\\sin x}{1 + \\\\cos x} dx$","options":["$x \\\\tan\\\\frac{x}{2} + C$","$\\\\tan\\\\frac{x}{2} + C$","$x \\\\cot\\\\frac{x}{2} + C$","$\\\\ln\\vert{}1+\\\\cos x\\vert{} + C$"],"ans":0,"topic":"Integrals","diff":"medium","explain":"Using half angle identities..."}]';
+      'CRITICAL RULES:\n' +
+      '1. If options already exist (A/B/C/D), copy them exactly.\n' +
+      '2. If no options, YOU MUST SOLVE the question carefully and create 4 plausible options (1 correct + 3 distractors).\n' +
+      '3. "ans" MUST be the exact 0-based integer index of the correct option (0=A, 1=B, 2=C, 3=D).\n' +
+      '4. Wrap ALL math formulas in LaTeX $...$ syntax.\n' +
+      '5. "topic" = chapter name. "diff" = easy/medium/hard. "explain" = short solution.\n\n' +
+      'FORMAT: Return ONLY a raw JSON array without markdown:\n' +
+      '[{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"...","diff":"medium","explain":"..."}]';
   } else if (isCBT && mode === 'extract') {
     systemPrompt =
       'You are an expert CUET exam question extractor.\n' +
-      'Convert questions or exercise problems into standard 4-option MCQs. If options are missing, solve and create 4 options with one correct answer.\n' +
-      'Math in $...$. "ans" must be integer 0 to 3.\n' +
-      'Return ONLY a raw JSON array: [{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"Subject","diff":"medium","explain":""}]';
+      'Extract all MCQs from the provided text EXACTLY. Do NOT invent new questions. If answer key is present, use it. If not, solve carefully.\n' +
+      'Wrap math in $...$. "ans" must be integer 0-3.\n' +
+      'Return ONLY raw JSON array: [{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"...","diff":"medium","explain":""}]';
   } else if (isCBT && (mode === 'notes' || mode === 'ai')) {
     systemPrompt =
       'You are a senior CUET UG paper setter.\n' +
-      'Generate high-yield NCERT standard MCQs. 4 options, 1 correct. Math in $...$.\n' +
-      'Return ONLY a raw JSON array: [{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"Subject","diff":"medium","explain":""}]';
+      'Generate high-yield NCERT MCQs. 4 options, 1 correct. Wrap math in $...$.\n' +
+      'Return ONLY raw JSON array: [{"q":"...","options":["A","B","C","D"],"ans":0,"topic":"...","diff":"medium","explain":""}]';
   } else {
     systemPrompt = 'You are Ambition AI Coach. Supportive, encouraging, concise.';
   }
 
-  let contents = [
-    {
-      role: 'user',
-      parts: [
-        { text: systemPrompt + '\n\nUser Request / Context:\n' + message }
-      ]
-    }
-  ];
+  const contents = [{
+    role: 'user',
+    parts: [{ text: systemPrompt + '\n\nUser Request:\n' + message }]
+  }];
 
   if (hasImages) {
     for (const img of allImages) {
       contents[0].parts.push({
-        inline_data: {
-          mime_type: img.mime || 'image/jpeg',
-          data: img.data
-        }
+        inline_data: { mime_type: img.mime || 'image/jpeg', data: img.data }
       });
     }
   }
 
-  // ✅ अपडेटेड मॉडल लिस्ट: पुराने और डेप्रीकेटेड मॉडल हटा दिए गए हैं।
-  // Google के नवीनतम स्टेबल मॉडल्स का उपयोग किया गया है।
-  const models = [
-    'gemini-3.8-flash',        // सबसे नया, सबसे स्मार्ट Flash मॉडल
-    'gemini-3.6-flash',        // पिछली जेनरेशन का स्टेबल मॉडल
-    'gemini-3.5-flash-lite',   // तेज़ और किफायती
-    'gemini-3.1-flash-lite'    // बैकअप के लिए
-  ];
+  const genConfig = {
+    maxOutputTokens: 4096,
+    temperature: isCBT ? 0.15 : 0.7
+  };
+  if (isCBT) genConfig.responseMimeType = 'application/json';
+
+  // ✅ PARALLEL RACING: Do fast models ek saath. Jo pehle reply de, use kar lo.
+  const primaryModels = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite'];
+  const fallbackModel = 'gemini-3.8-flash';
 
   let lastError = '';
 
-  for (const model of models) {
-    try {
-      const controller = new AbortController();
-      // इमेज प्रोसेसिंग के लिए 20 सेकंड का टाइमआउट सेफ है
-      const timeoutId = setTimeout(() => controller.abort(), 20000);
-
-      const genConfig = {
-        maxOutputTokens: 8192,
-        temperature: isCBT ? 0.15 : 0.7
-      };
-      if (isCBT) genConfig.responseMimeType = 'application/json';
-
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': key
-          },
-          body: JSON.stringify({
-            contents,
-            generationConfig: genConfig
-          }),
-          signal: controller.signal
-        }
-      );
-
-      clearTimeout(timeoutId);
-      const data = await response.json().catch(() => ({}));
-
-      if (response.ok) {
-        const candidateParts = data.candidates?.[0]?.content?.parts;
-        let text = candidateParts ? candidateParts.map(p => p.text || '').join('').trim() : '';
-
-        if (text) {
-          text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
-          const start = text.indexOf('[');
-          const end = text.lastIndexOf(']');
-          if (start >= 0 && end > start) {
-            text = text.slice(start, end + 1);
-          }
-          return res.status(200).json({ message: text });
-        }
-        lastError = `[${model}] Empty output`;
-        continue;
+  // Stage 1: Race the two fastest models
+  try {
+    const text = await Promise.any(
+      primaryModels.map(m => callGemini(m, key, contents, genConfig, 12000))
+    );
+    return res.status(200).json({ message: cleanJSON(text) });
+  } catch (aggregateErr) {
+    // Promise.any throws AggregateError if all fail
+    const errs = aggregateErr.errors || [aggregateErr];
+    for (const e of errs) {
+      lastError = e.message || String(e);
+      // Auth/quota errors should exit immediately
+      if (e.status === 401 || e.status === 403) {
+        return res.status(401).json({ error: 'AUTH_ERROR', message: 'API Key invalid.' });
       }
-
-      const errMsg = data.error?.message || `HTTP ${response.status}`;
-      lastError = `[${model}] ${errMsg}`;
-
-      if (response.status === 401 || response.status === 403) {
-        return res.status(401).json({ error: 'AUTH_ERROR', message: 'API Key invalid or expired.' });
+      if (e.status === 429) {
+        return res.status(429).json({ error: 'QUOTA_EXCEEDED', message: 'Quota exceeded. Wait a minute.' });
       }
-      if (response.status === 429) {
-        return res.status(429).json({ error: 'QUOTA_EXCEEDED', message: 'API quota exceeded. Please wait a minute.' });
-      }
-    } catch (err) {
-      lastError = err.name === 'AbortError' ? `[${model}] Timeout (>20s)` : `[${model}] ${err.message}`;
+    }
+  }
+
+  // Stage 2: Fallback to heavy model
+  try {
+    const text = await callGemini(fallbackModel, key, contents, genConfig, 15000);
+    return res.status(200).json({ message: cleanJSON(text) });
+  } catch (e) {
+    lastError = e.message || String(e);
+    if (e.status === 401 || e.status === 403) {
+      return res.status(401).json({ error: 'AUTH_ERROR', message: 'API Key invalid.' });
+    }
+    if (e.status === 429) {
+      return res.status(429).json({ error: 'QUOTA_EXCEEDED', message: 'Quota exceeded. Wait a minute.' });
     }
   }
 
   return res.status(502).json({
     error: 'AI_FAILED',
-    message: 'Could not extract questions from image/file.',
+    message: 'Could not extract questions. Please retry.',
     detail: lastError
   });
 };
