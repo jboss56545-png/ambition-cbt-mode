@@ -49,7 +49,7 @@ module.exports = async (req, res) => {
       '8. "explain" = brief step-by-step solution.\n\n' +
       'FORMAT:\n' +
       'Return ONLY a valid, raw JSON array of objects without any markdown fences or conversational text:\n' +
-      '[{"q":"Evaluate $\\\\int \\\\frac{x + \\\\sin x}{1 + \\\\cos x} dx$","options":["$x \\\\tan\\\\frac{x}{2} + C$","$\\\\tan\\\\frac{x}{2} + C$","$x \\\\cot\\\\frac{x}{2} + C$","$\\\\ln\vert{}1+\\\\cos x\vert{} + C$"],"ans":0,"topic":"Integrals","diff":"medium","explain":"Using half angle identities..."}]';
+      '[{"q":"Evaluate $\\\\int \\\\frac{x + \\\\sin x}{1 + \\\\cos x} dx$","options":["$x \\\\tan\\\\frac{x}{2} + C$","$\\\\tan\\\\frac{x}{2} + C$","$x \\\\cot\\\\frac{x}{2} + C$","$\\\\ln\\vert{}1+\\\\cos x\\vert{} + C$"],"ans":0,"topic":"Integrals","diff":"medium","explain":"Using half angle identities..."}]';
   } else if (isCBT && mode === 'extract') {
     systemPrompt =
       'You are an expert CUET exam question extractor.\n' +
@@ -85,11 +85,13 @@ module.exports = async (req, res) => {
     }
   }
 
+  // ✅ अपडेटेड मॉडल लिस्ट: पुराने और डेप्रीकेटेड मॉडल हटा दिए गए हैं।
+  // Google के नवीनतम स्टेबल मॉडल्स का उपयोग किया गया है।
   const models = [
-    'gemini-3.5-flash-lite',
-    'gemini-3.5-flash',
-    'gemini-2.5-flash',
-    'gemini-2.0-flash'
+    'gemini-3.8-flash',        // सबसे नया, सबसे स्मार्ट Flash मॉडल
+    'gemini-3.6-flash',        // पिछली जेनरेशन का स्टेबल मॉडल
+    'gemini-3.5-flash-lite',   // तेज़ और किफायती
+    'gemini-3.1-flash-lite'    // बैकअप के लिए
   ];
 
   let lastError = '';
@@ -97,7 +99,8 @@ module.exports = async (req, res) => {
   for (const model of models) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 14000);
+      // इमेज प्रोसेसिंग के लिए 20 सेकंड का टाइमआउट सेफ है
+      const timeoutId = setTimeout(() => controller.abort(), 20000);
 
       const genConfig = {
         maxOutputTokens: 8192,
@@ -151,7 +154,7 @@ module.exports = async (req, res) => {
         return res.status(429).json({ error: 'QUOTA_EXCEEDED', message: 'API quota exceeded. Please wait a minute.' });
       }
     } catch (err) {
-      lastError = err.name === 'AbortError' ? `[${model}] Timeout (>14s)` : `[${model}] ${err.message}`;
+      lastError = err.name === 'AbortError' ? `[${model}] Timeout (>20s)` : `[${model}] ${err.message}`;
     }
   }
 
@@ -162,4 +165,4 @@ module.exports = async (req, res) => {
   });
 };
 
-module.exports.config = { maxDuration: 15 };
+module.exports.config = { maxDuration: 20 };
