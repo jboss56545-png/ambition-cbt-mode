@@ -52,6 +52,9 @@ module.exports = async (req, res) => {
 
   let system = '';
 
+  const mathRule = 
+    '7. CRITICAL MATH RULE: Wrap ALL math expressions and formulas (in both "q" and every item in "options") inside `$ ... $` delimiters (e.g. "$-x \\\\cos^{-1} x + \\\\sqrt{1 - x^2} + C$"). Do NOT leave raw LaTeX outside `$ ... $`. Inside JSON strings, ALWAYS escape backslashes as `\\\\` (e.g. `\\\\frac`, `\\\\sqrt`, `\\\\tan`, `\\\\cos`).\n\n';
+
   if (hasImages && (mode === 'scanned-extract' || mode === 'image-extract' || mode === 'extract' || mode === 'notes')) {
     system =
       'You are an expert Indian exam question extractor.\n\n' +
@@ -63,7 +66,7 @@ module.exports = async (req, res) => {
       '4. REMOVE all option prefixes from the options array! Do NOT include (a), (b), (A), 1, 2. Just the raw text.\n' +
       '5. Exactly 4 options, ONE correct. "ans" = 0-based index (0,1,2,3).\n' +
       '6. If direct question without options, SOLVE carefully. Only 1 option must be 100% correct.\n' +
-      '7. Use LaTeX `$` for math formulas.\n\n' +
+      mathRule +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
       '[{"q":"...","options":["text1","text2","text3","text4"],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(context || {});
@@ -77,7 +80,7 @@ module.exports = async (req, res) => {
       '3. Question text EXACT. Statements (A, B, C, D) on new lines using \\n.\n' +
       '4. REMOVE option prefixes (a), (b), (A), 1. from the array items.\n' +
       '5. Exactly 4 options, ONE correct. "ans" = 0 to 3.\n' +
-      '6. Use LaTeX `$` for math.\n\n' +
+      mathRule +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
       '[{"q":"...","options":["text1","text2","text3","text4"],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(context || {});
@@ -85,7 +88,8 @@ module.exports = async (req, res) => {
   } else if (isCBT && mode === 'notes') {
     system =
       'You are a senior CUET UG paper setter.\n' +
-      'Generate high-yield NCERT MCQs. 4 options, 1 correct. REMOVE any prefixes from options array. Math in `$...$`.\n' +
+      'Generate high-yield NCERT MCQs. 4 options, 1 correct. REMOVE any prefixes from options array.\n' +
+      mathRule +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
       '[{"q":"...","options":["text1","text2","text3","text4"],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(context || {});
@@ -93,7 +97,8 @@ module.exports = async (req, res) => {
   } else if (isCBT && mode === 'ai') {
     system =
       'You are an expert CUET UG paper setter. Generate MCQs matching Oswaal/Arihant style.\n' +
-      '4 options, 1 correct. REMOVE any prefixes from options array. Math in `$...$`.\n' +
+      '4 options, 1 correct. REMOVE any prefixes from options array.\n' +
+      mathRule +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
       '[{"q":"...","options":["text1","text2","text3","text4"],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(context || {});
@@ -125,6 +130,7 @@ module.exports = async (req, res) => {
     }
   }
 
+  // Models untouched as requested!
   const models = [
     'gemini-2.5-flash',
     'gemini-1.5-flash',
