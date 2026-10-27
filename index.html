@@ -373,13 +373,29 @@ async function aiCall(message, context, opts) {
 }
 
 function safeParseJSON(text){
+  if (!text) return [];
   var t = String(text).trim();
   t = t.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
   try { return JSON.parse(t); } catch(e) {}
+  
   var s = t.indexOf('['), e = t.lastIndexOf(']');
-  if(s >= 0 && e > s) { try { return JSON.parse(t.slice(s, e+1)); } catch(err) {} }
+  if(s >= 0 && e > s) { 
+    try { return JSON.parse(t.slice(s, e+1)); } catch(err) {} 
+  }
   var s2 = t.indexOf('{'), e2 = t.lastIndexOf('}');
-  if(s2 >= 0 && e2 > s2) { try { var o = JSON.parse(t.slice(s2, e2+1)); if (o && Array.isArray(o.questions)) return o.questions; return o; } catch(err) {} }
+  if(s2 >= 0 && e2 > s2) { 
+    try { 
+      var o = JSON.parse(t.slice(s2, e2+1)); 
+      if (o && Array.isArray(o.questions)) return o.questions; 
+      return o; 
+    } catch(err) {} 
+  }
+  
+  // Gracefully handle plain text responses (like "I cannot read this image")
+  if (t.length > 0 && t.length < 500 && !t.includes('{')) {
+     return []; 
+  }
+  
   throw new Error('AI returned non-JSON. Please retry.');
 }
 
@@ -393,7 +409,6 @@ function autoWrapMath(str) {
   return str;
 }
 
-// ✅ STRIPS "(a)", "(1)", "A." etc from start of options
 function cleanOptionText(str) {
   if (!str) return '';
   var s = String(str).trim();
@@ -417,7 +432,6 @@ function normaliseList(raw){
     
     var fixedQ = autoWrapMath(q);
     
-    // Sanitize options
     var fixedOpts = opts.map(function(o) { 
       return autoWrapMath(cleanOptionText(o)); 
     });
@@ -611,7 +625,7 @@ async function handleFileUpload(file){
       throw new Error('Unsupported file type.');
     }
 
-    if(!questions || !questions.length) throw new Error('No valid questions found in the file.');
+    if(!questions || !questions.length) throw new Error('No valid questions found. Please upload a clearer image or a text-based PDF.');
 
     progressBar.style.width='100%';
     progressText.textContent='Saving '+questions.length+' questions…';
@@ -636,7 +650,8 @@ async function handleFileUpload(file){
 async function processImageFile(file, bar, text){
   bar.style.width='15%';
   text.textContent='Compressing image…';
-  var img = await compressImage(file, 1024, 0.72);
+  // ✅ Increased size to 1600 for better OCR
+  var img = await compressImage(file, 1600, 0.8);
 
   bar.style.width='40%';
   text.textContent='AI is reading the image…';
@@ -671,7 +686,6 @@ async function processTextFile(file, bar, text){
   return normaliseList(safeParseJSON(raw));
 }
 
-// ✅ FAST PDF PROCESSING (Parallel chunks with 2 concurrency)
 async function processPDFFile(file, bar, text){
   bar.style.width='10%';
   text.textContent='Loading PDF…';
@@ -692,11 +706,10 @@ async function processPDFFile(file, bar, text){
     bar.style.width='30%';
     text.textContent='Text extracted. AI is reading…';
 
-    // Chunk size 25000
     var chunks = chunkText(extracted.text, 25000);
     var mode = uploadMode === 'notes' ? 'notes' : 'extract';
     var collected = [];
-    var concurrency = 2; // Do 2 chunks at a time
+    var concurrency = 2; 
     
     for(var b=0; b<chunks.length; b+=concurrency){
       var group = chunks.slice(b, b+concurrency);
