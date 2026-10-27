@@ -57,10 +57,9 @@ module.exports = async (req, res) => {
       'You are an expert Indian exam question extractor.\n\n' +
       'MISSION: Extract ALL valid exam questions and convert to standard 4-option MCQ format.\n\n' +
       'CRITICAL FORMATTING RULES:\n' +
-      '1. Question text must be EXACT. If it has statements (A, B, C, D), put EACH statement on a NEW LINE using \\n (e.g., "Identify the correct statements:\\nA. Statement 1\\nB. Statement 2").\n' +
+      '1. Question text must be EXACT. If it has statements (A, B, C, D), put EACH statement on a NEW LINE using \\n.\n' +
       '2. If Match the following, format list items on new lines.\n' +
-      '3. REMOVE all option prefixes from the options array! Do NOT include (a), (b), (A), (B), 1, 2. Just the raw text.\n' +
-      '   Example: If option is "(a) A, D, E only", the array should be ["A, D, E only", ...].\n' +
+      '3. REMOVE all option prefixes from the options array! Do NOT include (a), (b), (A), 1, 2. Just the raw text.\n' +
       '4. Exactly 4 options, ONE correct. "ans" = 0-based index (0,1,2,3).\n' +
       '5. If direct question, SOLVE carefully. Only 1 option must be 100% correct.\n' +
       '6. Use LaTeX `$` for math formulas.\n\n' +
@@ -124,11 +123,11 @@ module.exports = async (req, res) => {
     }
   }
 
-  // ✅ SPEED BOOST: Fastest models first
+  // ✅ BEST VISION MODELS (Fast + High Accuracy for OCR)
   const models = [
-    'gemini-3.5-flash-lite',   
     'gemini-2.5-flash',
-    'gemini-3.5-flash'
+    'gemini-1.5-flash',
+    'gemini-3.5-flash-lite'
   ];
 
   let lastErr = '';
@@ -138,15 +137,15 @@ module.exports = async (req, res) => {
   for (const model of models) {
     try {
       const temp = isCBT ? 0.15 : 0.85;
-      // Tokens reduced to 4096 for lightning fast generation
-      const genConfig = { maxOutputTokens: 4096, temperature: temp };
+      // Increased tokens for better extraction
+      const genConfig = { maxOutputTokens: 8192, temperature: temp };
       if (isCBT) genConfig.responseMimeType = 'application/json';
 
       const r = await fetchGemini(model, key, {
         systemInstruction: { parts: [{ text: system }] },
         contents,
         generationConfig: genConfig
-      }, 30000); // 30s timeout per model
+      }, 40000); // 40s timeout
 
       const data = await r.json().catch(() => ({}));
 
