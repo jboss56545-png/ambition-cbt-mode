@@ -55,10 +55,10 @@ module.exports = async (req, res) => {
   if (hasImages && (mode === 'scanned-extract' || mode === 'image-extract' || mode === 'extract' || mode === 'notes')) {
     system =
       'You are an expert Indian exam question extractor.\n\n' +
-      'MISSION: Extract ALL valid exam questions and convert to standard 4-option MCQ format.\n\n' +
+      'MISSION: Extract ALL valid exam questions from the image and convert to standard 4-option MCQ format.\n\n' +
       'CRITICAL RULES:\n' +
-      '1. DO NOT INVENT OR GENERATE ANY NEW QUESTIONS. ONLY extract what is present in the image.\n' +
-      '2. If the provided image does not contain any questions, return an empty array []. Do NOT make up questions.\n' +
+      '1. Extract questions that are ACTUALLY PRESENT in the image. Do NOT invent questions from different subjects.\n' +
+      '2. If the image is blurry, try your best to read it. ONLY return [] if the image has absolutely no text/questions.\n' +
       '3. Question text must be EXACT. If it has statements (A, B, C, D), put EACH statement on a NEW LINE using \\n.\n' +
       '4. REMOVE all option prefixes from the options array! Do NOT include (a), (b), (A), 1, 2. Just the raw text.\n' +
       '5. Exactly 4 options, ONE correct. "ans" = 0-based index (0,1,2,3).\n' +
@@ -72,13 +72,12 @@ module.exports = async (req, res) => {
     system =
       'You are an expert CUET exam question extractor.\n\n' +
       'CRITICAL RULES:\n' +
-      '1. DO NOT INVENT OR GENERATE ANY NEW QUESTIONS. ONLY extract what is present in the text.\n' +
-      '2. If the provided text does not contain any questions, return an empty array []. Do NOT make up questions.\n' +
+      '1. Extract ONLY the questions present in the text.\n' +
+      '2. If the text doesn\'t have questions, return [].\n' +
       '3. Question text EXACT. Statements (A, B, C, D) on new lines using \\n.\n' +
       '4. REMOVE option prefixes (a), (b), (A), 1. from the array items.\n' +
       '5. Exactly 4 options, ONE correct. "ans" = 0 to 3.\n' +
-      '6. If direct question without options, SOLVE carefully.\n' +
-      '7. Use LaTeX `$` for math.\n\n' +
+      '6. Use LaTeX `$` for math.\n\n' +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
       '[{"q":"...","options":["text1","text2","text3","text4"],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(context || {});
@@ -146,7 +145,7 @@ module.exports = async (req, res) => {
         systemInstruction: { parts: [{ text: system }] },
         contents,
         generationConfig: genConfig
-      }, 40000); 
+      }, 45000); 
 
       const data = await r.json().catch(() => ({}));
 
