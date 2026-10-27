@@ -317,7 +317,10 @@ function showScreen(id){var all=document.querySelectorAll('.screen');for(var i=0
 function renderMath(el){
   if(!el) return;
   if(window.MathJax && MathJax.typesetPromise){
-    try{ MathJax.typesetPromise([el]).catch(function(){}); }catch(e){}
+    try{
+      if(MathJax.typesetClear) MathJax.typesetClear([el]);
+      MathJax.typesetPromise([el]).catch(function(){});
+    }catch(e){}
   } else {
     setTimeout(function(){ renderMath(el); }, 350);
   }
@@ -372,20 +375,32 @@ async function aiCall(message, context, opts) {
   throw lastErr;
 }
 
+// Protect LaTeX commands (\tan, \frac, \beta, \sqrt, etc.) before JSON.parse eats them!
+function fixLatexEscapesInJSON(jsonStr) {
+  return jsonStr
+    // Protect single backslash before common LaTeX commands starting with t, f, b, r, n
+    .replace(/(?<!\\)\\(tan|theta|times|text|tfrac|tau|to|top|triangle|frac|forall|flat|beta|binom|bar|mathbf|mathbb|sqrt|sin|sec|sum|sigma|int|infty|cos|cot|csc|cdot|alpha|delta|gamma|lambda|mu|omega|pi|phi|psi|rho|left|right|vec|hat|overline|underline|lim|log|ln|pm|mp|neq|leq|geq|approx|equiv|subset|supset|cup|cap|in|notin|partial|nabla|degree|circ)/g, '\\\\$1')
+    // Protect any remaining single backslash that isn't a valid JSON escape
+    .replace(/(?<!\\)\\(?![/\"\\bfnrt]|u[0-9a-fA-F]{4})/g, '\\\\');
+}
+
 function safeParseJSON(text){
   if (!text) return [];
   var t = String(text).trim();
   t = t.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
+  
+  var safeT = fixLatexEscapesInJSON(t);
+  try { return JSON.parse(safeT); } catch(e) {}
   try { return JSON.parse(t); } catch(e) {}
   
-  var s = t.indexOf('['), e = t.lastIndexOf(']');
+  var s = safeT.indexOf('['), e = safeT.lastIndexOf(']');
   if(s >= 0 && e > s) { 
-    try { return JSON.parse(t.slice(s, e+1)); } catch(err) {} 
+    try { return JSON.parse(safeT.slice(s, e+1)); } catch(err) {} 
   }
-  var s2 = t.indexOf('{'), e2 = t.lastIndexOf('}');
+  var s2 = safeT.indexOf('{'), e2 = safeT.lastIndexOf('}');
   if(s2 >= 0 && e2 > s2) { 
     try { 
-      var o = JSON.parse(t.slice(s2, e2+1)); 
+      var o = JSON.parse(safeT.slice(s2, e2+1)); 
       if (o && Array.isArray(o.questions)) return o.questions; 
       return o; 
     } catch(err) {} 
@@ -408,22 +423,53 @@ function formatStatements(text) {
   return formatted.trim();
 }
 
+// Upgraded autoWrapMath: Repairs corrupted tabs/formfeeds and wraps any unwrapped LaTeX
 function autoWrapMath(str) {
   if (!str) return '';
   str = String(str).trim();
-  
+
+  // Repair control characters if already corrupted in older saved IndexedDB banks
+  str = str
+    .replace(/\t(an|heta|imes|ext|frac|au|o|op|riangle)\b/g, '\\t$1')
+    .replace(/\f(rac|orall|lat)\b/g, '\\f$1')
+    .replace(/[\b](eta|inom|ar|ig)\b/g, '\\b$1')
+    .replace(/\r(ight|ho|aise)\b/g, '\\r$1');
+
+  // Skip plain English phrases like "None of these" or "All of the above"
+  if (/^(none of these|none of the above|all of these|all of the above|both a and b|cannot be determined)$/i.test(str)) {
+    return str;
+  }
+
+  // Balance odd dollar signs
   var dollarCount = (str.match(/\$/g) || []).length;
   if (dollarCount % 2 !== 0) {
     str = str.replace(/\$/g, '');
+    dollarCount = 0;
   }
-  
-  if (str.includes('$')) return str;
-  if (str.includes('\\(')) return str;
 
-  if (/\\[a-zA-Z]+/.test(str)) {
-    var safeStr = str.replace(/\[/g, '\\left[').replace(/\]/g, '\\right]');
-    return '\\(' + safeStr + '\\)';
+  // If already properly wrapped in $...$ or \(...\) without raw leaked LaTeX outside
+  if ((dollarCount > 0 || str.includes('\\(') || str.includes('\\['))) {
+    // Check if raw LaTeX exists outside $...$
+    var stripped = str.replace(/\$[^$]+\$/g, '').replace(/\\\([\s\S]*?\\\)/g, '');
+    if (!/\\[a-zA-Z]+/.test(stripped) && !/[\^_]\{/.test(stripped)) {
+      return str;
+    }
+    // If mixed raw LaTeX and $, strip $ and wrap cleanly
+    str = str.replace(/\$/g, '');
   }
+
+  // Detect any LaTeX command (\sqrt, \cos, \frac, etc.) or math exponents/subscripts (^, _)
+  var hasLatex = /\\[a-zA-Z]+/.test(str) || /[\^_]\{/.test(str) || /[a-zA-Z0-9]\^[0-9a-zA-Z+-]/.test(str);
+
+  if (hasLatex) {
+    // If string starts with prose like "Evaluate " followed by math
+    var proseMatch = str.match(/^((?:Evaluate|Find|Solve|Integrate|Differentiate|Simplify|The value of|If)\s+)(.+)$/i);
+    if (proseMatch && /\\[a-zA-Z]+/.test(proseMatch[2])) {
+      return proseMatch[1] + '\\(' + proseMatch[2].trim() + '\\)';
+    }
+    return '\\(' + str + '\\)';
+  }
+
   return str;
 }
 
@@ -674,7 +720,7 @@ async function processImageFile(file, bar, text){
   text.textContent='AI is reading the image…';
 
   var raw = await aiCall(
-    'Extract ALL questions from this image. If MCQ, copy options exactly. If direct question, solve it and create 4 options. "ans" = 0-based index of correct option. Math in $...$. Return raw JSON array only.',
+    'Extract ALL questions from this image. If MCQ, copy options exactly. If direct question, solve it and create 4 options. "ans" = 0-based index of correct option. Wrap ALL math in $...$ and double-escape backslashes (\\\\frac, \\\\sqrt, \\\\cos). Return raw JSON array only.',
     {source:'ambition-cuet-cbt', mode: uploadMode==='notes' ? 'notes' : 'image-extract', image: img},
     {timeoutMs: 60000}
   );
@@ -767,7 +813,7 @@ async function processPDFFile(file, bar, text){
     text.textContent = 'Processing page '+(i+1)+'/'+rendered.images.length+'…';
     try {
       var raw = await aiCall(
-        'Extract ALL MCQs from this page. Copy options exactly. If direct question, solve and create 4 options. "ans" = 0-based index. Return raw JSON array only.',
+        'Extract ALL MCQs from this page. Copy options exactly. If direct question, solve and create 4 options. "ans" = 0-based index. Wrap ALL math in $...$. Return raw JSON array only.',
         {source:'ambition-cuet-cbt', mode: uploadMode==='notes' ? 'notes' : 'scanned-extract', image: rendered.images[i]},
         {timeoutMs: 60000, retries: 1}
       );
@@ -813,20 +859,22 @@ function startTimer(){
   },1000);
 }
 
+// Upgraded renderQuestion: runs autoWrapMath live so even already-saved Question Banks render properly
 function renderQuestion(){
   if(!T) return;
   var q=T.questions[T.cur];
   $('qCounter').textContent='Question '+(T.cur+1)+' of '+T.questions.length;
   $('qTopic').textContent=q.topic;
   $('qDiff').textContent=q.diff;
-  $('qText').innerHTML=q.q;
+  $('qText').innerHTML=autoWrapMath(q.q);
 
   var box=$('optionsBox');box.innerHTML='';
   var letters=['A','B','C','D'];
   q.options.forEach(function(opt,i){
     var b=document.createElement('button');
     b.className='option'+(T.answers[T.cur]===i?' selected':'');
-    b.innerHTML='<span class="opt-key">'+letters[i]+'</span><span class="option-text">'+opt+'</span>';
+    var formattedOpt = autoWrapMath(cleanOptionText(opt));
+    b.innerHTML='<span class="opt-key">'+letters[i]+'</span><span class="option-text">'+formattedOpt+'</span>';
     b.onclick=function(){T.answers[T.cur]=i;renderQuestion();renderPalette()};
     box.appendChild(b);
   });
