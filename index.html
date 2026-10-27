@@ -391,7 +391,6 @@ function safeParseJSON(text){
     } catch(err) {} 
   }
   
-  // Gracefully handle plain text responses (like "I cannot read this image")
   if (t.length > 0 && t.length < 500 && !t.includes('{')) {
      return []; 
   }
@@ -399,12 +398,31 @@ function safeParseJSON(text){
   throw new Error('AI returned non-JSON. Please retry.');
 }
 
+function formatStatements(text) {
+  if (!text) return '';
+  var formatted = text;
+  formatted = formatted.replace(/([^\n])\s+([A-E]\.\s)/g, '$1\n$2');
+  formatted = formatted.replace(/([^\n])\s+(\([A-E1-4]\)\s)/g, '$1\n$2');
+  formatted = formatted.replace(/^([A-E]\.\s)/, '\n$1');
+  formatted = formatted.replace(/^(\([A-E1-4]\)\s)/, '\n$1');
+  return formatted.trim();
+}
+
 function autoWrapMath(str) {
   if (!str) return '';
   str = String(str).trim();
-  if (str.indexOf('$') !== -1) return str; 
+  
+  var dollarCount = (str.match(/\$/g) || []).length;
+  if (dollarCount % 2 !== 0) {
+    str = str.replace(/\$/g, '');
+  }
+  
+  if (str.includes('$')) return str;
+  if (str.includes('\\(')) return str;
+
   if (/\\[a-zA-Z]+/.test(str)) {
-    return '$' + str + '$';
+    var safeStr = str.replace(/\[/g, '\\left[').replace(/\]/g, '\\right]');
+    return '\\(' + safeStr + '\\)';
   }
   return str;
 }
@@ -430,7 +448,7 @@ function normaliseList(raw){
     var ans = Number(item.ans);
     if(isNaN(ans) || ans < 0 || ans > 3) ans = 0;
     
-    var fixedQ = autoWrapMath(q);
+    var fixedQ = autoWrapMath(formatStatements(q));
     
     var fixedOpts = opts.map(function(o) { 
       return autoWrapMath(cleanOptionText(o)); 
@@ -449,8 +467,8 @@ function normaliseList(raw){
 }
 
 function compressImage(file, maxDim, quality){
-  maxDim = maxDim || 1024;
-  quality = quality || 0.72;
+  maxDim = maxDim || 1600;
+  quality = quality || 0.8;
   return new Promise(function(resolve, reject){
     var reader = new FileReader();
     reader.onload = function(e){
@@ -650,7 +668,6 @@ async function handleFileUpload(file){
 async function processImageFile(file, bar, text){
   bar.style.width='15%';
   text.textContent='Compressing image…';
-  // ✅ Increased size to 1600 for better OCR
   var img = await compressImage(file, 1600, 0.8);
 
   bar.style.width='40%';
